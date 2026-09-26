@@ -1,6 +1,7 @@
-from typing import Any, Dict, List, Optional
+from typing import List
 from ..models import ProjectAnalysis, EngineeringSkillMap
 from ..providers import BaseAIProvider
+from workspace.models import ProjectSnapshot
 
 
 class ProjectAnalyzer:
@@ -9,7 +10,7 @@ class ProjectAnalyzer:
     def __init__(self, provider: BaseAIProvider):
         self.provider = provider
 
-    async def analyze(self, project_snapshot: Dict[str, Any]) -> ProjectAnalysis:
+    async def analyze(self, project_snapshot: ProjectSnapshot) -> ProjectAnalysis:
         """Analyze a project from its snapshot."""
         prompt = self._build_analysis_prompt(project_snapshot)
         return await self.provider.generate_structured(
@@ -18,7 +19,7 @@ class ProjectAnalyzer:
             system_prompt="You are an expert software engineer analyzing a project."
         )
 
-    async def map_skills(self, project_snapshot: Dict[str, Any]) -> EngineeringSkillMap:
+    async def map_skills(self, project_snapshot: ProjectSnapshot) -> EngineeringSkillMap:
         """Map engineering skills required for a project."""
         prompt = self._build_skill_prompt(project_snapshot)
         return await self.provider.generate_structured(
@@ -27,10 +28,10 @@ class ProjectAnalyzer:
             system_prompt="You are an expert software engineer identifying required skills."
         )
 
-    def _build_analysis_prompt(self, snapshot: Dict[str, Any]) -> str:
+    def _build_analysis_prompt(self, snapshot: ProjectSnapshot) -> str:
         files_summary = "\n".join([
-            f"- {f['path']}: {f.get('summary', 'No summary')}"
-            for f in snapshot.get("files", [])[:20]
+            f"- {path}: {content[:200]}..."
+            for path, content in list(snapshot.files.items())[:20]
         ])
         return f"""
 Analyze this project and provide:
@@ -42,14 +43,14 @@ Analyze this project and provide:
 Project files:
 {files_summary}
 
-Dependencies: {snapshot.get('dependencies', {})}
-Configuration: {snapshot.get('config', {})}
+Dependencies: {snapshot.dependencies}
+Configuration: {snapshot.config}
 """
 
-    def _build_skill_prompt(self, snapshot: Dict[str, Any]) -> str:
+    def _build_skill_prompt(self, snapshot: ProjectSnapshot) -> str:
         files_summary = "\n".join([
-            f"- {f['path']}"
-            for f in snapshot.get("files", [])[:30]
+            f"- {path}"
+            for path in list(snapshot.files.keys())[:30]
         ])
         return f"""
 Identify the engineering skills required to work on this project.
@@ -57,5 +58,6 @@ Identify the engineering skills required to work on this project.
 Project files:
 {files_summary}
 
-Technologies: {snapshot.get('technologies', [])}
+Dependencies: {snapshot.dependencies}
+Configuration: {snapshot.config}
 """
