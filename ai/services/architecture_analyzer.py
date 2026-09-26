@@ -1,6 +1,7 @@
-from typing import Any, Dict, List
+from typing import List
 from ..models import ProjectAnalysis
 from ..providers import BaseAIProvider
+from workspace.models import ProjectSnapshot
 
 
 class ArchitectureAnalyzer:
@@ -9,7 +10,7 @@ class ArchitectureAnalyzer:
     def __init__(self, provider: BaseAIProvider):
         self.provider = provider
 
-    async def analyze_architecture(self, project_snapshot: Dict[str, Any]) -> Dict[str, Any]:
+    async def analyze_architecture(self, project_snapshot: ProjectSnapshot) -> dict:
         """Analyze the architecture of a project."""
         prompt = self._build_architecture_prompt(project_snapshot)
         response = await self.provider.generate(
@@ -18,7 +19,7 @@ class ArchitectureAnalyzer:
         )
         return {"analysis": response}
 
-    async def detect_patterns(self, project_snapshot: Dict[str, Any]) -> List[str]:
+    async def detect_patterns(self, project_snapshot: ProjectSnapshot) -> List[str]:
         """Detect architectural patterns in the project."""
         prompt = self._build_pattern_prompt(project_snapshot)
         response = await self.provider.generate(
@@ -27,7 +28,7 @@ class ArchitectureAnalyzer:
         )
         return [line.strip("- ") for line in response.split("\n") if line.strip().startswith("-")]
 
-    async def evaluate_changes(self, project_snapshot: Dict[str, Any], proposed_changes: str) -> Dict[str, Any]:
+    async def evaluate_changes(self, project_snapshot: ProjectSnapshot, proposed_changes: str) -> dict:
         """Evaluate proposed architectural changes."""
         prompt = self._build_evaluation_prompt(project_snapshot, proposed_changes)
         response = await self.provider.generate(
@@ -36,10 +37,10 @@ class ArchitectureAnalyzer:
         )
         return {"evaluation": response}
 
-    def _build_architecture_prompt(self, snapshot: Dict[str, Any]) -> str:
+    def _build_architecture_prompt(self, snapshot: ProjectSnapshot) -> str:
         structure = "\n".join([
-            f"- {f['path']} ({f.get('type', 'file')})"
-            for f in snapshot.get("files", [])[:50]
+            f"- {path}"
+            for path in list(snapshot.files.keys())[:50]
         ])
         return f"""
 Analyze the architecture of this project:
@@ -47,8 +48,8 @@ Analyze the architecture of this project:
 File structure:
 {structure}
 
-Dependencies: {snapshot.get('dependencies', {})}
-Config files: {snapshot.get('config', {})}
+Dependencies: {snapshot.dependencies}
+Config files: {snapshot.config}
 
 Identify:
 1. Overall architecture style
@@ -57,7 +58,7 @@ Identify:
 4. Potential architectural issues
 """
 
-    def _build_pattern_prompt(self, snapshot: Dict[str, Any]) -> str:
+    def _build_pattern_prompt(self, snapshot: ProjectSnapshot) -> str:
         return f"""
 Identify architectural patterns in this project:
 {self._build_architecture_prompt(snapshot)}
@@ -65,7 +66,7 @@ Identify architectural patterns in this project:
 List patterns found (one per line, prefixed with -):
 """
 
-    def _build_evaluation_prompt(self, snapshot: Dict[str, Any], changes: str) -> str:
+    def _build_evaluation_prompt(self, snapshot: ProjectSnapshot, changes: str) -> str:
         return f"""
 Evaluate these proposed architectural changes:
 

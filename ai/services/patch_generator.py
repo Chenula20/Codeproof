@@ -1,6 +1,7 @@
-from typing import Any, Dict, List
+from typing import List
 from ..models import Patch
 from ..providers import BaseAIProvider
+from workspace.models import ProjectSnapshot
 
 
 class PatchGenerator:
@@ -12,7 +13,7 @@ class PatchGenerator:
     async def generate_patch(
         self,
         issue_description: str,
-        project_snapshot: Dict[str, Any],
+        project_snapshot: ProjectSnapshot,
         target_files: List[str]
     ) -> Patch:
         """Generate a patch to address an issue."""
@@ -25,8 +26,8 @@ class PatchGenerator:
 
     async def generate_patch_from_analysis(
         self,
-        analysis: Dict[str, Any],
-        project_snapshot: Dict[str, Any]
+        analysis: dict,
+        project_snapshot: ProjectSnapshot
     ) -> List[Patch]:
         """Generate patches based on analysis results."""
         patches = []
@@ -43,13 +44,13 @@ class PatchGenerator:
     def _build_patch_prompt(
         self,
         issue_description: str,
-        project_snapshot: Dict[str, Any],
+        project_snapshot: ProjectSnapshot,
         target_files: List[str]
     ) -> str:
         file_contents = []
-        for f in project_snapshot.get("files", []):
-            if f["path"] in target_files:
-                file_contents.append(f"--- {f['path']} ---\n{f.get('content', '')}")
+        for path in target_files:
+            if path in project_snapshot.files:
+                file_contents.append(f"--- {path} ---\n{project_snapshot.files[path]}")
 
         return f"""
 Generate a patch to fix this issue:
