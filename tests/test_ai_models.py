@@ -5,6 +5,7 @@ from ai.models import (
     HintRequest,
     HintResponse,
     ExplanationEvaluation,
+    ExplanationClassification,
     Patch,
 )
 from ai.providers import AIProviderConfig
@@ -50,10 +51,11 @@ class TestAIModels:
 
     def test_hint_request_invalid_level(self):
         """Test HintRequest rejects invalid hint level."""
-        with pytest.raises(ValueError):
+        from pydantic import ValidationError
+        with pytest.raises(ValidationError):
             HintRequest(challenge_id="c1", hint_level=0)
-        with pytest.raises(ValueError):
-            HintRequest(challenge_id="c1", hint_level=4)
+        with pytest.raises(ValidationError):
+            HintRequest(challenge_id="c1", hint_level=5)
 
     def test_hint_response(self):
         """Test HintResponse model."""
@@ -69,12 +71,14 @@ class TestAIModels:
         """Test ExplanationEvaluation model."""
         eval = ExplanationEvaluation(
             user_explanation="This function adds two numbers",
+            classification=ExplanationClassification.CORRECT,
             score=0.8,
             feedback="Good but missing edge cases",
             passed=True,
         )
         assert eval.score == 0.8
         assert eval.passed is True
+        assert eval.classification == ExplanationClassification.CORRECT
 
     def test_explanation_evaluation_score_bounds(self):
         """Test score bounds."""
