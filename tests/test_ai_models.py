@@ -40,22 +40,44 @@ class TestAIModels:
 
     def test_hint_request(self):
         """Test HintRequest model."""
+        from ai.models import ChallengeContext
+
+        context = ChallengeContext(
+            challenge_id="chal-1",
+            title="Test Challenge",
+            description="Test description",
+            difficulty="easy",
+            target_skill="Testing",
+            problem_statement="Test problem",
+        )
+
         request = HintRequest(
             challenge_id="chal-1",
             hint_level=2,
-            context={"progress": "started", "question": "How to test?"},
+            challenge_context=context,
         )
         assert request.challenge_id == "chal-1"
         assert request.hint_level == 2
-        assert request.context["progress"] == "started"
+        assert request.challenge_context is not None
 
     def test_hint_request_invalid_level(self):
         """Test HintRequest rejects invalid hint level."""
         from pydantic import ValidationError
+        from ai.models import ChallengeContext
+
+        context = ChallengeContext(
+            challenge_id="c1",
+            title="Test Challenge",
+            description="Test description",
+            difficulty="easy",
+            target_skill="Testing",
+            problem_statement="Test problem",
+        )
+
         with pytest.raises(ValidationError):
-            HintRequest(challenge_id="c1", hint_level=0)
+            HintRequest(challenge_id="c1", hint_level=0, challenge_context=context)
         with pytest.raises(ValidationError):
-            HintRequest(challenge_id="c1", hint_level=5)
+            HintRequest(challenge_id="c1", hint_level=5, challenge_context=context)
 
     def test_hint_response(self):
         """Test HintResponse model."""

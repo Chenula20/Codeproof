@@ -7,6 +7,8 @@ from ai.models import (
     HintResponse,
     ExplanationEvaluation,
     ExplanationClassification,
+    ChallengeContext,
+    ExplanationEvaluationRequest,
 )
 from ai.services import HintEngine, ExplanationEvaluator
 from ai.providers import BaseAIProvider, AIProviderConfig
@@ -53,16 +55,23 @@ class TestHintEngine:
         self.provider = MockAIProvider()
         self.engine = HintEngine(self.provider)
 
-    def _sample_challenge_context(self) -> dict:
-        return {
-            "description": "Login fails when user enters correct credentials",
-            "project_summary": "Flask REST API with JWT authentication",
-            "relevant_files": ["src/auth/handler.py", "src/models/user.py"],
-            "error_message": "Invalid credentials",
-            "expected_behavior": "User should be logged in and receive JWT token",
-            "actual_behavior": "Returns 401 Invalid credentials even with correct password",
-            "root_cause": "Backend expects 'username' field but frontend sends 'email'",
-        }
+    def _sample_challenge_context(self) -> ChallengeContext:
+        return ChallengeContext(
+            challenge_id="chal-001",
+            title="Login Failure Debugging",
+            description="Login fails when user enters correct credentials",
+            difficulty="medium",
+            target_skill="Authentication",
+            problem_statement="Debug why valid credentials return 401",
+            relevant_code_excerpts=[
+                "def login():\n    data = request.get_json()\n    user = User.query.filter_by(username=data['username']).first()"
+            ],
+            error_logs=["401 Invalid credentials"],
+            expected_concepts=["field name mismatch", "username vs email", "auth handler"],
+            relevant_files=["src/auth/handler.py", "src/models/user.py"],
+            project_summary="Flask REST API with JWT authentication",
+            metadata={},
+        )
 
     def test_valid_challenge_produces_hint_response(self):
         """Valid challenge produces a HintResponse."""
@@ -75,11 +84,12 @@ class TestHintEngine:
         request = HintRequest(
             challenge_id="chal-001",
             hint_level=1,
-            context={"progress": "Investigating login flow", "question": "Why does login fail?"},
+            developer_progress="Investigating login flow",
+            developer_question="Why does login fail?",
+            challenge_context=self._sample_challenge_context(),
         )
-        context = self._sample_challenge_context()
 
-        response = asyncio.run(self.engine.generate_hint(request, context))
+        response = asyncio.run(self.engine.generate_hint(request))
 
         assert isinstance(response, HintResponse)
         assert response.hint_level == 1
@@ -95,9 +105,12 @@ class TestHintEngine:
             next_level_available=True,
         )
 
-        request1 = HintRequest(challenge_id="chal-001", hint_level=1, context={})
-        context = self._sample_challenge_context()
-        response1 = asyncio.run(self.engine.generate_hint(request1, context))
+        request1 = HintRequest(
+            challenge_id="chal-001",
+            hint_level=1,
+            challenge_context=self._sample_challenge_context(),
+        )
+        response1 = asyncio.run(self.engine.generate_hint(request1))
 
         # Level 4 - Near-solution
         self.provider._generate_structured_result = HintResponse(
@@ -106,8 +119,12 @@ class TestHintEngine:
             next_level_available=False,
         )
 
-        request4 = HintRequest(challenge_id="chal-001", hint_level=4, context={})
-        response4 = asyncio.run(self.engine.generate_hint(request4, context))
+        request4 = HintRequest(
+            challenge_id="chal-001",
+            hint_level=4,
+            challenge_context=self._sample_challenge_context(),
+        )
+        response4 = asyncio.run(self.engine.generate_hint(request4))
 
         assert response1.hint_level == 1
         assert response4.hint_level == 4
@@ -119,14 +136,14 @@ class TestHintEngine:
     def test_invalid_hint_level_rejected(self):
         """Invalid hint level is rejected at model validation level."""
         from pydantic import ValidationError
-        
+
         # Level 0 should be rejected by Pydantic
         with pytest.raises(ValidationError, match="hint_level"):
-            HintRequest(challenge_id="chal-001", hint_level=0, context={})
+            HintRequest(challenge_id="chal-001", hint_level=0, challenge_context=self._sample_challenge_context())
 
         # Level 5 should be rejected by Pydantic
         with pytest.raises(ValidationError, match="hint_level"):
-            HintRequest(challenge_id="chal-001", hint_level=5, context={})
+            HintRequest(challenge_id="chal-001", hint_level=5, challenge_context=self._sample_challenge_context())
 
     def test_provider_failure_handled(self):
         """Provider failure is handled cleanly."""
@@ -135,25 +152,32 @@ class TestHintEngine:
 
         self.provider.generate_structured = failing_generate
 
-        request = HintRequest(challenge_id="chal-001", hint_level=1, context={})
-        context = self._sample_challenge_context()
+        request = HintRequest(
+            challenge_id="chal-001",
+            hint_level=1,
+            challenge_context=self._sample_challenge_context(),
+        )
 
         with pytest.raises(RuntimeError, match="Hint generation failed"):
-            asyncio.run(self.engine.generate_hint(request, context))
+            asyncio.run(self.engine.generate_hint(request))
 
     def test_empty_challenge_context_rejected(self):
         """Empty challenge context is rejected."""
-        request = HintRequest(challenge_id="chal-001", hint_level=1, context={})
-        
-        with pytest.raises(ValueError, match="Challenge context is required"):
-            asyncio.run(self.engine.generate_hint(request, {}))
+        from pydantic import ValidationError
+
+        # Challenge context is required in HintRequest
+        with pytest.raises(ValidationError):
+            HintRequest(challenge_id="chal-001", hint_level=1, challenge_context=None)
 
     def test_project_filesystem_never_accessed(self):
         """Project/filesystem is never accessed directly."""
         # The engine only uses the challenge_context dict passed to it
         # No filesystem operations in the engine code
-        request = HintRequest(challenge_id="chal-001", hint_level=1, context={})
-        context = self._sample_challenge_context()
+        request = HintRequest(
+            challenge_id="chal-001",
+            hint_level=1,
+            challenge_context=self._sample_challenge_context(),
+        )
 
         # Verify no filesystem access methods exist
         assert not hasattr(self.engine, 'read_file')
@@ -168,10 +192,13 @@ class TestHintEngine:
             next_level_available=True,
         )
 
-        request = HintRequest(challenge_id="chal-001", hint_level=1, context={})
-        context = self._sample_challenge_context()
+        request = HintRequest(
+            challenge_id="chal-001",
+            hint_level=1,
+            challenge_context=self._sample_challenge_context(),
+        )
 
-        asyncio.run(self.engine.generate_hint(request, context))
+        asyncio.run(self.engine.generate_hint(request))
 
         # Verify the user prompt contains security markers
         prompt = self.provider.last_prompt
@@ -193,13 +220,23 @@ class TestExplanationEvaluator:
         self.provider = MockAIProvider()
         self.evaluator = ExplanationEvaluator(self.provider, passing_threshold=0.7)
 
-    def _sample_challenge_context(self) -> dict:
-        return {
-            "description": "Login fails when user enters correct credentials",
-            "root_cause": "Backend expects 'username' field but frontend sends 'email'",
-            "project_summary": "Flask REST API with JWT authentication",
-            "relevant_files": ["src/auth/handler.py"],
-        }
+    def _sample_challenge_context(self) -> ChallengeContext:
+        return ChallengeContext(
+            challenge_id="chal-001",
+            title="Login Failure Debugging",
+            description="Login fails when user enters correct credentials",
+            difficulty="medium",
+            target_skill="Authentication",
+            problem_statement="Debug why valid credentials return 401",
+            relevant_code_excerpts=[
+                "def login():\n    data = request.get_json()\n    user = User.query.filter_by(username=data['username']).first()"
+            ],
+            error_logs=["401 Invalid credentials"],
+            expected_concepts=["field name mismatch", "username vs email", "auth handler"],
+            relevant_files=["src/auth/handler.py", "src/models/user.py"],
+            project_summary="Flask REST API with JWT authentication",
+            metadata={},
+        )
 
     def test_correct_explanation_classified_correctly(self):
         """Correct explanation is classified as CORRECT."""
@@ -215,7 +252,12 @@ class TestExplanationEvaluator:
         expected = ["field name mismatch", "username vs email", "auth handler"]
         context = self._sample_challenge_context()
 
-        result = asyncio.run(self.evaluator.evaluate(explanation, expected, context))
+        request = ExplanationEvaluationRequest(
+            challenge_context=context,
+            developer_explanation=explanation,
+            expected_concepts=expected,
+        )
+        result = asyncio.run(self.evaluator.evaluate(request))
 
         assert result.classification == ExplanationClassification.CORRECT
         assert result.score >= 0.7
@@ -235,7 +277,12 @@ class TestExplanationEvaluator:
         expected = ["field name mismatch", "username vs email", "auth handler"]
         context = self._sample_challenge_context()
 
-        result = asyncio.run(self.evaluator.evaluate(explanation, expected, context))
+        request = ExplanationEvaluationRequest(
+            challenge_context=context,
+            developer_explanation=explanation,
+            expected_concepts=expected,
+        )
+        result = asyncio.run(self.evaluator.evaluate(request))
 
         assert result.classification == ExplanationClassification.PARTIALLY_CORRECT
         assert result.score < 0.7
@@ -255,7 +302,12 @@ class TestExplanationEvaluator:
         expected = ["field name mismatch", "username vs email", "auth handler"]
         context = self._sample_challenge_context()
 
-        result = asyncio.run(self.evaluator.evaluate(explanation, expected, context))
+        request = ExplanationEvaluationRequest(
+            challenge_context=context,
+            developer_explanation=explanation,
+            expected_concepts=expected,
+        )
+        result = asyncio.run(self.evaluator.evaluate(request))
 
         assert result.classification == ExplanationClassification.INCORRECT
         assert result.score < 0.7
@@ -272,21 +324,45 @@ class TestExplanationEvaluator:
         expected = ["concept1"]
         context = self._sample_challenge_context()
 
+        request = ExplanationEvaluationRequest(
+            challenge_context=context,
+            developer_explanation=explanation,
+            expected_concepts=expected,
+        )
         with pytest.raises(RuntimeError, match="Explanation evaluation failed"):
-            asyncio.run(self.evaluator.evaluate(explanation, expected, context))
+            asyncio.run(self.evaluator.evaluate(request))
 
     def test_empty_explanation_rejected(self):
         """Empty explanation is rejected."""
-        with pytest.raises(ValueError, match="User explanation cannot be empty"):
-            asyncio.run(self.evaluator.evaluate("", ["concept1"], self._sample_challenge_context()))
+        context = self._sample_challenge_context()
 
         with pytest.raises(ValueError, match="User explanation cannot be empty"):
-            asyncio.run(self.evaluator.evaluate("   ", ["concept1"], self._sample_challenge_context()))
+            request = ExplanationEvaluationRequest(
+                challenge_context=context,
+                developer_explanation="",
+                expected_concepts=["concept1"],
+            )
+            asyncio.run(self.evaluator.evaluate(request))
+
+        with pytest.raises(ValueError, match="User explanation cannot be empty"):
+            request = ExplanationEvaluationRequest(
+                challenge_context=context,
+                developer_explanation="   ",
+                expected_concepts=["concept1"],
+            )
+            asyncio.run(self.evaluator.evaluate(request))
 
     def test_empty_expected_concepts_rejected(self):
         """Empty expected concepts list is rejected."""
+        context = self._sample_challenge_context()
+
         with pytest.raises(ValueError, match="Expected concepts list cannot be empty"):
-            asyncio.run(self.evaluator.evaluate("Some explanation", [], self._sample_challenge_context()))
+            request = ExplanationEvaluationRequest(
+                challenge_context=context,
+                developer_explanation="Some explanation",
+                expected_concepts=[],
+            )
+            asyncio.run(self.evaluator.evaluate(request))
 
     def test_no_filesystem_access(self):
         """No filesystem access in evaluator."""
@@ -308,7 +384,12 @@ class TestExplanationEvaluator:
         expected = ["concept1"]
         context = self._sample_challenge_context()
 
-        asyncio.run(self.evaluator.evaluate(explanation, expected, context))
+        request = ExplanationEvaluationRequest(
+            challenge_context=context,
+            developer_explanation=explanation,
+            expected_concepts=expected,
+        )
+        asyncio.run(self.evaluator.evaluate(request))
 
         prompt = self.provider.last_prompt
         assert "UNTRUSTED DATA" in prompt
@@ -330,14 +411,22 @@ class TestHintEngineIntegration:
 
     def test_progressive_hint_levels_for_same_challenge(self):
         """Same challenge can have progressive hints requested."""
-        challenge_context = {
-            "description": "TypeError when calling process_data with None",
-            "project_summary": "Python data processing pipeline",
-            "relevant_files": ["src/processor.py", "src/validators.py"],
-            "error_message": "TypeError: 'NoneType' object is not iterable",
-            "expected_behavior": "Should handle None gracefully and return empty result",
-            "actual_behavior": "Crashes with TypeError when input is None",
-        }
+        challenge_context = ChallengeContext(
+            challenge_id="c1",
+            title="TypeError Debugging",
+            description="TypeError when calling process_data with None",
+            difficulty="easy",
+            target_skill="Error Handling",
+            problem_statement="Debug TypeError when None is passed to process_data",
+            relevant_code_excerpts=[
+                "def process_data(data):\n    for item in data:\n        process(item)"
+            ],
+            error_logs=["TypeError: 'NoneType' object is not iterable"],
+            expected_concepts=["None handling", "guard clause", "input validation"],
+            relevant_files=["src/processor.py", "src/validators.py"],
+            project_summary="Python data processing pipeline",
+            metadata={},
+        )
 
         # Level 1
         self.provider._generate_structured_result = HintResponse(
@@ -346,8 +435,7 @@ class TestHintEngineIntegration:
             next_level_available=True,
         )
         r1 = asyncio.run(self.engine.generate_hint(
-            HintRequest(challenge_id="c1", hint_level=1, context={}),
-            challenge_context
+            HintRequest(challenge_id="c1", hint_level=1, challenge_context=challenge_context),
         ))
         assert r1.hint_level == 1
 
@@ -358,8 +446,7 @@ class TestHintEngineIntegration:
             next_level_available=True,
         )
         r2 = asyncio.run(self.engine.generate_hint(
-            HintRequest(challenge_id="c1", hint_level=2, context={}),
-            challenge_context
+            HintRequest(challenge_id="c1", hint_level=2, challenge_context=challenge_context),
         ))
         assert r2.hint_level == 2
 
@@ -370,8 +457,7 @@ class TestHintEngineIntegration:
             next_level_available=True,
         )
         r3 = asyncio.run(self.engine.generate_hint(
-            HintRequest(challenge_id="c1", hint_level=3, context={}),
-            challenge_context
+            HintRequest(challenge_id="c1", hint_level=3, challenge_context=challenge_context),
         ))
         assert r3.hint_level == 3
 
@@ -382,8 +468,7 @@ class TestHintEngineIntegration:
             next_level_available=False,
         )
         r4 = asyncio.run(self.engine.generate_hint(
-            HintRequest(challenge_id="c1", hint_level=4, context={}),
-            challenge_context
+            HintRequest(challenge_id="c1", hint_level=4, challenge_context=challenge_context),
         ))
         assert r4.hint_level == 4
         assert r4.next_level_available is False
