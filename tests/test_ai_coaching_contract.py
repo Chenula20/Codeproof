@@ -390,7 +390,7 @@ class TestServiceSignatures:
         
         sig = inspect.signature(PatchGenerator.generate_patch)
         params = list(sig.parameters.keys())
-        assert params == ['self', 'issue_description', 'project_snapshot', 'target_files']
+        assert params == ['self', 'request']
 
 
 if __name__ == "__main__":

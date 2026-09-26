@@ -208,7 +208,7 @@ normal_var = 'hello'
         assert 'return' in annotations
 
     def test_patch_generator_accepts_typed_snapshot(self):
-        """PatchGenerator accepts ProjectSnapshot."""
+        """PatchGenerator accepts PatchRequest with ProjectSnapshot."""
         generator = PatchGenerator(self.provider)
         snapshot = self.guardian.create_snapshot()
 
@@ -216,7 +216,7 @@ normal_var = 'hello'
         generate_func = generator.generate_patch
         annotations = generate_func.__annotations__
 
-        assert 'project_snapshot' in annotations
+        assert 'request' in annotations
         assert 'return' in annotations
 
     def test_invalid_snapshot_fails_cleanly(self):
