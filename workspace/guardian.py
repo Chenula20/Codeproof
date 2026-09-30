@@ -4,6 +4,7 @@ from .models import ProjectIndex, FileMetadata, ProjectSnapshot
 from .scanner import ProjectScanner
 from .secret_filter import SecretFilter
 from .snapshot import SnapshotBuilder
+from .security import contained_file
 
 
 class WorkspaceGuardian:
@@ -47,11 +48,12 @@ class WorkspaceGuardian:
         This is the ONLY way to read file content - no direct filesystem access.
         """
         # Validate path is within project root
-        file_path = (self.project_root / relative_path).resolve()
         try:
-            file_path.relative_to(self.project_root)
+            file_path = contained_file(self.project_root, relative_path)
         except ValueError:
-            raise ValueError(f"Path {relative_path} is outside project root")
+            if not (self.project_root / relative_path).exists() and ".." not in Path(relative_path).parts:
+                return None
+            raise
 
         # Check if file is ignored/secret
         if self.secret_filter.is_secret_file(Path(relative_path)):
@@ -59,7 +61,12 @@ class WorkspaceGuardian:
 
         # Read and redact
         try:
-            content = file_path.read_text(encoding="utf-8", errors="replace")
+            if file_path.stat().st_size > 5_000_000:
+                return None
+            with file_path.open(encoding="utf-8", errors="replace") as stream:
+                content = stream.read(5_000_001)
+            if len(content) > 5_000_000:
+                return None
             return self.secret_filter.redact_content(content)
         except (OSError, PermissionError, UnicodeDecodeError):
             return None

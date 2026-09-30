@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Set
 from .models import FileMetadata, ProjectIndex
+from .security import contained_file
 
 
 class ProjectScanner:
@@ -120,12 +121,21 @@ class ProjectScanner:
         files = []
         for root, dirs, filenames in os.walk(self.project_root):
             # Filter directories in-place to avoid traversing ignored dirs
-            dirs[:] = [d for d in dirs if not self._is_ignored(Path(root) / d)]
+            dirs[:] = [d for d in dirs if not self._is_ignored(Path(root) / d)
+                       and not (Path(root) / d).is_symlink()
+                       and not getattr(Path(root) / d, "is_junction", lambda: False)()]
 
             for filename in filenames:
                 file_path = Path(root) / filename
                 if not self._is_ignored(file_path):
-                    files.append(file_path)
+                    try:
+                        contained_file(self.project_root, str(file_path.relative_to(self.project_root)))
+                    except ValueError:
+                        continue
+                    if file_path.stat().st_size <= 5_000_000:
+                        files.append(file_path)
+                    if len(files) >= 10000:
+                        return files
         return files
 
     def _is_ignored(self, path: Path) -> bool:

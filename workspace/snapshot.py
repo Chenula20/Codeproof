@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Set
 from .models import ProjectIndex, FileMetadata, ProjectSnapshot
 from .scanner import ProjectScanner
 from .secret_filter import SecretFilter
+from .security import contained_file
 
 
 class SnapshotBuilder:
@@ -50,6 +51,8 @@ class SnapshotBuilder:
 
             content = self._read_file_safely(file_meta)
             if content is not None:
+                if total_size + len(content.encode("utf-8")) > self.max_total_size:
+                    continue
                 file_contents[file_meta.path] = content
                 total_size += len(content.encode("utf-8"))
 
@@ -137,12 +140,15 @@ class SnapshotBuilder:
 
     def _read_file_safely(self, file_meta: FileMetadata) -> Optional[str]:
         """Read file content safely with secret redaction."""
-        file_path = Path(self.scanner.project_root) / file_meta.path
         try:
-            content = file_path.read_text(encoding="utf-8", errors="replace")
+            file_path = contained_file(self.scanner.project_root, file_meta.path)
+            with file_path.open(encoding="utf-8", errors="replace") as stream:
+                content = stream.read(self.max_file_size + 1)
+            if len(content.encode("utf-8")) > self.max_file_size:
+                return None
             # Redact potential secrets
             return self.secret_filter.redact_content(content)
-        except (OSError, PermissionError, UnicodeDecodeError):
+        except (OSError, PermissionError, UnicodeDecodeError, ValueError):
             return None
 
     def _extract_dependencies(self, index: ProjectIndex, files: Dict[str, str]) -> Dict:
