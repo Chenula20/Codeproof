@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.routers import project, challenges, patch, sandbox, release
+from backend.routers import project, challenges, patch, sandbox, release, sessions
 
 app = FastAPI(
     title="CodeProof Backend",
@@ -26,6 +26,7 @@ app.include_router(challenges.router)
 app.include_router(patch.router)
 app.include_router(sandbox.router)
 app.include_router(release.router)
+app.include_router(sessions.router)
 
 
 @app.get("/health")

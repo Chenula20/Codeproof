@@ -1,6 +1,8 @@
 """Tests for backend services."""
 
 import pytest
+import os
+import tempfile
 from backend.services import project_service, challenge_service, patch_lab, release_readiness
 from backend.models import SandboxResult
 
@@ -84,6 +86,145 @@ class TestPatchLab:
         assert os.path.exists(temp)
         patch_lab.cleanup_temporary_copy(temp)
         assert not os.path.exists(os.path.dirname(temp))
+
+    def test_validate_patch_path_traversal(self):
+        """Test validation rejects path traversal in file paths."""
+        patch = """--- a/../etc/passwd
++++ b/../etc/passwd
+@@ -1 +1 @@
+-old
++new
+"""
+        result = patch_lab.validate_patch(patch)
+        assert result.valid is False
+        assert "Path traversal" in result.message
+
+    def test_validate_patch_absolute_path_unix(self):
+        """Test validation rejects Unix-style absolute paths in file paths."""
+        patch = """--- a//etc/passwd
++++ b//etc/passwd
+@@ -1 +1 @@
+-old
++new
+"""
+        result = patch_lab.validate_patch(patch)
+        assert result.valid is False
+        assert "absolute path" in result.message.lower() or "path traversal" in result.message.lower()
+
+    def test_validate_patch_absolute_path_windows(self):
+        """Test validation rejects Windows-style absolute paths in file paths."""
+        patch = """--- a/C:/Windows/System32/drivers/etc/hosts
++++ b/C:/Windows/System32/drivers/etc/hosts
+@@ -1 +1 @@
+-old
++new
+"""
+        result = patch_lab.validate_patch(patch)
+        assert result.valid is False
+        assert "absolute path" in result.message.lower() or "path traversal" in result.message.lower()
+
+    def test_apply_patch_rejects_symlink_escape(self):
+        """
+        Regression test: Patch application must not follow symlinks that escape the workspace.
+        
+        This test creates a temporary project with a symlink pointing outside the workspace,
+        then attempts to apply a patch targeting the symlink. The patch should be rejected.
+        """
+        import os
+        import stat
+        
+        # Create a temporary workspace
+        with tempfile.TemporaryDirectory() as workspace:
+            project_dir = os.path.join(workspace, "project")
+            os.makedirs(project_dir)
+            
+            # Create a target file inside the workspace
+            target_file = os.path.join(project_dir, "target.txt")
+            with open(target_file, "w") as f:
+                f.write("original content")
+            
+            # Create a sentinel file OUTSIDE the workspace (should not be modifiable)
+            sentinel_file = os.path.join(workspace, "sentinel.txt")
+            with open(sentinel_file, "w") as f:
+                f.write("SENTINEL - DO NOT MODIFY")
+            
+            # Create a symlink inside the project that points to the sentinel
+            # This simulates an attacker replacing a file with a symlink
+            symlink_path = os.path.join(project_dir, "malicious_link.txt")
+            try:
+                os.symlink(sentinel_file, symlink_path)
+            except (OSError, NotImplementedError):
+                # Symlinks may not be supported on this platform without admin rights
+                pytest.skip("Symlink creation not supported on this platform")
+            
+            # Verify the symlink was created and points to the sentinel
+            assert os.path.islink(symlink_path)
+            assert os.path.realpath(symlink_path) == sentinel_file
+            
+            # Create a patch that targets the symlink
+            patch = """--- a/malicious_link.txt
++++ b/malicious_link.txt
+@@ -1 +1 @@
+-original content
++MALICIOUS CONTENT
+"""
+            
+            # Attempt to apply the patch - should be rejected due to symlink escape
+            success, message = patch_lab.apply_patch(project_dir, patch)
+            
+            # The patch application should fail because the symlink escapes the workspace
+            assert success is False, f"Patch application should have been rejected, but succeeded: {message}"
+            assert "escape" in message.lower() or "symlink" in message.lower() or "traversal" in message.lower()
+            
+            # Verify the sentinel file was NOT modified
+            with open(sentinel_file, "r") as f:
+                content = f.read()
+            assert content == "SENTINEL - DO NOT MODIFY", "Sentinel file was modified - containment breach!"
+
+    def test_apply_patch_absolute_path_rejected(self):
+        """Test that absolute paths in patches are rejected during application."""
+        with tempfile.TemporaryDirectory() as workspace:
+            project_dir = os.path.join(workspace, "project")
+            os.makedirs(project_dir)
+            
+            # Create a patch with Windows absolute path
+            patch = """--- a/C:/etc/passwd
++++ b/C:/etc/passwd
+@@ -1 +1 @@
+-old
++new
+"""
+            
+            success, message = patch_lab.apply_patch(project_dir, patch)
+            assert success is False
+            assert "escape" in message.lower() or "traversal" in message.lower() or "absolute" in message.lower()
+
+    def test_apply_patch_normal_file_works(self):
+        """Test that normal file patches still work correctly."""
+        with tempfile.TemporaryDirectory() as workspace:
+            project_dir = os.path.join(workspace, "project")
+            os.makedirs(project_dir)
+            
+            # Create a normal file
+            target_file = os.path.join(project_dir, "normal.txt")
+            with open(target_file, "w") as f:
+                f.write("original content")
+            
+            # Create a valid patch
+            patch = """--- a/normal.txt
++++ b/normal.txt
+@@ -1 +1 @@
+-original content
++patched content
+"""
+            
+            success, message = patch_lab.apply_patch(project_dir, patch)
+            assert success is True
+            
+            # Verify the file was patched
+            with open(target_file, "r") as f:
+                content = f.read()
+            assert content.rstrip('\n') == "patched content"
 
 
 class TestReleaseReadiness:

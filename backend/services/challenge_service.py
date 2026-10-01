@@ -99,6 +99,7 @@ def get_hint(challenge_id: str, level: int = 1) -> HintResponse | None:
         challenge_id=challenge_id,
         hint=hints[hint_index],
         level=level,
+        next_level_available=level < 4,
     )
 
 
@@ -109,6 +110,8 @@ def evaluate_explanation(challenge_id: str, explanation: str) -> ExplanationResp
             challenge_id=challenge_id,
             classification="UNKNOWN",
             feedback="Challenge not found.",
+            score=0.0,
+            passed=False,
         )
 
     expected = CHALLENGES[challenge_id]["expected_fix"].lower()
@@ -121,15 +124,20 @@ def evaluate_explanation(challenge_id: str, explanation: str) -> ExplanationResp
     if matches >= len(keywords) * 0.6:
         classification = "CORRECT"
         feedback = "Your explanation correctly identifies the issue and the fix needed."
+        score = 0.85
     elif matches >= len(keywords) * 0.3:
         classification = "PARTIALLY_CORRECT"
         feedback = "You're on the right track, but your explanation is missing some key details."
+        score = 0.5
     else:
         classification = "INCORRECT"
         feedback = "Your explanation doesn't match the expected fix. Review the challenge scenario again."
+        score = 0.2
 
     return ExplanationResponse(
         challenge_id=challenge_id,
         classification=classification,
         feedback=feedback,
+        score=score,
+        passed=classification in ("CORRECT", "PARTIALLY_CORRECT"),
     )
