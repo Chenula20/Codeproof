@@ -341,5 +341,104 @@ class TestSnapshotBuilder:
         assert "large.txt" not in snapshot.files
 
 
+class TestPatchLabSymlinkContainment:
+    """Tests for symlink/reparse-point containment in patch application."""
+
+    def setup_method(self):
+        self.temp_dir = Path(tempfile.mkdtemp())
+
+    def teardown_method(self):
+        shutil.rmtree(self.temp_dir)
+
+    def test_symlink_escape_prevented(self):
+        """Test that symlinks pointing outside workspace are rejected during patch apply."""
+        from backend.services.patch_lab import apply_patch, create_temporary_copy, _resolve_within_root
+
+        # Create a source project
+        source_dir = self.temp_dir / "source"
+        source_dir.mkdir()
+        target_file = source_dir / "target.txt"
+        target_file.write_text("original content\n")
+
+        # Create temporary copy
+        temp_project = create_temporary_copy(str(source_dir))
+
+        # Replace the file in temp copy with a symlink pointing outside
+        temp_target = Path(temp_project) / "target.txt"
+        temp_target.unlink()
+        external_file = self.temp_dir / "external_sentinel.txt"
+        external_file.write_text("sentinel: do not modify\n")
+        
+        # Create symlink (requires admin on Windows, but works in dev mode)
+        try:
+            temp_target.symlink_to(external_file)
+        except (OSError, PermissionError):
+            # Symlinks may require admin on Windows; skip if not possible
+            pytest.skip("Symlink creation not permitted")
+
+        # Verify symlink was created
+        assert temp_target.is_symlink()
+        assert temp_target.resolve() == external_file.resolve()
+
+        # Try to apply a patch that would write through the symlink
+        patch = """--- a/target.txt
++++ b/target.txt
+@@ -1 +1 @@
+-original content
++modified content
+"""
+        # This should fail because the symlink points outside the workspace
+        success, message = apply_patch(temp_project, patch)
+        
+        # The patch application should be rejected
+        assert success is False
+        assert "escapes the workspace root" in message or "could not be applied" in message
+
+        # Verify external sentinel file was NOT modified
+        assert external_file.read_text() == "sentinel: do not modify\n"
+
+    def test_resolve_within_root_rejects_escape(self):
+        """Test that _resolve_within_root rejects paths outside the root."""
+        from backend.services.patch_lab import _resolve_within_root
+        
+        with tempfile.TemporaryDirectory() as root:
+            root_path = Path(root)
+            # Create a file inside root
+            inside = root_path / "inside.txt"
+            inside.write_text("inside")
+            
+            # Create a file outside root
+            with tempfile.TemporaryDirectory() as outside:
+                outside_path = Path(outside)
+                outside_file = outside_path / "outside.txt"
+                outside_file.write_text("outside")
+                
+                # Test that inside file resolves OK
+                resolved = _resolve_within_root(str(inside), str(root_path))
+                assert resolved == inside.resolve()
+                
+                # Test that outside file (via symlink) is rejected
+                symlink = root_path / "link.txt"
+                symlink.symlink_to(outside_file)
+                
+                with pytest.raises(ValueError, match="escapes the workspace root"):
+                    _resolve_within_root(str(symlink), str(root_path))
+
+    def test_resolve_within_root_allows_relative_paths(self):
+        """Test that relative paths within root are allowed."""
+        from backend.services.patch_lab import _resolve_within_root
+        
+        with tempfile.TemporaryDirectory() as root:
+            root_path = Path(root)
+            subdir = root_path / "subdir"
+            subdir.mkdir()
+            target = subdir / "target.txt"
+            target.write_text("content")
+            
+            # Test absolute path within root
+            resolved = _resolve_within_root(str(target), str(root_path))
+            assert resolved == target.resolve()
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

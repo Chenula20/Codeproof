@@ -9,6 +9,34 @@ from pathlib import Path
 from backend.models import PatchValidateResponse
 
 
+def _resolve_within_root(path: str, root: str) -> Path:
+    """
+    Resolve a path and ensure it's within the allowed root directory.
+    
+    This prevents symlink/reparse-point escape attacks where a file in the
+    temporary workspace is replaced with a symlink pointing outside the workspace.
+    
+    Args:
+        path: The path to resolve
+        root: The root directory that the resolved path must be within
+        
+    Returns:
+        Resolved Path object
+        
+    Raises:
+        ValueError: If the resolved path escapes the root directory
+    """
+    resolved = Path(path).resolve()
+    root_resolved = Path(root).resolve()
+    
+    try:
+        resolved.relative_to(root_resolved)
+    except ValueError:
+        raise ValueError(f"Path {path} resolves to {resolved} which escapes the workspace root {root_resolved}")
+    
+    return resolved
+
+
 def get_demo_project_path() -> str:
     """Get the path to the demo project."""
     return str(Path(__file__).parent.parent.parent / "demo-project")
@@ -99,6 +127,9 @@ def _apply_unified_diff(project_path: str, patch: str) -> int:
     files_modified = 0
     i = 0
 
+    # Resolve the project path to its canonical form for containment checks
+    workspace_root = Path(project_path).resolve()
+
     while i < len(lines):
         line = lines[i]
 
@@ -134,7 +165,7 @@ def _apply_unified_diff(project_path: str, patch: str) -> int:
 
             # Apply the changes to the file
             if full_path != '/dev/null' and os.path.exists(full_path):
-                _apply_file_changes(full_path, file_lines)
+                _apply_file_changes(full_path, file_lines, str(workspace_root))
                 files_modified += 1
         else:
             i += 1
@@ -142,9 +173,21 @@ def _apply_unified_diff(project_path: str, patch: str) -> int:
     return files_modified
 
 
-def _apply_file_changes(file_path: str, file_lines: list) -> None:
-    """Apply parsed diff lines to a single file."""
-    with open(file_path, 'r') as f:
+def _apply_file_changes(file_path: str, file_lines: list, workspace_root: str = None) -> None:
+    """Apply parsed diff lines to a single file.
+    
+    Args:
+        file_path: Path to the file to modify
+        file_lines: Parsed diff entries
+        workspace_root: Root of the temporary workspace (for symlink containment check)
+    """
+    # Resolve path and check containment if workspace_root is provided
+    if workspace_root:
+        safe_path = _resolve_within_root(file_path, workspace_root)
+    else:
+        safe_path = Path(file_path).resolve()
+    
+    with open(safe_path, 'r') as f:
         original_lines = f.readlines()
 
     result_lines = []
@@ -172,5 +215,5 @@ def _apply_file_changes(file_path: str, file_lines: list) -> None:
         result_lines.append(original_lines[orig_idx])
         orig_idx += 1
 
-    with open(file_path, 'w') as f:
+    with open(safe_path, 'w') as f:
         f.writelines(result_lines)
