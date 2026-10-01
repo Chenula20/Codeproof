@@ -1,6 +1,8 @@
 """Tests for backend services."""
 
 import pytest
+import os
+import tempfile
 from backend.services import project_service, challenge_service, patch_lab, release_readiness
 from backend.models import SandboxResult
 
@@ -84,6 +86,84 @@ class TestPatchLab:
         assert os.path.exists(temp)
         patch_lab.cleanup_temporary_copy(temp)
         assert not os.path.exists(os.path.dirname(temp))
+
+    def test_validate_patch_path_traversal(self):
+        """Test validation rejects path traversal in file paths."""
+        patch = """--- a/../etc/passwd
++++ b/../etc/passwd
+@@ -1 +1 @@
+-old
++new
+"""
+        result = patch_lab.validate_patch(patch)
+        assert result.valid is False
+        assert result.message
+
+    def test_validate_patch_absolute_path_unix(self):
+        """Test validation rejects Unix-style absolute paths in file paths."""
+        patch = """--- a//etc/passwd
++++ b//etc/passwd
+@@ -1 +1 @@
+-old
++new
+"""
+        result = patch_lab.validate_patch(patch)
+        assert result.valid is False
+        assert result.message
+
+    def test_validate_patch_absolute_path_windows(self):
+        """Test validation rejects Windows-style absolute paths in file paths."""
+        patch = """--- a/C:/Windows/System32/drivers/etc/hosts
++++ b/C:/Windows/System32/drivers/etc/hosts
+@@ -1 +1 @@
+-old
++new
+"""
+        result = patch_lab.validate_patch(patch)
+        assert result.valid is False
+        assert result.message
+
+    def test_apply_patch_rejects_symlink_escape(self, tmp_path):
+        source = tmp_path / 'source'
+        source.mkdir()
+        (source / 'example.txt').write_text('original content\n')
+        sentinel = tmp_path / 'sentinel.txt'
+        sentinel.write_bytes(b'original content\n')
+        project = patch_lab.create_temporary_copy(str(source))
+        try:
+            from pathlib import Path
+            target = Path(project) / 'example.txt'
+            target.unlink()
+            target.symlink_to(sentinel)
+            patch = '--- a/example.txt\n+++ b/example.txt\n@@ -1 +1 @@\n-original content\n+MALICIOUS CONTENT\n'
+            success, message = patch_lab.apply_patch(project, patch)
+            assert not success
+            assert 'Symlink' in message
+            assert sentinel.read_text() == 'original content\n'
+        finally:
+            patch_lab.cleanup_temporary_copy(project)
+
+    def test_apply_patch_absolute_path_rejected(self, tmp_path):
+        (tmp_path / 'normal.txt').write_text('original content\n')
+        project = patch_lab.create_temporary_copy(str(tmp_path))
+        try:
+            patch = '--- a/C:/etc/passwd\n+++ b/C:/etc/passwd\n@@ -1 +1 @@\n-old\n+new\n'
+            assert patch_lab.apply_patch(project, patch)[0] is False
+        finally:
+            patch_lab.cleanup_temporary_copy(project)
+
+    def test_apply_patch_normal_file_works(self, tmp_path):
+        from pathlib import Path
+        original = tmp_path / 'normal.txt'
+        original.write_text('original content\n')
+        project = patch_lab.create_temporary_copy(str(tmp_path))
+        try:
+            patch = '--- a/normal.txt\n+++ b/normal.txt\n@@ -1 +1 @@\n-original content\n+patched content\n'
+            assert patch_lab.apply_patch(project, patch)[0]
+            assert (Path(project) / 'normal.txt').read_text() == 'patched content\n'
+            assert original.read_text() == 'original content\n'
+        finally:
+            patch_lab.cleanup_temporary_copy(project)
 
 
 class TestReleaseReadiness:
