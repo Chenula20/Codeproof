@@ -9,6 +9,34 @@ from pathlib import Path
 from backend.models import PatchValidateResponse
 
 
+def _resolve_within_root(path: str, root: str) -> Path:
+    """
+    Resolve a path and ensure it's within the allowed root directory.
+    
+    This prevents symlink/reparse-point escape attacks where a file in the
+    temporary workspace is replaced with a symlink pointing outside the workspace.
+    
+    Args:
+        path: The path to resolve
+        root: The root directory that the resolved path must be within
+        
+    Returns:
+        Resolved Path object
+        
+    Raises:
+        ValueError: If the resolved path escapes the root directory
+    """
+    resolved = Path(path).resolve()
+    root_resolved = Path(root).resolve()
+    
+    try:
+        resolved.relative_to(root_resolved)
+    except ValueError:
+        raise ValueError(f"Path {path} resolves to {resolved} which escapes the workspace root {root_resolved}")
+    
+    return resolved
+
+
 def get_demo_project_path() -> str:
     """Get the path to the demo project."""
     return str(Path(__file__).parent.parent.parent / "demo-project")
@@ -123,38 +151,6 @@ def apply_patch(project_path: str, patch: str) -> tuple[bool, str]:
         return False, f"Patch could not be applied: {str(e)}"
 
 
-def _resolve_safe_path(base_path: str, target_path: str) -> str:
-    """
-    Resolve target path and ensure it's contained within base_path.
-    
-    Raises ValueError if target_path escapes base_path or is a symlink/reparse point
-    that points outside base_path.
-    """
-    base = Path(base_path).resolve()
-    target = Path(target_path).resolve()
-    
-    # Check if target is within base
-    try:
-        target.relative_to(base)
-    except ValueError:
-        raise ValueError(f"Path traversal detected: {target_path} escapes workspace")
-    
-    # Check if any parent of target is a symlink/reparse point
-    # that could have been used to escape
-    for parent in target.parents:
-        if parent == base:
-            break
-        if parent.is_symlink() or _is_reparse_point(parent):
-            # The parent is a symlink/reparse point - check if its target is outside base
-            try:
-                real_parent = parent.resolve()
-                real_parent.relative_to(base)
-            except ValueError:
-                raise ValueError(f"Symlink/reparse point escape detected: {parent}")
-    
-    return str(target)
-
-
 def _is_reparse_point(path: Path) -> bool:
     """Check if a path is a Windows reparse point (symlink, junction, mount point)."""
     try:
@@ -199,7 +195,7 @@ def _apply_unified_diff(project_path: str, patch: str) -> int:
             
             # SECURITY: Resolve and verify the target path is within the project
             try:
-                safe_path = _resolve_safe_path(str(canonical_project_path), full_path)
+                safe_path = _resolve_within_root(full_path, str(canonical_project_path))
             except ValueError as e:
                 raise ValueError(f"Security violation: {e}")
 
@@ -222,7 +218,7 @@ def _apply_unified_diff(project_path: str, patch: str) -> int:
 
             # Apply the changes to the file
             if safe_path != '/dev/null' and os.path.exists(safe_path):
-                _apply_file_changes(safe_path, file_lines)
+                _apply_file_changes(str(safe_path), file_lines, str(canonical_project_path))
                 files_modified += 1
         else:
             i += 1
@@ -230,9 +226,21 @@ def _apply_unified_diff(project_path: str, patch: str) -> int:
     return files_modified
 
 
-def _apply_file_changes(file_path: str, file_lines: list) -> None:
-    """Apply parsed diff lines to a single file."""
-    with open(file_path, 'r') as f:
+def _apply_file_changes(file_path: str, file_lines: list, workspace_root: str = None) -> None:
+    """Apply parsed diff lines to a single file.
+    
+    Args:
+        file_path: Path to the file to modify
+        file_lines: Parsed diff entries
+        workspace_root: Root of the temporary workspace (for symlink containment check)
+    """
+    # Resolve path and check containment if workspace_root is provided
+    if workspace_root:
+        safe_path = _resolve_within_root(file_path, workspace_root)
+    else:
+        safe_path = Path(file_path).resolve()
+    
+    with open(safe_path, 'r') as f:
         original_lines = f.readlines()
 
     result_lines = []
@@ -260,5 +268,5 @@ def _apply_file_changes(file_path: str, file_lines: list) -> None:
         result_lines.append(original_lines[orig_idx])
         orig_idx += 1
 
-    with open(file_path, 'w') as f:
+    with open(safe_path, 'w') as f:
         f.writelines(result_lines)
