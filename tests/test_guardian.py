@@ -134,7 +134,7 @@ class TestProjectScanner:
 
     def test_invalid_project_path_raises(self):
         """Test that invalid project path raises ValueError."""
-        scanner = ProjectScanner("/nonexistent/path")
+        scanner = ProjectScanner(str(self.temp_dir / "missing" / "path"))
         with pytest.raises(ValueError, match="does not exist"):
             scanner.scan()
 
@@ -222,7 +222,7 @@ class TestWorkspaceGuardian:
 
     def test_guardian_rejects_invalid_path(self):
         """Test that invalid path is rejected."""
-        bad_guardian = WorkspaceGuardian("/nonexistent")
+        bad_guardian = WorkspaceGuardian(str(self.temp_dir / "missing"))
         assert bad_guardian.validate_project() is False
 
     def test_guardian_lists_files(self):

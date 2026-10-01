@@ -14,5 +14,7 @@ async def validate_patch(request: PatchValidateRequest) -> PatchValidateResponse
 
     Returns whether the patch can be safely applied to a temporary workspace.
     """
-    result = patch_lab.validate_patch(request.patch)
+    from backend.services.guardian import capture, open_guardian
+    snapshot, _ = capture(open_guardian(patch_lab.get_demo_project_path()))
+    result = patch_lab.validate_patch(request.patch, snapshot.files)
     return result

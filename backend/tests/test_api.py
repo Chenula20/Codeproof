@@ -90,12 +90,14 @@ class TestPatchEndpoints:
 
     def test_validate_patch_valid(self):
         """POST /patch/validate accepts valid patch."""
-        patch = """--- a/backend/auth.py
-+++ b/backend/auth.py
-@@ -1,3 +1,3 @@
--    if password == row["password_hash"]:
-+    if verify_password(password, row["password_hash"]):
-"""
+        import difflib
+        from backend.services.guardian import capture, open_guardian
+        from backend.services.patch_lab import get_demo_project_path
+        snapshot, _ = capture(open_guardian(get_demo_project_path()))
+        before = snapshot.files['backend/auth.py']
+        patch = ''.join(difflib.unified_diff(before.splitlines(keepends=True),
+            ('# Proposed review change\n' + before).splitlines(keepends=True),
+            fromfile='a/backend/auth.py', tofile='b/backend/auth.py'))
         response = client.post("/patch/validate", json={
             "challenge_id": "auth-001",
             "patch": patch

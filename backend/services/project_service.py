@@ -1,93 +1,23 @@
-"""Project analysis service — provides project metadata for the UI."""
-
-import os
+"""Legacy demo metadata; connected projects use the versioned session API."""
 from pathlib import Path
-from typing import Optional
-
 from backend.models import ProjectResponse, SkillsResponse
+from .guardian import capture, open_guardian
+from .patch_lab import get_demo_project_path
 
 
-# Language detection by extension
-LANGUAGE_MAP = {
-    ".py": "Python",
-    ".js": "JavaScript",
-    ".ts": "TypeScript",
-    ".jsx": "JavaScript",
-    ".tsx": "TypeScript",
-    ".java": "Java",
-    ".go": "Go",
-    ".rs": "Rust",
-    ".cpp": "C++",
-    ".c": "C",
-    ".cs": "C#",
-    ".rb": "Ruby",
-    ".php": "PHP",
-    ".swift": "Swift",
-    ".kt": "Kotlin",
-}
-
-# Framework detection by file patterns
-FRAMEWORK_PATTERNS = {
-    "React": ["package.json"],
-    "FastAPI": ["requirements.txt", "pyproject.toml"],
-    "Flutter": ["pubspec.yaml"],
-    "Django": ["manage.py"],
-    "Express": ["package.json"],
-    "Spring": ["pom.xml", "build.gradle"],
-}
-
-
-def detect_languages(project_path: str) -> list[str]:
-    """Detect programming languages used in the project."""
-    languages = set()
-    project = Path(project_path)
-
-    for ext in LANGUAGE_MAP:
-        if any(project.rglob(f"*{ext}")):
-            languages.add(LANGUAGE_MAP[ext])
-
-    return sorted(languages) if languages else ["Python"]
-
-
-def detect_frameworks(project_path: str) -> list[str]:
-    """Detect frameworks used in the project."""
-    frameworks = set()
-    project = Path(project_path)
-
-    for framework, patterns in FRAMEWORK_PATTERNS.items():
-        for pattern in patterns:
-            if any(project.rglob(pattern)):
-                frameworks.add(framework)
-                break
-
-    return sorted(frameworks) if frameworks else ["FastAPI"]
-
-
-def get_project_info(project_path: Optional[str] = None) -> ProjectResponse:
-    """Get project metadata for the UI."""
-    if project_path is None:
-        project_path = os.getenv(
-            "CODEPROOF_PROJECT_PATH",
-            str(Path(__file__).parent.parent / "demo-project"),
-        )
-
-    project = Path(project_path)
-    name = project.name if project.exists() else "Unknown Project"
-
-    return ProjectResponse(
-        name=name,
-        languages=detect_languages(project_path),
-        frameworks=detect_frameworks(project_path),
-    )
+def get_project_info(project_path: str | None = None) -> ProjectResponse:
+    path = project_path or get_demo_project_path()
+    snapshot, _ = capture(open_guardian(path))
+    suffixes = {Path(name).suffix for name in snapshot.files}
+    languages = [name for suffix, name in [('.py', 'Python'), ('.js', 'JavaScript'),
+                  ('.ts', 'TypeScript'), ('.dart', 'Dart')] if suffix in suffixes]
+    frameworks = []
+    if any('fastapi' in content.lower() for content in snapshot.files.values()):
+        frameworks.append('FastAPI')
+    return ProjectResponse(name=Path(path).name, languages=languages, frameworks=frameworks)
 
 
 def get_skills() -> SkillsResponse:
-    """Get engineering skill estimates for the current project."""
-    return SkillsResponse(
-        debugging=62,
-        api=75,
-        database=45,
-        authentication=38,
-        testing=31,
-        error_handling=52,
-    )
+    """Deterministic practice estimates, never used by connected sessions."""
+    return SkillsResponse(debugging=62, api=75, database=45,
+                          authentication=38, testing=31, error_handling=52)

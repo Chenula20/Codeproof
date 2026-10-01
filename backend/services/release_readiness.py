@@ -15,10 +15,10 @@ def evaluate_release_readiness(sandbox_result: SandboxResult) -> ReleaseReadines
     warnings = 0
 
     # Check for critical issues
-    if sandbox_result.status == "error":
-        critical_issues += len(sandbox_result.runtime_errors)
-    elif sandbox_result.status == "failed":
-        critical_issues += sandbox_result.tests_failed
+    if (sandbox_result.status != "passed" or sandbox_result.tests_total <= 0 or
+            sandbox_result.tests_passed != sandbox_result.tests_total or
+            sandbox_result.tests_failed or sandbox_result.runtime_errors):
+        critical_issues = max(1, sandbox_result.tests_failed, len(sandbox_result.runtime_errors))
 
     # Check for security warnings
     warnings += len(sandbox_result.security_warnings)

@@ -58,7 +58,7 @@ class TestPatchLab:
         """Test validation of a valid unified diff."""
         patch = """--- a/file.py
 +++ b/file.py
-@@ -1,2 +1,2 @@
+@@ -1 +1 @@
 -old line
 +new line
 """

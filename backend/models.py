@@ -89,6 +89,8 @@ class SandboxResult(BaseModel):
     tests_failed: int = 0
     runtime_errors: list[str] = []
     security_warnings: list[str] = []
+    output: str = ""
+    duration_ms: int = 0
 
 
 # ── Release Readiness ────────────────────────────────────────────────
