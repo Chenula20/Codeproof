@@ -1,5 +1,5 @@
 {
-  "published_file_count": 8740,
+  "published_file_count": 8741,
   "original_file_count": 8733,
   "local_originals_unchanged": true,
   "empty_directory_markers": [
@@ -34,6 +34,21 @@
     }
   ],
   "snapshot_utc": "2026-10-02T16:47:09.7132041+05:30",
+  "latest_source_update": {
+    "date": "2026-10-02",
+    "reason": "Verified analysis artifact repairs",
+    "changed_files": [
+      "CodeProof Main App/source/workspace/scanner.py",
+      "CodeProof Main App/source/workspace/snapshot.py",
+      "CodeProof Main App/source/ai/services/analyzer.py",
+      "CodeProof Main App/source/backend/services/sandbox.py",
+      "CodeProof Main App/source/.gitignore",
+      "CodeProof Main App/source/tests/test_analysis_artifacts.py"
+    ],
+    "added_file_count": 1,
+    "original_publication_count_is_historical": true,
+    "archives_and_branch_snapshots_preserved": true
+  },
   "files": [
     {
       "sha256": "2661427125c6a2d7ff7b706f688ddd44d0bc66b7b6482e9b78c1ca92c1f90c12",
@@ -41291,8 +41306,8 @@
       "path": "CodeProof Main App/source/.gitattributes"
     },
     {
-      "sha256": "f53a3889bad9cb56def8cfd549e86e1716a84686822af8e0f088b3d046a73795",
-      "bytes": 638,
+      "sha256": "574331cc5d76ded2c38210a8c68a9d14b18bf3e5b97c968e9ea838f96f538bd1",
+      "bytes": 709,
       "path": "CodeProof Main App/source/.gitignore"
     },
     {
@@ -41401,8 +41416,8 @@
       "path": "CodeProof Main App/source/ai/services/__init__.py"
     },
     {
-      "sha256": "f8c0fe740188cb3343699313e32aeafa0fdc988ef8093b95f37c4c02395943cd",
-      "bytes": 12481,
+      "sha256": "7a44d3fde1509a371d4857c37c6be9fe75cdcd61b9a06697aff45039195914c1",
+      "bytes": 14032,
       "path": "CodeProof Main App/source/ai/services/analyzer.py"
     },
     {
@@ -41526,8 +41541,8 @@
       "path": "CodeProof Main App/source/backend/services/release_readiness.py"
     },
     {
-      "sha256": "073c35921e94f351736f4a45bc85ca8e1fc2dc6c674f2f4737f4da6e4fefe896",
-      "bytes": 10659,
+      "sha256": "ccc925e9e22543d4ecfe7952139b1e7fcbab6ec3c09eda9c530f169c39d17776",
+      "bytes": 10936,
       "path": "CodeProof Main App/source/backend/services/sandbox.py"
     },
     {
@@ -41961,8 +41976,8 @@
       "path": "CodeProof Main App/source/workspace/README.md"
     },
     {
-      "sha256": "0a6c78567528e427b19a45d2e7161bf8b685872aed9653049e3728ad8a60d945",
-      "bytes": 8535,
+      "sha256": "aefac96e5f05ce36d49b090b448dee107b9af4835d30502777a126a049080212",
+      "bytes": 8692,
       "path": "CodeProof Main App/source/workspace/scanner.py"
     },
     {
@@ -41971,8 +41986,8 @@
       "path": "CodeProof Main App/source/workspace/secret_filter.py"
     },
     {
-      "sha256": "3e84c8eddbfaf68fa06792f2af1287689b4a562f2d27c21f82f13414215a6295",
-      "bytes": 8627,
+      "sha256": "71cd9745727ca32cbd42b95b02d9b6c29650a1637f1ae257067ecc7ef80cb719",
+      "bytes": 9262,
       "path": "CodeProof Main App/source/workspace/snapshot.py"
     },
     {
@@ -43734,6 +43749,11 @@
       "path": "CodeProof v.10.rar",
       "bytes": 253694167,
       "sha256": "34ed4f4ed4671ec9c555e750255e7c8d2ee9fa6065c375aff8693a157568bc22"
+    },
+    {
+      "sha256": "ca0b2db9d2685f04a5906dacd8eb27374238844368166327a903acf1c5d06d21",
+      "bytes": 4406,
+      "path": "CodeProof Main App/source/tests/test_analysis_artifacts.py"
     }
   ],
   "source_folder": "C:\\CodeProof brances\\CodeProof v.10",

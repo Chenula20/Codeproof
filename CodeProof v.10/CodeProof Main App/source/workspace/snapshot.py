@@ -108,8 +108,14 @@ class SnapshotBuilder:
 
     def _file_priority(self, file_meta: FileMetadata) -> tuple:
         """Determine file priority for inclusion."""
-        path = file_meta.path.lower()
+        path = file_meta.path.replace(chr(92), "/").lower()
         name = Path(path).name.lower()
+        parts = path.split("/")
+        is_test = (any(part in {"test", "tests", "__tests__", "fixtures"} for part in parts[:-1])
+                   or name.startswith("test_") or Path(name).stem.endswith(("_test", ".test", ".spec")))
+
+        if is_test:
+            return (4, path)
 
         # Config files - highest priority
         if name in {
@@ -118,22 +124,25 @@ class SnapshotBuilder:
             "dockerfile", "docker-compose.yml", "docker-compose.yaml",
             ".gitignore", ".dockerignore", "makefile", "cmake",
         }:
-            return (0, path)
+            return (0 if len(parts) == 1 else 3, path)
 
         # Source files
-        if file_meta.language in {"python", "javascript", "typescript", "go", "rust", "java", "csharp"}:
-            return (1, path)
+        if Path(name).suffix in {".py", ".js", ".ts", ".jsx", ".tsx", ".dart", ".go", ".rs", ".java", ".cs", ".rb", ".php", ".c", ".cpp", ".h"}:
+            entrypoints = {"main.py", "app.py", "server.py", "__main__.py",
+                          "main.dart", "app.dart", "app.jsx", "app.tsx",
+                          "index.js", "index.ts", "main.go", "main.rs"}
+            return (1 if name in entrypoints else 2, path)
 
         # Documentation
         if file_meta.language == "markdown":
-            return (2, path)
+            return (5, path)
 
         # Config files (other)
         if file_meta.language in {"json", "yaml", "toml", "ini"}:
-            return (3, path)
+            return (6, path)
 
         # Everything else
-        return (4, path)
+        return (7, path)
 
     def _read_file_safely(self, file_meta: FileMetadata) -> Optional[str]:
         """Read file content safely with secret redaction."""

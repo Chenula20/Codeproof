@@ -1,0 +1,18 @@
+{
+  "snapshot_file_count": 409,
+  "original_hash_count": 414,
+  "generated_pytest_paths": [],
+  "context_paths": [
+    ".gitignore",
+    "backend/__main__.py",
+    "backend/main.py",
+    "demo-project/backend/main.py",
+    "demo-project/frontend/src/App.jsx",
+    "desktop/lib/app/app.dart",
+    "desktop/lib/main.dart",
+    "frontend/src/App.jsx"
+  ],
+  "context_chars": 24000,
+  "backend_entrypoint_in_context": true,
+  "private_environment_included": false
+}

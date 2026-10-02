@@ -158,7 +158,9 @@ def _parse_test_results(logs: str, exit_code: int, runner: str = 'python-pytest'
         summaries = [line.strip().strip('= ').strip() for line in logs.splitlines()
                      if re.search(r'\bin [\d.]+s', line)]
         if not summaries:
-            return unknown()
+            if exit_code == 2:
+                return unknown('Pytest did not complete test collection (exit code 2). Check project imports and required dependencies; test counts are unknown.')
+            return unknown(f'Could not determine complete test counts; runner exited with code {exit_code}.')
         match = re.fullmatch(r'(.+) in [\d.]+s', summaries[-1])
         if not match:
             return unknown()

@@ -1,0 +1,37 @@
+{
+  "application_source": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Main App\\source",
+  "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Main App\\history\\before-analysis-artifacts-20261002-194624",
+  "selected_original_project_untouched": true,
+  "files": [
+    {
+      "file": "workspace\\scanner.py",
+      "original_sha256": "0A6C78567528E427B19A45D2E7161BF8B685872AED9653049E3728AD8A60D945",
+      "new_sha256": "AEFAC96E5F05CE36D49B090B448DEE107B9AF4835D30502777A126A049080212"
+    },
+    {
+      "file": "workspace\\snapshot.py",
+      "original_sha256": "3E84C8EDDBFAF68FA06792F2AF1287689B4A562F2D27C21F82F13414215A6295",
+      "new_sha256": "71CD9745727CA32CBD42B95B02D9B6C29650A1637F1AE257067ECC7EF80CB719"
+    },
+    {
+      "file": "ai\\services\\analyzer.py",
+      "original_sha256": "F8C0FE740188CB3343699313E32AEAFA0FDC988EF8093B95F37C4C02395943CD",
+      "new_sha256": "7A44D3FDE1509A371D4857C37C6BE9FE75CDCD61B9A06697AFF45039195914C1"
+    },
+    {
+      "file": "backend\\services\\sandbox.py",
+      "original_sha256": "073C35921E94F351736F4A45BC85CA8E1FC2DC6C674F2F4737F4DA6E4FEFE896",
+      "new_sha256": "CCC925E9E22543D4ECFE7952139B1E7FCBAB6EC3C09EDA9C530F169C39D17776"
+    },
+    {
+      "file": ".gitignore",
+      "original_sha256": "F53A3889BAD9CB56DEF8CFD549E86E1716A84686822AF8E0F088B3D046A73795",
+      "new_sha256": "574331CC5D76DED2C38210A8C68A9D14B18BF3E5B97C968E9EA838F96F538BD1"
+    },
+    {
+      "file": "tests\\test_analysis_artifacts.py",
+      "original_sha256": null,
+      "new_sha256": "CA0B2DB9D2685F04A5906DACD8EB27374238844368166327A903ACF1C5D06D21"
+    }
+  ]
+}

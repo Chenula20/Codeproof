@@ -16,6 +16,11 @@ env/
 dist/
 build/
 .pytest_cache/
+.pytest-tmp*/
+.pytest_tmp*/
+pytest-of-*/
+.dart_tool/
+.ruff_cache/
 .coverage
 htmlcov/
 .tox/

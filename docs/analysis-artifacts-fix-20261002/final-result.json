@@ -1,0 +1,9 @@
+{
+  "test_passed": 492,
+  "test_skipped": 2,
+  "source_snapshot_files": 409,
+  "generated_pytest_files": 0,
+  "app_backend_healthy": true,
+  "selected_original_untouched": true,
+  "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Main App\\history\\before-analysis-artifacts-20261002-194624"
+}

@@ -1,0 +1,14 @@
+{
+  "project": "C:\\Codeproof-fix-ai-setup",
+  "original_modified": false,
+  "ai_request_sent": false,
+  "snapshot_files": 409,
+  "generated_pytest_paths": 0,
+  "backend_main_present": true,
+  "private_env_present": false,
+  "baseline_status": "error",
+  "baseline_counts": null,
+  "original_unchanged": true,
+  "baseline_output_tail": "Could not determine complete test counts.",
+  "session_closed": true
+}
