@@ -1,0 +1,58 @@
+{
+  "signing_regression_file_exact_match": true,
+  "signing_regression_sha256": "20178821ab06e75b1960179a5dce80ff64086732237a599d2eab8a9695f892ca",
+  "signing_provider_assertions_preserved": true,
+  "signing_provider_assertion_count": 6,
+  "historical_backend_ancestor": true,
+  "historical_integrated_ancestor": true,
+  "reviewed_history_documents": [
+    {
+      "file": "ARCHITECTURE-AND-CHECKS-REPORT.md",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "ca203b4b1a5de188bb6de03a014845c42ceead35844bc367826833acc221f6d7"
+    },
+    {
+      "file": "FULL-MVP-FEATURE-AUDIT.md",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "1c437cbf054943d41d8a22c067f3a60eb20b221506a3d22fec8f8a7de49a395c"
+    },
+    {
+      "file": "RUNTIME-AUDIT-REPORT.md",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "167f1c03fb90d803c621de452a615deb86bc80fd0f8a7d7b8b31121d0264eabb"
+    },
+    {
+      "file": "PROJECT-HANDOVER-AND-FIX-PROMPTS.md",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "18470d36a51e7aa229c4c0ce060670d95cf8580320048a1e51321a7fdb56afe1"
+    },
+    {
+      "file": "LIGHT-THEME-RUN-REPORT.md",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "a9f93c3d3c59894d593463f6a87227d3681709b95ed0650fd077a36e7e4d17f4"
+    },
+    {
+      "file": "RUNTIME-MVP-MATRIX.csv",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "cfc5dbccf7537ecfed114760c1bda7360d63aaf24bc2bec74f0b8f0ce73abb11"
+    },
+    {
+      "file": "architecture-source-evidence.txt",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "0dc21451134727336a6db656b84311640fc30e5954b80fe6ede3e8e92c2831cd"
+    },
+    {
+      "file": "runtime-secret-filter-check.json",
+      "historical": true,
+      "actual_private_literal_removed": false,
+      "published_sha256": "946e06deefbc1dd5fd84012b84a52ea39020f2782ec0dafa5b2dcf687a803a94"
+    }
+  ]
+}
