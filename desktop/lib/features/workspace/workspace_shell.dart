@@ -42,6 +42,7 @@ class WorkspaceShellState extends State<WorkspaceShell> {
           builder: (context, _) => CoachPanel(
             controller: c,
             explanation: explanation,
+            onAnalyze: widget.onAnalyze,
             onClose: () => Navigator.pop(context),
           ),
         ),
@@ -63,19 +64,23 @@ class WorkspaceShellState extends State<WorkspaceShell> {
     ),
   );
 
-  Future<void> startChallenge() async {
+  Future<void> startChallenge({bool breakApp = false}) async {
     final data = c.data!;
     String issueText = '';
     String target = c.selectedFile;
     Incident? selectedIncident;
+    if (breakApp && data.supportedIncidents.isNotEmpty) {
+      selectedIncident = data.supportedIncidents.firstWhere(
+        (incident) => incident.targetFile == target,
+        orElse: () => data.supportedIncidents.first,
+      );
+    }
     final proceed = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, update) => AlertDialog(
           title: Text(
-            data.practice
-                ? 'Ready to break it, safely?'
-                : 'Choose an investigation',
+            breakApp || data.practice ? 'Break My App' : 'Investigate an issue',
           ),
           content: SizedBox(
             width: 480,
@@ -86,8 +91,10 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                 children: [
                   Text(
                     data.practice
-                        ? 'Simulate an authentication failure in the in-memory practice workspace. No project files or tests are executed.'
-                        : 'Investigate an observed issue, or choose a supported controlled incident. Changes happen only in a managed temporary copy.',
+                        ? 'Simulate a failure in the in-memory test workspace.'
+                        : breakApp
+                        ? 'Run a healthy baseline, introduce a syntax fault in a temporary copy, and verify that your tests detect it. Docker must be running with a prepared test image.'
+                        : 'Describe an observed issue and investigate a protected snapshot of your project.',
                     style: TextStyle(color: Palette.of(context).muted),
                   ),
                   const SizedBox(height: 20),
@@ -96,21 +103,21 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                     color: Palette.of(context).mint,
                     icon: Icons.shield_outlined,
                   ),
-                  if (!data.practice) ...[
-                    if (data.supportedIncidents.isNotEmpty) ...[
-                      const SizedBox(height: 20),
+                  if (!data.practice && breakApp) ...[
+                    const SizedBox(height: 20),
+                    if (data.supportedIncidents.isEmpty)
+                      const Text(
+                        'No compatible modules found. Break My App currently supports Python and Node.js source files exercised by runnable tests. You can still investigate an observed issue.',
+                      )
+                    else
                       DropdownButtonFormField<String>(
                         key: const Key('incident-selector'),
-                        initialValue: '',
+                        initialValue: selectedIncident!.id,
                         isExpanded: true,
                         decoration: const InputDecoration(
-                          labelText: 'Investigation type',
+                          labelText: 'Module and test runner',
                         ),
                         items: [
-                          const DropdownMenuItem(
-                            value: '',
-                            child: Text('Observed project issue'),
-                          ),
                           for (final incident in data.supportedIncidents)
                             DropdownMenuItem(
                               value: incident.id,
@@ -121,14 +128,11 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                             ),
                         ],
                         onChanged: (value) => update(() {
-                          selectedIncident = value == null || value.isEmpty
-                              ? null
-                              : data.supportedIncidents.firstWhere(
-                                  (incident) => incident.id == value,
-                                );
+                          selectedIncident = data.supportedIncidents.firstWhere(
+                            (incident) => incident.id == value,
+                          );
                         }),
                       ),
-                    ],
                     if (selectedIncident != null) ...[
                       const SizedBox(height: 16),
                       Text(
@@ -136,60 +140,48 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                         key: const Key('incident-goal'),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        'Target: ${selectedIncident!.targetFile}',
-                        style: TextStyle(color: Palette.of(context).muted),
-                      ),
+                      Text('Target: ${selectedIncident!.targetFile}'),
                       const SizedBox(height: 12),
-                      Text(
-                        'The local service checks the healthy training fixture before introducing this incident. Close the workspace and reopen the original project to restore its healthy baseline. Validation runs only in Docker.',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Palette.of(context).muted,
-                        ),
-                      ),
-                    ] else ...[
-                      const SizedBox(height: 20),
-                      TextField(
-                        key: const Key('observed-issue-field'),
-                        minLines: 3,
-                        maxLines: 5,
-                        maxLength: 4000,
-                        onChanged: (value) => update(() => issueText = value),
-                        decoration: const InputDecoration(
-                          labelText: 'Observed issue',
-                          hintText: 'What happened, and what did you expect?',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                        initialValue: target,
-                        isExpanded: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Relevant file',
-                        ),
-                        items: data.files.keys
-                            .map(
-                              (path) => DropdownMenuItem(
-                                value: path,
-                                child: Text(
-                                  path,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) => target = value!,
+                      const Text(
+                        'Four local hints are available without AI. Existing failures or tests that do not load this module prevent the fault from being introduced. Close the workspace and reopen the original project to discard the temporary fault.',
                       ),
                     ],
-                    const SizedBox(height: 12),
-                    Text(
-                      'Coaching and patch generation require AI analysis to be enabled first.',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Palette.of(context).muted,
+                  ] else if (!data.practice) ...[
+                    const SizedBox(height: 20),
+                    TextField(
+                      key: const Key('observed-issue-field'),
+                      minLines: 3,
+                      maxLines: 5,
+                      maxLength: 4000,
+                      onChanged: (value) => update(() => issueText = value),
+                      decoration: const InputDecoration(
+                        labelText: 'Observed issue',
+                        hintText: 'What happened, and what did you expect?',
                       ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: target,
+                      isExpanded: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Relevant file',
+                      ),
+                      items: data.files.keys
+                          .map(
+                            (path) => DropdownMenuItem(
+                              value: path,
+                              child: Text(
+                                path,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) => target = value!,
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Enable AI analysis first for observed-issue coaching and patch generation.',
                     ),
                   ],
                 ],
@@ -204,11 +196,12 @@ class WorkspaceShellState extends State<WorkspaceShell> {
             PrimaryButton(
               'Start challenge',
               onPressed:
-                  !data.practice &&
-                      selectedIncident == null &&
-                      issueText.trim().isEmpty
-                  ? null
-                  : () => Navigator.pop(context, true),
+                  data.practice ||
+                      (breakApp
+                          ? selectedIncident != null
+                          : issueText.trim().isNotEmpty)
+                  ? () => Navigator.pop(context, true)
+                  : null,
             ),
           ],
         ),
@@ -222,6 +215,12 @@ class WorkspaceShellState extends State<WorkspaceShell> {
             ? {'issue': issueText, 'target_file': target}
             : {'incident_id': selectedIncident!.id},
       );
+      if (breakApp && c.error == null && mounted) {
+        c.selectFile(selectedIncident!.targetFile);
+        c.selectTab(WorkspaceTab.investigation);
+        c.selectEvidence(EvidenceTab.sandbox);
+        setState(() => expandedEvidence = true);
+      }
     }
   }
 
@@ -346,19 +345,36 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                         size: 19,
                       ),
                     ),
-                  if (size.maxWidth >= 700 && !data.hasChallenge)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 12),
-                      child: PrimaryButton(
-                        data.practice
-                            ? 'Break My App'
-                            : data.supportedIncidents.isNotEmpty
-                            ? 'Choose challenge'
-                            : 'Investigate',
-                        icon: Icons.bolt_rounded,
-                        onPressed: c.busy ? null : startChallenge,
-                      ),
-                    ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 8,
+                children: [
+                  PrimaryButton(
+                    'Break My App',
+                    key: const Key('break-my-app-button'),
+                    icon: Icons.bolt_rounded,
+                    onPressed: c.busy || data.hasChallenge
+                        ? null
+                        : () => startChallenge(breakApp: !data.practice),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: c.busy || data.hasChallenge
+                        ? null
+                        : () => startChallenge(),
+                    icon: const Icon(Icons.search, size: 16),
+                    label: const Text('Investigate'),
+                  ),
+                  OutlinedButton.icon(
+                    key: const Key('hints-button'),
+                    onPressed: data.hasChallenge ? showCoach : null,
+                    icon: const Icon(Icons.lightbulb_outline, size: 16),
+                    label: Text('Hints (${data.hints.length}/4)'),
+                  ),
                 ],
               ),
             ),
@@ -422,6 +438,7 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                       child: CoachPanel(
                         controller: c,
                         explanation: explanation,
+                        onAnalyze: widget.onAnalyze,
                       ),
                     ),
                   ],

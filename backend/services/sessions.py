@@ -15,7 +15,7 @@ from workspace.models import ProjectSnapshot
 from backend.session_models import SessionView, Skill, Evaluation, PatchView, Validation
 from .guardian import capture, hashes, open_guardian
 from .diff import apply_diff
-from . import patch_lab, sandbox, release_readiness
+from . import patch_lab, sandbox, release_readiness, controlled_faults
 
 
 @asynccontextmanager
@@ -44,6 +44,8 @@ class Session:
     use_ai: bool = False
     closed: bool = False
     readiness: str = 'BLOCKED'
+    controlled_fault: controlled_faults.ControlledFault | None = None
+    healthy_source: str = ''
 
     def check(self):
         if self.closed:
@@ -80,8 +82,8 @@ def open_session(path: str) -> Session:
     copy = patch_lab.materialize(snapshot)
     try:
         view = SessionView(id=uuid.uuid4().hex, name=root.name, sample=False,
-            files=dict(snapshot.files), summary=f'Guardian snapshot: {len(snapshot.files)} filtered text files. Enable AI analysis to investigate.',
-            technologies=[], issues=[], skills=[], supported_incidents=[], activity=['Opened a redacted Guardian snapshot.'])
+            files=dict(snapshot.files), summary=f'Guardian snapshot: {len(snapshot.files)} filtered text files. Choose Break My App for local controlled faults, or enable AI analysis to investigate an observed issue.',
+            technologies=[], issues=[], skills=[], supported_incidents=[fault.incident for fault in controlled_faults.catalog(snapshot.files)], activity=['Opened a redacted Guardian snapshot.'])
         return Session(guardian, snapshot, original_hashes, copy, view)
     except Exception:
         patch_lab.cleanup_temporary_copy(copy)
@@ -89,7 +91,7 @@ def open_session(path: str) -> Session:
 
 
 async def analyze(session, use_ai, provider_factory):
-    if session.view.phase != 'analyzed':
+    if session.view.phase != 'analyzed' and not (session.controlled_fault and session.view.phase == 'investigating'):
         raise HTTPException(409, 'Analyze before starting an investigation')
     if use_ai:
         async with provider_factory() as provider:
@@ -110,7 +112,7 @@ def challenge(session, issue, target, incident_id=None):
         raise HTTPException(409, 'Enable AI analysis before project investigation')
     view = session.view
     if incident_id is not None:
-        raise ValueError('Controlled demo incidents are available only in the separate demo application.')
+        raise ValueError('Use a supported controlled incident from this session.')
     if not issue.strip() or target not in session.snapshot.files:
         raise ValueError('Describe the issue and select a snapshot file')
     view.challenge_title = 'Project investigation'
@@ -124,6 +126,11 @@ async def hint(session, provider_factory):
     if view.phase != 'investigating' or len(view.hints) >= 4:
         raise HTTPException(409, 'No further hints available')
     level = len(view.hints) + 1
+    if session.controlled_fault:
+        view.hints.append(session.controlled_fault.hints(session.healthy_source)[level - 1])
+        return
+    if not session.use_ai:
+        raise HTTPException(409, 'Enable AI analysis before requesting investigation hints')
     async with provider_factory() as provider:
         result = await HintEngine(provider).generate_hint(HintRequest(challenge_id=view.id,
             hint_level=level, developer_progress='Investigating snapshot evidence', challenge_context=session.context()))
@@ -136,6 +143,8 @@ async def explain(session, explanation, provider_factory):
     view = session.view
     if view.phase not in ('investigating', 'review'):
         raise HTTPException(409, 'Start an investigation first')
+    if not session.use_ai:
+        raise HTTPException(409, 'Enable AI analysis before explanation review and patch generation')
     # A new attempt revokes old approval even if the provider or patch fails.
     view.evaluation = None
     view.patch = None
@@ -190,3 +199,66 @@ async def validate(session, runner):
         session.readiness = ready.status if unchanged else 'BLOCKED'
         session.view.phase = 'validated' if session.readiness == 'READY' else 'applied'
     session.view.activity.append(f'Docker validation: {status}.')
+
+
+async def break_app(session: Session, incident_id: str):
+    """Commit only a reproduced fault after a healthy Docker baseline."""
+    if session.view.phase != 'analyzed':
+        raise HTTPException(409, 'Reopen the original project before starting another controlled fault')
+    fault = next((item for item in controlled_faults.catalog(session.snapshot.files)
+                  if item.incident.id == incident_id), None)
+    if fault is None:
+        raise ValueError('Select a supported controlled incident from this session; demo incidents are unavailable.')
+    if not session.original_unchanged():
+        raise HTTPException(409, 'Original changed externally; reopen the project before breaking its copy')
+    baseline = await asyncio.to_thread(sandbox.run_managed_copy, session.copy, fault.runner)
+    if release_readiness.evaluate_release_readiness(baseline).status != 'READY':
+        raise HTTPException(409, 'Healthy Docker baseline required. Fix existing test failures, missing dependencies, or Docker setup before Break My App. ' +
+                            (baseline.output or ' '.join(baseline.runtime_errors))[-1500:])
+    target = fault.incident.target_file
+    healthy_source = session.snapshot.files[target]
+    broken_files = dict(session.snapshot.files)
+    broken_files[target] = fault.inject(healthy_source)
+    broken_snapshot = session.snapshot.model_copy(update={'files': broken_files}, deep=True)
+    candidate = patch_lab.materialize(broken_snapshot)
+    committed = False
+    try:
+        failure = await asyncio.to_thread(sandbox.run_managed_copy, candidate, fault.runner)
+        # A timeout, cleanup problem, unrelated failure, or an uncovered module
+        # is not evidence that our controlled fault was detected.
+        if (failure.status != 'failed' or 'SyntaxError' not in failure.output
+                or fault.marker not in failure.output):
+            raise HTTPException(409, 'Tests did not reproduce the selected syntax fault. Choose a module exercised by this test runner. The healthy copy has been retained.')
+        if not session.original_unchanged():
+            raise HTTPException(409, 'Original changed externally during Docker checks; reopen the project')
+        session.check()
+        patch_lab.copy_files(candidate)
+        view = session.view
+        old_copy = session.copy
+        session.copy = candidate
+        session.snapshot = broken_snapshot
+        session.controlled_fault = fault
+        session.healthy_source = healthy_source
+        session.readiness = 'BLOCKED'
+        view.files = broken_files
+        view.active_incident = fault.incident
+        view.challenge_title = 'Break My App: syntax failure'
+        view.challenge_description = fault.incident.goal + f' Docker reproduced a SyntaxError in {target} using {fault.runner}.'
+        view.relevant_files = [target]
+        view.hints = []
+        view.evaluation = None
+        view.patch = None
+        view.phase = 'investigating'
+        view.validation = Validation(status='failed', test_counts=failure.test_counts,
+            output=failure.output, duration_ms=baseline.duration_ms + failure.duration_ms,
+            original_unchanged=True, simulated=False,
+            checks=[f'Healthy baseline passed in Docker: {fault.runner}',
+                    'Controlled syntax fault reproduced in Docker', 'Original project hashes unchanged'])
+        view.activity.extend([f'Healthy Docker baseline passed: {fault.runner}.',
+                              f'Controlled syntax fault introduced only in a disposable copy: {target}.',
+                              'Docker reproduced the fault. Four local hints are available without AI.'])
+        committed = True
+        patch_lab.cleanup_temporary_copy(old_copy)
+    finally:
+        if not committed:
+            patch_lab.cleanup_temporary_copy(candidate)

@@ -61,7 +61,10 @@ async def challenge(request: Request, session_id: str, body: ChallengeRequest):
     session = get_session(request, session_id)
     async with session.lock:
         session.check()
-        service.challenge(session, body.issue, body.target_file, body.incident_id)
+        if body.incident_id is not None:
+            await service.break_app(session, body.incident_id)
+        else:
+            service.challenge(session, body.issue, body.target_file)
         return session.view
 
 

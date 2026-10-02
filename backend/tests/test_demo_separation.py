@@ -56,7 +56,7 @@ def test_explicit_project_uses_only_its_selected_files_and_rejects_incidents(tmp
         data = result.json()
         assert data['name'] == 'actual-project'
         assert data['sample'] is False
-        assert data['supported_incidents'] == []
+        assert all(item['target_file'] == 'main.py' for item in data['supported_incidents'])
         assert data['active_incident'] is None
         assert data['files'] == {'main.py': 'value = 1\n'}
         session = app.state.sessions[data['id']]
@@ -65,7 +65,7 @@ def test_explicit_project_uses_only_its_selected_files_and_rejects_incidents(tmp
         result = client.post('/v1/sessions/' + data['id'] + '/challenge',
                              json={'incident_id': 'request-field'})
         assert result.status_code == 400
-        assert 'separate demo application' in result.json()['detail']
+        assert 'demo incidents are unavailable' in result.json()['detail']
         assert session.view.phase == 'analyzed'
         assert source.read_bytes() == before
         assert client.delete('/v1/sessions/' + data['id']).status_code == 200

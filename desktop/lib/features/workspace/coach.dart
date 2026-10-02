@@ -10,10 +10,12 @@ class CoachPanel extends StatelessWidget {
     required this.controller,
     required this.explanation,
     this.onClose,
+    this.onAnalyze,
   });
   final WorkspaceController controller;
   final TextEditingController explanation;
   final VoidCallback? onClose;
+  final VoidCallback? onAnalyze;
   @override
   Widget build(BuildContext context) {
     final data = controller.data!;
@@ -139,7 +141,10 @@ class CoachPanel extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
-                  onPressed: data.hints.length < 4 && !controller.busy
+                  onPressed:
+                      data.phase == 'investigating' &&
+                          data.hints.length < 4 &&
+                          !controller.busy
                       ? () => controller.act('hint')
                       : null,
                   icon: const Icon(Icons.lightbulb_outline, size: 16),
@@ -173,6 +178,23 @@ class CoachPanel extends StatelessWidget {
               const SizedBox(height: 22),
               const Divider(),
               const SizedBox(height: 18),
+              if (!data.practice && data.provider == 'Local inspection') ...[
+                const Text(
+                  'These controlled-fault hints run locally. Enable AI analysis to review your explanation and generate a patch.',
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: controller.busy
+                      ? null
+                      : () {
+                          onClose?.call();
+                          onAnalyze?.call();
+                        },
+                  icon: const Icon(Icons.auto_awesome, size: 16),
+                  label: const Text('Enable AI review'),
+                ),
+                const SizedBox(height: 18),
+              ],
               const SectionTitle('Explain before you fix'),
               Text(
                 'Describe the cause and the evidence that led you there.',
@@ -201,7 +223,10 @@ class CoachPanel extends StatelessWidget {
                 child: PrimaryButton(
                   'Evaluate explanation',
                   icon: Icons.arrow_forward_rounded,
-                  onPressed: !controller.busy && !data.applied
+                  onPressed:
+                      !controller.busy &&
+                          !data.applied &&
+                          (data.practice || data.provider != 'Local inspection')
                       ? () async {
                           await controller.act('explanation', {
                             'explanation': explanation.text,
@@ -247,6 +272,8 @@ class CoachPanel extends StatelessWidget {
             Text(
               data.sample
                   ? 'Practice coaching uses curated hints and a keyword-based explanation check. It is not an AI assessment.'
+                  : data.activeIncident != null
+                  ? 'Controlled-fault hints are local. AI review uses the redacted snapshot only after you enable AI analysis.'
                   : 'AI coaching uses your redacted snapshot only after you enable AI analysis.',
               style: TextStyle(
                 fontSize: 10,

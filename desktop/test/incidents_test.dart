@@ -80,7 +80,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Choose challenge'));
+    await tester.tap(find.byKey(const Key('break-my-app-button')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('incident-selector')));
     await tester.pumpAndSettle();

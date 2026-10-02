@@ -59,7 +59,11 @@ class LocalWorkspaceService extends WorkspaceService {
         request.add(bytes);
       }
       final response = await request.close().timeout(
-        const Duration(seconds: 140),
+        path.endsWith('/challenge') && body.containsKey('incident_id')
+            ? const Duration(
+                seconds: 650,
+              ) // Two Docker runs, each bounded to 300 seconds.
+            : const Duration(seconds: 140),
       );
       final raw = await utf8.decoder
           .bind(response)

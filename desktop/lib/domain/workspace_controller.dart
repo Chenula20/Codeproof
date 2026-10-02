@@ -61,6 +61,11 @@ class WorkspaceController extends ChangeNotifier {
   Future<void> act(String action, [Map<String, dynamic> body = const {}]) =>
       _perform(
         switch (action) {
+          'challenge' =>
+            body.containsKey('incident_id')
+                ? 'Checking baseline and reproducing fault in Docker'
+                : 'Starting investigation',
+          'hint' => 'Revealing next hint',
           'validation' => 'Validating temporary copy',
           'explanation' => 'Reviewing explanation',
           'analysis' => 'Analyzing project',
