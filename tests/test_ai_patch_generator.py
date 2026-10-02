@@ -166,14 +166,15 @@ class TestPatchGenerator:
             asyncio.run(self.generator.generate_patch(request))
 
     def test_absolute_paths_rejected(self):
-        """Absolute paths in target_files are rejected."""
+        """Native absolute target paths are rejected before provider access."""
         request = PatchRequest(
             issue_description="Test issue",
             project_snapshot=_create_test_snapshot(),
-            target_files=["/absolute/path/file.py"],
+            target_files=[str(Path(tempfile.gettempdir()).resolve() / "codeproof-absolute-path.py")],
         )
-        with pytest.raises(ValueError, match="Target file not in project snapshot"):
+        with pytest.raises(ValueError, match="Absolute paths not allowed"):
             asyncio.run(self.generator.generate_patch(request))
+        assert self.provider.call_count == 0
 
     def test_path_traversal_rejected(self):
         """Path traversal (..) in target_files is rejected."""
@@ -372,13 +373,13 @@ class TestPatchGeneratorValidation:
         self.snapshot = _create_test_snapshot()
 
     def test_validate_request_absolute_path(self):
-        """Validate request rejects absolute paths."""
+        """Validate request rejects a native absolute target path."""
         request = PatchRequest(
             issue_description="Test",
             project_snapshot=self.snapshot,
-            target_files=["/absolute/path/file.py"],
+            target_files=[str(Path(tempfile.gettempdir()).resolve() / "codeproof-absolute-path.py")],
         )
-        with pytest.raises(ValueError, match="Target file not in project snapshot"):
+        with pytest.raises(ValueError, match="Absolute paths not allowed"):
             self.generator._validate_request(request)
 
     def test_validate_request_traversal(self):

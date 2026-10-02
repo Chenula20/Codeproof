@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-02",
+  "version": "1.0.10+10",
+  "python": {
+    "passed": 510,
+    "execution": "Trusted Docker image, no network, read-only source, 1 GiB memory, 2 CPUs, 128 PIDs",
+    "failed": 0,
+    "skipped": 5,
+    "skipped_tests": [
+      {
+        "test": "backend.tests.test_incidents.test_real_docker_baseline_failure_repair[request-field]",
+        "reason": "Real Docker/image unavailable:"
+      },
+      {
+        "test": "backend.tests.test_incidents.test_real_docker_baseline_failure_repair[date-serialization]",
+        "reason": "Real Docker/image unavailable:"
+      },
+      {
+        "test": "backend.tests.test_incidents.test_real_docker_baseline_failure_repair[database-init]",
+        "reason": "Real Docker/image unavailable:"
+      },
+      {
+        "test": "backend.tests.test_patch_safety.test_junction_rejected_on_windows",
+        "reason": "Windows junction regression"
+      },
+      {
+        "test": "backend.tests.test_sandbox_safety.test_real_docker_when_available",
+        "reason": "Docker is not installed; real container validation unavailable"
+      }
+    ],
+    "total": 515,
+    "errors": 0
+  },
+  "initial_python_run": {
+    "passed": 508,
+    "correction": "Use native absolute paths and assert rejection before provider access; no production behavior change",
+    "failed": 2,
+    "reason": "Existing POSIX absolute-path test expected Windows-specific rejection message",
+    "skipped": 5
+  },
+  "flutter": {
+    "host_execution_exception": "Explicitly approved by the user for the isolated copy",
+    "passed": 37,
+    "analysis": "No issues",
+    "failed": 0,
+    "windows_build": "Passed"
+  },
+  "docker_training": {
+    "tmpfs_noexec": true,
+    "failed": 0,
+    "pids": 64,
+    "read_only": true,
+    "network": "none",
+    "passed": 3,
+    "memory_mib": 512,
+    "tmpfs_mib": 128,
+    "user": "65532:65532",
+    "image": "codeproof/sandbox:latest",
+    "cpus": 2
+  },
+  "live_ai_provider_quality": "Not tested; private usable provider/model configuration is required",
+  "native_connected_ui_journey": "Not performed in this integration; widget checks and build success are separate evidence",
+  "architecture": "Flutter desktop + separate authenticated loopback FastAPI service + Docker workers, unchanged"
+}

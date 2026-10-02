@@ -1,0 +1,40 @@
+00:00 +0: loading C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart
+00:00 +0: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Invalid token and port fail before networking
+00:00 +1: C:/cp-v10-integrate-20261002/desktop/test/evaluation_test.dart: CORRECT coach shows classification, score and feedback
+00:00 +2: C:/cp-v10-integrate-20261002/desktop/test/evaluation_test.dart: CORRECT coach shows classification, score and feedback
+00:00 +3: C:/cp-v10-integrate-20261002/desktop/test/evaluation_test.dart: CORRECT coach shows classification, score and feedback
+00:00 +4: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:00 +5: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:00 +6: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:00 +7: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +8: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +9: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +10: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +11: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +12: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:02 +13: C:/cp-v10-integrate-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:02 +14: C:/cp-v10-integrate-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:02 +15: C:/cp-v10-integrate-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:02 +16: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +17: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +18: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +19: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +20: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +21: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +22: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +23: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +24: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:02 +25: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +26: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +27: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:04 +28: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:04 +29: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:04 +30: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:05 +31: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:06 +32: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Theme light renders full simulated journey
+00:06 +33: C:/cp-v10-integrate-20261002/desktop/test/theme_test.dart: Theme light renders full simulated journey
+00:07 +34: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Responsive navigation and settings at Size(900.0, 650.0)
+00:07 +35: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Responsive navigation and settings at Size(1280.0, 720.0)
+00:07 +36: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: Connection dialog validates pairing token and port
+00:07 +37: C:/cp-v10-integrate-20261002/desktop/test/widget_test.dart: (tearDownAll)
+00:08 +37: All tests passed!
