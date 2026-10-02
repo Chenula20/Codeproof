@@ -29,15 +29,15 @@ class AmbientBackground extends StatelessWidget {
     children: [
       Positioned.fill(
         child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: Palette.background,
+          decoration: BoxDecoration(
+            color: Palette.of(context).background,
             gradient: RadialGradient(
               center: Alignment(-.85, -.8),
               radius: 1.25,
               colors: [
-                Color(0xFF153B47),
-                Color(0xFF0B1725),
-                Palette.background,
+                Palette.of(context).cyan.withValues(alpha: .12),
+                Palette.of(context).background,
+                Palette.of(context).background,
               ],
               stops: [0, .45, 1],
             ),
@@ -51,7 +51,7 @@ class AmbientBackground extends StatelessWidget {
               center: const Alignment(1, .4),
               radius: .9,
               colors: [
-                const Color(0xFF392859).withValues(alpha: .6),
+                Palette.of(context).violet.withValues(alpha: .12),
                 Colors.transparent,
               ],
             ),
@@ -64,7 +64,10 @@ class AmbientBackground extends StatelessWidget {
             gradient: RadialGradient(
               center: const Alignment(.2, 1.3),
               radius: .7,
-              colors: [Palette.cyan.withValues(alpha: .07), Colors.transparent],
+              colors: [
+                Palette.of(context).cyan.withValues(alpha: .07),
+                Colors.transparent,
+              ],
             ),
           ),
         ),
@@ -95,20 +98,20 @@ class GlassPanel extends StatelessWidget {
         MediaQuery.highContrastOf(context);
     Widget content = DecoratedBox(
       decoration: BoxDecoration(
-        color: solid ? Palette.panel : null,
+        color: solid ? Palette.of(context).panel : null,
         gradient: solid
             ? null
             : LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  (tint ?? const Color(0xFF9CB5D2)).withValues(alpha: .12),
-                  Palette.panel.withValues(alpha: .50),
+                  (tint ?? Palette.of(context).panel).withValues(alpha: .12),
+                  Palette.of(context).panel.withValues(alpha: .50),
                 ],
               ),
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(
-          color: solid ? Palette.line : Colors.white.withValues(alpha: .12),
+          color: Palette.of(context).line.withValues(alpha: solid ? 1 : .65),
         ),
         boxShadow: [
           BoxShadow(
@@ -148,12 +151,18 @@ class Brand extends StatelessWidget {
         height: 34,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(11),
-          gradient: const LinearGradient(
-            colors: [Color(0xFF285D67), Color(0xFF493A6C)],
+          gradient: LinearGradient(
+            colors: [Palette.of(context).panel, Palette.of(context).background],
           ),
-          border: Border.all(color: Palette.cyan.withValues(alpha: .35)),
+          border: Border.all(
+            color: Palette.of(context).cyan.withValues(alpha: .35),
+          ),
         ),
-        child: const Icon(Icons.code_rounded, color: Palette.cyan, size: 24),
+        child: Icon(
+          Icons.code_rounded,
+          color: Palette.of(context).cyan,
+          size: 24,
+        ),
       ),
       if (!compact) ...[
         const SizedBox(width: 10),
@@ -171,42 +180,40 @@ class Brand extends StatelessWidget {
 }
 
 class StatusBadge extends StatelessWidget {
-  const StatusBadge(
-    this.label, {
-    super.key,
-    this.color = Palette.muted,
-    this.icon,
-  });
+  const StatusBadge(this.label, {super.key, this.color, this.icon});
   final String label;
-  final Color color;
+  final Color? color;
   final IconData? icon;
   @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: color.withValues(alpha: .10),
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: color.withValues(alpha: .15)),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (icon != null) ...[
-          Icon(icon, size: 12, color: color),
-          const SizedBox(width: 5),
-        ],
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            color: color,
-            fontWeight: FontWeight.w600,
-            letterSpacing: .2,
+  Widget build(BuildContext context) {
+    final color = this.color ?? Palette.of(context).muted;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .10),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: .15)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: color),
+            const SizedBox(width: 5),
+          ],
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: color,
+              fontWeight: FontWeight.w600,
+              letterSpacing: .2,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
+        ],
+      ),
+    );
+  }
 }
 
 class PrimaryButton extends StatelessWidget {
@@ -224,12 +231,18 @@ class PrimaryButton extends StatelessWidget {
     decoration: BoxDecoration(
       gradient: onPressed == null
           ? null
-          : const LinearGradient(
-              colors: [Palette.cyan, Palette.mint, Palette.violet],
+          : LinearGradient(
+              colors: [
+                Palette.of(context).cyan,
+                Palette.of(context).mint,
+                Palette.of(context).violet,
+              ],
             ),
-      color: onPressed == null ? Palette.line : null,
+      color: onPressed == null ? Palette.of(context).line : null,
       borderRadius: BorderRadius.circular(13),
-      border: Border.all(color: Colors.white.withValues(alpha: .20)),
+      border: Border.all(
+        color: Palette.of(context).line.withValues(alpha: .65),
+      ),
     ),
     child: FilledButton.icon(
       onPressed: onPressed,
@@ -239,8 +252,8 @@ class PrimaryButton extends StatelessWidget {
         backgroundColor: Colors.transparent,
         shadowColor: Colors.transparent,
         disabledBackgroundColor: Colors.transparent,
-        foregroundColor: Palette.background,
-        disabledForegroundColor: Palette.muted,
+        foregroundColor: Palette.of(context).background,
+        disabledForegroundColor: Palette.of(context).muted,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
         textStyle: const TextStyle(
           fontFamily: 'Segoe UI',
@@ -282,8 +295,8 @@ class PageHeading extends StatelessWidget {
     children: [
       Text(
         eyebrow.toUpperCase(),
-        style: const TextStyle(
-          color: Palette.cyan,
+        style: TextStyle(
+          color: Palette.of(context).cyan,
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 2,

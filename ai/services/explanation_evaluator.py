@@ -49,8 +49,9 @@ class ExplanationEvaluator:
                 response_model=ExplanationEvaluation,
                 system_prompt=_EXPLANATION_SYSTEM_PROMPT,
             )
-            # Override passed based on threshold
-            result.passed = result.score >= self.passing_threshold
+            # The provider cannot grant patch authorization.
+            result.passed = (result.classification == ExplanationClassification.CORRECT
+                             and result.score >= self.passing_threshold)
             return result
         except Exception as e:
             raise RuntimeError(f"Explanation evaluation failed: {e}") from e
@@ -104,5 +105,5 @@ Output an ExplanationEvaluation with:
 - classification: CORRECT | PARTIALLY_CORRECT | INCORRECT
 - score: 0.0-1.0 (overall)
 - feedback: Detailed feedback explaining the classification
-- passed: true/false (based on score >= {0.7})
+- passed: true only when classification is CORRECT and score >= {self.passing_threshold}
 """

@@ -14,10 +14,13 @@ def evaluate_release_readiness(sandbox_result: SandboxResult) -> ReleaseReadines
     critical_issues = 0
     warnings = 0
 
+    counts = sandbox_result.test_counts
+
+    # Unknown legacy zeros are never passing evidence.
     # Check for critical issues
-    if (sandbox_result.status != "passed" or sandbox_result.tests_total <= 0 or
-            sandbox_result.tests_passed != sandbox_result.tests_total or
-            sandbox_result.tests_failed or sandbox_result.runtime_errors):
+    if (sandbox_result.status != "passed" or counts is None or counts.total <= 0 or
+            counts.passed != counts.total or counts.failed or counts.skipped or
+            sandbox_result.runtime_errors):
         critical_issues = max(1, sandbox_result.tests_failed, len(sandbox_result.runtime_errors))
 
     # Check for security warnings
@@ -35,6 +38,5 @@ def evaluate_release_readiness(sandbox_result: SandboxResult) -> ReleaseReadines
         status=status,
         critical_issues=critical_issues,
         warnings=warnings,
-        tests_passed=sandbox_result.tests_passed,
-        tests_total=sandbox_result.tests_total,
+        test_counts=counts,
     )

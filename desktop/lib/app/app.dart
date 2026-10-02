@@ -20,6 +20,67 @@ class CodeProofApp extends StatefulWidget {
 class _CodeProofAppState extends State<CodeProofApp> {
   bool reducedTransparency = false;
   bool reducedMotion = false;
+  ThemeMode themeMode = ThemeMode.dark;
+  bool rememberTheme = false;
+  String? appearanceError;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    try {
+      final saved = await _nativeChannel.invokeMethod<bool>('load_theme');
+      if (!mounted) return;
+      if (saved != null) {
+        setState(() {
+          themeMode = saved ? ThemeMode.light : ThemeMode.dark;
+          rememberTheme = true;
+        });
+      }
+      await _nativeChannel.invokeMethod<void>('set_theme', {
+        'light': themeMode == ThemeMode.light,
+        'remember': false,
+      });
+    } on MissingPluginException {
+      // Other platforms and widget tests keep the default/session-only choice.
+    } on PlatformException {
+      if (mounted) {
+        setState(
+          () => appearanceError = 'Saved appearance could not be loaded. Session-only themes are still available.',
+        );
+      }
+    }
+  }
+
+  Future<void> _applyTheme({bool clearPreference = false}) async {
+    try {
+      await _nativeChannel.invokeMethod<void>('set_theme', {
+        'light': themeMode == ThemeMode.light,
+        'remember': rememberTheme,
+        'clear_preference': clearPreference,
+      });
+      if (mounted && appearanceError != null) {
+        setState(() => appearanceError = null);
+      }
+    } on MissingPluginException {
+      if (mounted && rememberTheme) {
+        setState(
+          () => appearanceError =
+              'Saving appearance is available in the Windows desktop build.',
+        );
+      }
+    } on PlatformException {
+      if (mounted) {
+        setState(
+          () => appearanceError = 'Appearance changed for this session; the saved preference could not be updated.',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) => GlassSettings(
     reducedTransparency: reducedTransparency,
@@ -27,7 +88,9 @@ class _CodeProofAppState extends State<CodeProofApp> {
     child: MaterialApp(
       title: 'CodeProof',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       builder: (context, child) => MediaQuery(
         data: MediaQuery.of(context).copyWith(
           disableAnimations:
@@ -46,6 +109,37 @@ class _CodeProofAppState extends State<CodeProofApp> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    SwitchListTile(
+                      key: const Key('light-theme-switch'),
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Light theme'),
+                      subtitle: const Text('Use a bright, readable workspace'),
+                      value: themeMode == ThemeMode.light,
+                      onChanged: (value) {
+                        setState(
+                          () => themeMode = value
+                              ? ThemeMode.light
+                              : ThemeMode.dark,
+                        );
+                        update(() {});
+                        _applyTheme();
+                      },
+                    ),
+                    SwitchListTile(
+                      key: const Key('remember-theme-switch'),
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Remember theme'),
+                      subtitle: const Text(
+                        'Off keeps this choice for this session only',
+                      ),
+                      value: rememberTheme,
+                      onChanged: (value) {
+                        setState(() => rememberTheme = value);
+                        update(() {});
+                        _applyTheme(clearPreference: !value);
+                      },
+                    ),
+                    if (appearanceError != null) Text(appearanceError!),
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: const Text('Reduce transparency'),
@@ -72,9 +166,12 @@ class _CodeProofAppState extends State<CodeProofApp> {
                     ),
                     const Divider(),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       'Keyboard shortcuts\nCtrl+1–5   Workspace sections\nCtrl+K      Find a file\nF1             Open engineering coach',
-                      style: TextStyle(color: Palette.muted, height: 2),
+                      style: TextStyle(
+                        color: Palette.of(context).muted,
+                        height: 2,
+                      ),
                     ),
                   ],
                 ),
@@ -127,11 +224,11 @@ class _HomeState extends State<_Home> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Analyze with your AI provider?'),
-        content: const SizedBox(
+        content: SizedBox(
           width: 450,
           child: Text(
             'The backend will send selected, redacted project contents to your configured OpenRouter model for analysis and coaching. Review your project for sensitive material before continuing.\n\nYour API key stays in the backend environment.',
-            style: TextStyle(color: Palette.muted),
+            style: TextStyle(color: Palette.of(context).muted),
           ),
         ),
         actions: [
@@ -214,28 +311,31 @@ class _HomeState extends State<_Home> {
                               Container(
                                 width: 1,
                                 height: 24,
-                                color: Palette.line,
+                                color: Palette.of(context).line,
                               ),
                               const SizedBox(width: 20),
                               Expanded(
                                 child: Text(
                                   data.name,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Palette.muted,
+                                  style: TextStyle(
+                                    color: Palette.of(context).muted,
                                     fontSize: 12,
                                   ),
                                 ),
                               ),
-                              StatusBadge(data.mode, color: Palette.violet),
+                              StatusBadge(
+                                data.mode,
+                                color: Palette.of(context).violet,
+                              ),
                             ] else
                               const Spacer(),
                             if (size.maxWidth > 1000) ...[
                               const SizedBox(width: 10),
-                              const StatusBadge(
+                              StatusBadge(
                                 'Original protected',
                                 icon: Icons.shield_outlined,
-                                color: Palette.mint,
+                                color: Palette.of(context).mint,
                               ),
                             ],
                             if (data != null)
@@ -244,19 +344,19 @@ class _HomeState extends State<_Home> {
                                 onPressed: controller.busy
                                     ? null
                                     : closeProject,
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.logout_rounded,
                                   size: 18,
-                                  color: Palette.muted,
+                                  color: Palette.of(context).muted,
                                 ),
                               ),
                             IconButton(
                               tooltip: 'Appearance & shortcuts',
                               onPressed: () => widget.onSettings(context),
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.tune_rounded,
                                 size: 20,
-                                color: Palette.muted,
+                                color: Palette.of(context).muted,
                               ),
                             ),
                           ],
@@ -266,7 +366,7 @@ class _HomeState extends State<_Home> {
                     if (controller.busy)
                       LinearProgressIndicator(
                         minHeight: 2,
-                        color: Palette.cyan,
+                        color: Palette.of(context).cyan,
                         semanticsLabel: controller.operation,
                       )
                     else
@@ -279,15 +379,15 @@ class _HomeState extends State<_Home> {
                         ),
                         padding: const EdgeInsets.fromLTRB(16, 6, 5, 6),
                         decoration: BoxDecoration(
-                          color: Palette.red.withValues(alpha: .12),
+                          color: Palette.of(context).red.withValues(alpha: .12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.error_outline,
                               size: 18,
-                              color: Palette.red,
+                              color: Palette.of(context).red,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -325,16 +425,16 @@ class _HomeState extends State<_Home> {
                         vertical: 7,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: .12),
-                        border: const Border(
-                          top: BorderSide(color: Palette.line),
+                        color: Palette.of(context).panel.withValues(alpha: .65),
+                        border: Border(
+                          top: BorderSide(color: Palette.of(context).line),
                         ),
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.circle,
-                            color: Palette.mint,
+                            color: Palette.of(context).mint,
                             size: 6,
                           ),
                           const SizedBox(width: 7),
@@ -347,8 +447,8 @@ class _HomeState extends State<_Home> {
                                   : data.practice
                                   ? 'Practice mode · in-memory workspace'
                                   : 'Guardian · read-only project access',
-                              style: const TextStyle(
-                                color: Palette.muted,
+                              style: TextStyle(
+                                color: Palette.of(context).muted,
                                 fontSize: 10,
                               ),
                             ),
@@ -358,8 +458,8 @@ class _HomeState extends State<_Home> {
                               data?.hasChallenge == true
                                   ? 'Challenge copy   •   UTF-8'
                                   : 'CodeProof   /   Engineering workspace',
-                              style: const TextStyle(
-                                color: Palette.muted,
+                              style: TextStyle(
+                                color: Palette.of(context).muted,
                                 fontSize: 10,
                               ),
                             ),
@@ -417,13 +517,15 @@ class _ConnectDialogState extends State<_ConnectDialog> {
     } on MissingPluginException {
       if (mounted) {
         setState(
-          () => error = 'Folder browsing is available in the Windows desktop build.',
+          () => error =
+              'Folder browsing is available in the Windows desktop build.',
         );
       }
     } on PlatformException catch (exception) {
       if (mounted) {
         setState(
-          () => error = exception.message ?? 'Could not open the folder picker.',
+          () =>
+              error = exception.message ?? 'Could not open the folder picker.',
         );
       }
     }
@@ -439,9 +541,9 @@ class _ConnectDialogState extends State<_ConnectDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Start the local service with python -m backend, then paste its pairing token. Project files stay on this computer unless you explicitly enable AI analysis.',
-              style: TextStyle(color: Palette.muted),
+              style: TextStyle(color: Palette.of(context).muted),
             ),
             const SizedBox(height: 22),
             Row(
@@ -495,12 +597,15 @@ class _ConnectDialogState extends State<_ConnectDialog> {
             if (error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
-                child: Text(error!, style: const TextStyle(color: Palette.red)),
+                child: Text(
+                  error!,
+                  style: TextStyle(color: Palette.of(context).red),
+                ),
               ),
             const SizedBox(height: 20),
-            const StatusBadge(
+            StatusBadge(
               'Loopback connection only',
-              color: Palette.mint,
+              color: Palette.of(context).mint,
               icon: Icons.lock_outline,
             ),
           ],
@@ -517,12 +622,15 @@ class _ConnectDialogState extends State<_ConnectDialog> {
         icon: Icons.folder_open_outlined,
         onPressed: () {
           final number = int.tryParse(port.text);
-          if (token.text.trim().length < 32 ||
-              number == null ||
-              number < 1 ||
-              number > 65535) {
+          if (token.text.trim().length < 32) {
             setState(
-              () => error = 'Enter the service token (at least 32 characters) and a valid port.',
+              () => error = 'Paste the pairing token from the successfully running CodeProof service (at least 32 characters).',
+            );
+            return;
+          }
+          if (number == null || number < 1 || number > 65535) {
+            setState(
+              () => error = 'Enter the CodeProof service port from 1 to 65535; this is not the dummy app port.',
             );
             return;
           }

@@ -49,9 +49,9 @@ codeproof/
 
 ## Getting Started
 
-1. Copy `.env.example` to `.env` and fill in API keys
+1. If no root .env exists, copy .env.example to .env. Set OPENROUTER_API_KEY privately and replace the CODEPROOF_MODEL example for connected AI; inspection/practice work without them.
 2. Install dependencies for each component
-3. Run tests to verify setup
+3. Run tests to verify setup. Start the desktop service with backend/.venv/Scripts/python.exe -m backend; this launcher loads only CodeProof's root .env, keeps process variables authoritative, and generates a pairing token. See backend/README.md for port, pairing, provider and Docker prerequisites.
 
 ## Development
 

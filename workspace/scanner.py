@@ -1,4 +1,5 @@
 import hashlib
+from fnmatch import fnmatchcase
 import mimetypes
 import os
 from datetime import datetime
@@ -131,18 +132,15 @@ class ProjectScanner:
     def _is_ignored(self, path: Path) -> bool:
         """Check if a path should be ignored."""
         relative = path.relative_to(self.project_root)
-        relative_str = str(relative)
-        name = path.name
-
-        # Check exact name matches
-        if name in self.ignore_patterns:
-            return True
-
-        # Check pattern matches
+        # Match complete path components/globs, never substrings such as
+        # "out" inside "test_timeout.py" or "env" inside "environment.py".
+        parts = relative.parts
         for pattern in self.ignore_patterns:
-            if pattern.startswith("*") and name.endswith(pattern[1:]):
-                return True
-            if pattern in relative_str:
+            normalized = pattern.replace(chr(92), '/')
+            if '/' in normalized:
+                if fnmatchcase(relative.as_posix(), normalized):
+                    return True
+            elif any(fnmatchcase(part, normalized) for part in parts):
                 return True
 
         return False

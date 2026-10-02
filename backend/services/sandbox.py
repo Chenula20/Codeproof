@@ -5,7 +5,7 @@ import time
 import uuid
 from pathlib import Path
 
-from backend.models import SandboxResult
+from backend.models import SandboxResult, TestCounts
 from workspace.models import ProjectSnapshot
 from . import patch_lab
 
@@ -116,6 +116,10 @@ def run_managed_copy(project_path: str, runner: str = 'python-pytest') -> Sandbo
         result = _parse_test_results(output, code, runner)
         result.output = output
         if len(chunks) == MAX_OUTPUT:
+            result.status = 'error'
+            result.test_counts = None
+            result.tests_total = result.tests_passed = result.tests_failed = 0
+            result.runtime_errors = ['Could not determine complete test counts: output was capped.']
             result.security_warnings.append('Test output was capped.')
     except Exception as exc:
         from requests.exceptions import Timeout, ConnectionError
@@ -145,27 +149,76 @@ def run_managed_copy(project_path: str, runner: str = 'python-pytest') -> Sandbo
 
 
 def _parse_test_results(logs: str, exit_code: int, runner: str = 'python-pytest') -> SandboxResult:
-    passed = failed = errors = 0
+    """Recognize supported completed summaries; never infer success from unknowns."""
+    def unknown(message='Could not determine complete test counts.'):
+        return SandboxResult(status='error', runtime_errors=[message])
+
+    passed = failed = skipped = total = 0
     if runner == 'python-pytest':
-        summaries = [line for line in logs.splitlines() if re.search(r'\bin [\d.]+s', line)]
-        summary = summaries[-1] if summaries else ''
-        def count(word):
-            match = re.search(r'(\d+) ' + word + r'\b', summary)
-            return int(match.group(1)) if match else 0
-        passed, failed, errors = count('passed'), count('failed'), count('errors?')
+        summaries = [line.strip().strip('= ').strip() for line in logs.splitlines()
+                     if re.search(r'\bin [\d.]+s', line)]
+        if not summaries:
+            return unknown()
+        match = re.fullmatch(r'(.+) in [\d.]+s', summaries[-1])
+        if not match:
+            return unknown()
+        body = match.group(1)
+        if body != 'no tests ran':
+            outcomes = re.findall(r'(\d+) (passed|failed|errors?|skipped|warnings?)', body)
+            remainder = re.sub(r'\d+ (?:passed|failed|errors?|skipped|warnings?)', '', body)
+            if not outcomes or remainder.strip(' ,'):
+                return unknown('Unsupported pytest summary outcomes.')
+            values = {}
+            for count, kind in outcomes:
+                kind = 'errors' if kind in ('error', 'errors') else kind
+                if kind in values:
+                    return unknown()
+                values[kind] = int(count)
+            if 'ERROR collecting' in logs or (values.get('errors', 0) and
+                    not any(values.get(k, 0) for k in ('passed', 'failed', 'skipped'))):
+                return SandboxResult(status='failed', runtime_errors=[
+                    'Test discovery/setup failed; executed test counts are unknown.'])
+            passed = values.get('passed', 0)
+            failed = values.get('failed', 0) + values.get('errors', 0)
+            skipped = values.get('skipped', 0)
+        total = passed + failed + skipped
     elif runner == 'python-unittest':
-        match = re.search(r'Ran (\d+) tests? in', logs)
-        total = int(match.group(1)) if match else 0
-        skipped_match = re.search(r'skipped=(\d+)', logs)
-        skipped = int(skipped_match.group(1)) if skipped_match else 0
-        passed, failed = (max(0, total - skipped), 0) if exit_code == 0 else (0, total)
+        matches = re.findall(r'^Ran (\d+) tests? in [\d.]+s$', logs, re.M)
+        verdicts = re.findall(r'^(OK|FAILED)(?: \(([^\n]*)\))?$', logs, re.M)
+        if len(matches) != 1 or len(verdicts) != 1:
+            return unknown()
+        total = int(matches[0])
+        verdict, details = verdicts[0]
+        values = {}
+        for item in details.split(',') if details else []:
+            match = re.fullmatch(r'\s*(failures|errors|skipped)=(\d+)\s*', item)
+            if not match or match[1] in values:
+                return unknown('Unsupported unittest summary outcomes.')
+            values[match[1]] = int(match[2])
+        failed = values.get('failures', 0) + values.get('errors', 0)
+        skipped = values.get('skipped', 0)
+        passed = total - failed - skipped
+        if passed < 0 or (verdict == 'OK' and failed) or (verdict == 'FAILED' and not failed):
+            return unknown('Inconsistent unittest summary.')
+    elif runner == 'node-test':
+        values = {}
+        for kind in ('tests', 'pass', 'fail', 'skipped', 'cancelled', 'todo'):
+            matches = re.findall(r'^# ' + kind + r' (\d+)$', logs, re.M)
+            if len(matches) != 1:
+                return unknown('Incomplete Node test summary.')
+            values[kind] = int(matches[0])
+        if values['cancelled'] or values['todo']:
+            return unknown('Unsupported Node cancelled/todo outcomes.')
+        total, passed, failed, skipped = (values[k] for k in ('tests', 'pass', 'fail', 'skipped'))
     else:
-        match = re.search(r'# pass (\d+)', logs)
-        passed = int(match.group(1)) if match else 0
-        match = re.search(r'# fail (\d+)', logs)
-        failed = int(match.group(1)) if match else 0
-    total = passed + failed + errors
-    ok = exit_code == 0 and passed > 0 and failed == errors == 0
-    return SandboxResult(status='passed' if ok else 'failed', tests_total=total,
-        tests_passed=passed, tests_failed=failed + errors,
-        runtime_errors=[] if ok else [f'Test runner exited with code {exit_code}; passing evidence required.'])
+        return unknown('Unsupported test runner.')
+    try:
+        counts = TestCounts(total=total, passed=passed, failed=failed, skipped=skipped)
+    except ValueError:
+        return unknown('Inconsistent test counts.')
+    ok = exit_code == 0 and passed > 0 and failed == 0
+    errors = [] if ok else [
+        'No tests collected or no passing tests.' if passed == failed == 0
+        else f'Test runner exited with code {exit_code}; passing evidence required.']
+    return SandboxResult(status='passed' if ok else 'failed', test_counts=counts,
+                         runtime_errors=errors)

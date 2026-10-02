@@ -34,6 +34,6 @@ Classify the explanation as exactly one of:
 ## Output
 
 - classification: CORRECT | PARTIALLY_CORRECT | INCORRECT
-- Overall score (0.0-1.0)
+- Overall score (0.0-1.0); passing requires CORRECT classification and score >= the configured threshold (default 0.7)
 - Detailed feedback
 - Pass/fail based on threshold (0.7 default)

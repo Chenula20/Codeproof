@@ -98,6 +98,47 @@ bool FlutterWindow::OnCreate() {
       [this](const flutter::MethodCall<flutter::EncodableValue>& call,
              std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>>
                  result) {
+        if (call.method_name() == "load_theme") {
+          DWORD light = 0; DWORD size = sizeof(light);
+          const LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
+              L"Software\\CodeProof\\Preferences", L"LightTheme",
+              RRF_RT_REG_DWORD, nullptr, &light, &size);
+          if (status == ERROR_SUCCESS) result->Success(flutter::EncodableValue(light != 0));
+          else result->Success(flutter::EncodableValue());
+          return;
+        }
+        if (call.method_name() == "set_theme") {
+          const auto* args = std::get_if<flutter::EncodableMap>(call.arguments());
+          if (!args) { result->Error("invalid_theme", "Expected appearance options."); return; }
+          const auto boolean = [args](const char* key) {
+            const auto item = args->find(flutter::EncodableValue(key));
+            if (item == args->end()) return false;
+            const bool* value = std::get_if<bool>(&item->second);
+            return value && *value;
+          };
+          const bool light = boolean("light");
+          SetAppDarkMode(!light);
+          if (boolean("remember")) {
+            HKEY key = nullptr;
+            LSTATUS status = RegCreateKeyExW(HKEY_CURRENT_USER,
+                L"Software\\CodeProof\\Preferences", 0, nullptr, 0,
+                KEY_SET_VALUE, nullptr, &key, nullptr);
+            if (status == ERROR_SUCCESS) {
+              const DWORD value = light ? 1 : 0;
+              status = RegSetValueExW(key, L"LightTheme", 0, REG_DWORD,
+                  reinterpret_cast<const BYTE*>(&value), sizeof(value));
+              RegCloseKey(key);
+            }
+            if (status != ERROR_SUCCESS) { result->Error("appearance_save", "Could not save appearance preference."); return; }
+          } else if (boolean("clear_preference")) {
+            const LSTATUS status = RegDeleteKeyValueW(HKEY_CURRENT_USER,
+                L"Software\\CodeProof\\Preferences", L"LightTheme");
+            if (status != ERROR_SUCCESS && status != ERROR_FILE_NOT_FOUND) {
+              result->Error("appearance_save", "Could not clear appearance preference."); return;
+            }
+          }
+          result->Success(); return;
+        }
         if (call.method_name() != "pick_directory") {
           result->NotImplemented();
           return;

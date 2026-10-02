@@ -61,7 +61,7 @@ async def challenge(request: Request, session_id: str, body: ChallengeRequest):
     session = get_session(request, session_id)
     async with session.lock:
         session.check()
-        service.challenge(session, body.issue, body.target_file)
+        service.challenge(session, body.issue, body.target_file, body.incident_id)
         return session.view
 
 

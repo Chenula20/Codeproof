@@ -69,8 +69,8 @@ class EvidencePanel extends StatelessWidget {
                             label: Text(label),
                             style: TextButton.styleFrom(
                               foregroundColor: controller.evidence == tab
-                                  ? Palette.cyan
-                                  : Palette.muted,
+                                  ? Palette.of(context).cyan
+                                  : Palette.of(context).muted,
                               textStyle: const TextStyle(
                                 fontFamily: 'Segoe UI',
                                 fontSize: 11,
@@ -89,7 +89,7 @@ class EvidencePanel extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 8),
                     child: StatusBadge(
                       data.practice ? 'PRACTICE EVIDENCE' : 'DOCKER EVIDENCE',
-                      color: Palette.violet,
+                      color: Palette.of(context).violet,
                     ),
                   ),
                 IconButton(
@@ -130,8 +130,8 @@ class EvidencePanel extends StatelessWidget {
                                     ? 'POST /api/login → HTTP 422 · Missing credentials\nTrace the request contract in the challenge copy.'
                                     : data.challengeDescription
                               : data.issues.join('\n'),
-                          style: const TextStyle(
-                            color: Palette.muted,
+                          style: TextStyle(
+                            color: Palette.of(context).muted,
                             fontSize: 12,
                           ),
                         ),
@@ -143,12 +143,12 @@ class EvidencePanel extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              data.validation.status == 'passed'
+                              data.validation.successfulCheck
                                   ? Icons.check_circle_outline
                                   : Icons.info_outline,
-                              color: data.validation.status == 'passed'
-                                  ? Palette.mint
-                                  : Palette.amber,
+                              color: data.validation.successfulCheck
+                                  ? Palette.of(context).mint
+                                  : Palette.of(context).amber,
                               size: 18,
                             ),
                             const SizedBox(width: 9),
@@ -156,7 +156,7 @@ class EvidencePanel extends StatelessWidget {
                               child: Text(
                                 data.validation.status == 'not_run'
                                     ? 'No test evidence yet'
-                                    : '${data.practice ? 'Practice' : 'Docker'} validation: ${data.validation.status}',
+                                    : '${data.validation.simulated ? 'Simulated practice' : 'Docker'} validation: ${data.validation.status}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -165,19 +165,27 @@ class EvidencePanel extends StatelessWidget {
                             if (data.validation.durationMs > 0)
                               Text(
                                 '${data.validation.durationMs} ms',
-                                style: const TextStyle(
-                                  color: Palette.muted,
+                                style: TextStyle(
+                                  color: Palette.of(context).muted,
                                   fontSize: 11,
                                 ),
                               ),
                           ],
                         ),
                         const SizedBox(height: 10),
+                        Text(
+                          data.validation.countSummary,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Palette.of(context).muted,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         SelectableText(
                           data.validation.output,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Consolas',
-                            color: Palette.muted,
+                            color: Palette.of(context).muted,
                             fontSize: 11,
                           ),
                         ),
@@ -220,9 +228,9 @@ class EvidencePanel extends StatelessWidget {
                         Text(
                           data.practice
                               ? 'No container or host process is executed in practice mode. Connect the local service to run real tests.'
-                              : 'Network off  ·  1 CPU  ·  256 MB memory  ·  64 processes  ·  60-second timeout\nRead-only project mount. Ephemeral container. No host shell commands.',
-                          style: const TextStyle(
-                            color: Palette.muted,
+                              : 'Network off  ·  Resource and time limits configured by the local service\nRead-only project mount. Ephemeral container. No host shell commands.',
+                          style: TextStyle(
+                            color: Palette.of(context).muted,
                             fontSize: 12,
                           ),
                         ),
@@ -247,8 +255,8 @@ class EvidencePanel extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(
                               '0${index + 1}   $event',
-                              style: const TextStyle(
-                                color: Palette.muted,
+                              style: TextStyle(
+                                color: Palette.of(context).muted,
                                 fontSize: 12,
                               ),
                             ),
@@ -267,11 +275,13 @@ class EvidencePanel extends StatelessWidget {
   Widget _readiness(BuildContext context) {
     final data = controller.data!;
     final checks = [
-      (data.evaluation?.passed == true, 'Cause explained'),
+      (data.evaluation?.permitsPatch == true, 'Cause explained'),
       (data.applied, 'Patch applied to copy'),
       (
-        data.validation.status == 'passed',
-        data.practice ? 'Practice check complete' : 'Runner passed',
+        data.validation.successfulCheck,
+        data.validation.simulated
+            ? 'Simulated practice check complete'
+            : 'All collected tests passed',
       ),
       (
         data.practice || data.validation.originalUnchanged == true,
@@ -288,7 +298,9 @@ class EvidencePanel extends StatelessWidget {
                     : 'READY FOR HUMAN REVIEW'
               : 'MORE EVIDENCE NEEDED',
           style: TextStyle(
-            color: data.ready ? Palette.mint : Palette.amber,
+            color: data.ready
+                ? Palette.of(context).mint
+                : Palette.of(context).amber,
             fontSize: 19,
             fontWeight: FontWeight.w700,
           ),
@@ -305,14 +317,18 @@ class EvidencePanel extends StatelessWidget {
                   Icon(
                     passed ? Icons.check_rounded : Icons.radio_button_unchecked,
                     size: 16,
-                    color: passed ? Palette.mint : Palette.muted,
+                    color: passed
+                        ? Palette.of(context).mint
+                        : Palette.of(context).muted,
                   ),
                   const SizedBox(width: 7),
                   Text(
                     label,
                     style: TextStyle(
                       fontSize: 11,
-                      color: passed ? Palette.mint : Palette.muted,
+                      color: passed
+                          ? Palette.of(context).mint
+                          : Palette.of(context).muted,
                     ),
                   ),
                 ],
@@ -320,9 +336,9 @@ class EvidencePanel extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        const Text(
+        Text(
           'Readiness is evidence for review, not a guarantee of production safety. Security auditing and deployment checks are not included.',
-          style: TextStyle(color: Palette.muted, fontSize: 11),
+          style: TextStyle(color: Palette.of(context).muted, fontSize: 11),
         ),
         const SizedBox(height: 8),
         TextButton.icon(
@@ -333,6 +349,8 @@ class EvidencePanel extends StatelessWidget {
               'provider': data.provider,
               'phase': data.phase,
               'validation': data.validation.status,
+              'test_counts': data.validation.testCounts?.toJson(),
+              'simulated': data.validation.simulated,
               'output': data.validation.output,
               'original_unchanged': data.validation.originalUnchanged,
               'activity': data.activity,

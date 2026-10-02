@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
+# Keep legacy naive-UTC wire timestamps until a separately approved format migration.
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
@@ -20,7 +22,7 @@ class ProjectIndex(BaseModel):
     files: List[FileMetadata] = Field(default_factory=list, description="Indexed files")
     total_files: int = Field(default=0, description="Total number of files")
     total_size: int = Field(default=0, description="Total size in bytes")
-    indexed_at: datetime = Field(default_factory=datetime.utcnow, description="Index timestamp")
+    indexed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None), description="Index timestamp")
     ignored_patterns: List[str] = Field(default_factory=list, description="Patterns that were ignored")
 
 
@@ -32,4 +34,4 @@ class ProjectSnapshot(BaseModel):
     files: Dict[str, str] = Field(default_factory=dict, description="Selected file contents (path -> content)")
     dependencies: Dict[str, Any] = Field(default_factory=dict, description="Dependency information")
     config: Dict[str, Any] = Field(default_factory=dict, description="Relevant configuration")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="Snapshot creation time")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None), description="Snapshot creation time")

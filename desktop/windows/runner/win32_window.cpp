@@ -272,17 +272,28 @@ void Win32Window::OnDestroy() {
   // No-op; provided for subclasses.
 }
 
-void Win32Window::UpdateTheme(HWND const window) {
-  DWORD light_mode;
-  DWORD light_mode_size = sizeof(light_mode);
-  LSTATUS result = RegGetValue(HKEY_CURRENT_USER, kGetPreferredBrightnessRegKey,
-                               kGetPreferredBrightnessRegValue,
-                               RRF_RT_REG_DWORD, nullptr, &light_mode,
-                               &light_mode_size);
+void Win32Window::SetAppDarkMode(bool dark) {
+  app_dark_mode_ = dark;
+  UpdateTheme(window_handle_);
+}
 
-  if (result == ERROR_SUCCESS) {
-    BOOL enable_dark_mode = light_mode == 0;
-    DwmSetWindowAttribute(window, DWMWA_USE_IMMERSIVE_DARK_MODE,
-                          &enable_dark_mode, sizeof(enable_dark_mode));
+void Win32Window::UpdateTheme(HWND const window) {
+  Win32Window* self = GetThisFromHandle(window);
+  if (self && self->app_dark_mode_.has_value()) {
+    BOOL dark = *self->app_dark_mode_;
+    DwmSetWindowAttribute(window, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark, sizeof(dark));
+    // Explicit caption/text colors make application choice independent of the
+    // OS preference on supported Windows builds. Older builds ignore these.
+    COLORREF caption = dark ? RGB(8,14,26) : RGB(245,248,252);
+    COLORREF text = dark ? RGB(241,245,252) : RGB(22,35,59);
+    DwmSetWindowAttribute(window, 35, &caption, sizeof(caption));
+    DwmSetWindowAttribute(window, 36, &text, sizeof(text));
+    return;
+  }
+  DWORD light_mode; DWORD size = sizeof(light_mode);
+  if (RegGetValue(HKEY_CURRENT_USER,kGetPreferredBrightnessRegKey,kGetPreferredBrightnessRegValue,
+      RRF_RT_REG_DWORD,nullptr,&light_mode,&size) == ERROR_SUCCESS) {
+    BOOL dark = light_mode == 0;
+    DwmSetWindowAttribute(window,DWMWA_USE_IMMERSIVE_DARK_MODE,&dark,sizeof(dark));
   }
 }

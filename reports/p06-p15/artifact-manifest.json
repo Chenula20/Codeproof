@@ -1,0 +1,14 @@
+{
+  "C:\\Codeproof-release-audit-p06-p15\\CodeProof-Windows-P06-P15.zip": {
+    "bytes": 11915947,
+    "sha256": "7361cd94b5e41b38559a3ab8542425954b26e5fc7f012da990e51076a16651c2"
+  },
+  "C:\\Codeproof-release-audit-p06-p15\\CodeProof-Source-P06-P15.zip": {
+    "bytes": 321955,
+    "sha256": "50137977bbc754cb9dd0aa7e9e5e6d64e237ad2f77c0ffbdc7ac1b68bc57ef6e"
+  },
+  "C:\\Codeproof-release-audit-p06-p15\\desktop\\build\\windows\\x64\\runner\\Release\\codeproof_desktop.exe": {
+    "bytes": 131072,
+    "sha256": "4926850972a34d366fe50106667f72dc36341eabc9ca38060e9f295f175a7195"
+  }
+}

@@ -96,6 +96,9 @@ class PracticeWorkspaceService extends WorkspaceService {
         if (s.phase != 'investigating' && s.phase != 'review') {
           throw const WorkspaceException('Start an investigation first.');
         }
+        s.evaluation = null;
+        s.patch = null;
+        s.phase = 'investigating';
         final text = (body['explanation'] as String).trim().toLowerCase();
         if (text.length < 10) {
           throw const WorkspaceException(
@@ -113,12 +116,20 @@ class PracticeWorkspaceService extends WorkspaceService {
               'instead',
               'send',
             ].any(text.contains);
+        // Practice-only keyword simulation; not evidence of provider quality.
+        final partial =
+            !passed && (text.contains('username') || text.contains('email'));
         s.evaluation = Evaluation(
           passed,
           passed
               ? 'You found the request field mismatch. The client sends email while the handler expects username. Review the patch and validate the credential cases.'
               : 'Compare the field sent by the client with the field required by the handler. Explain why the mismatch fails validation.',
-          passed ? .95 : .35,
+          passed ? .95 : (partial ? .5 : .35),
+          classification: passed
+              ? ExplanationClassification.correct
+              : (partial
+                    ? ExplanationClassification.partiallyCorrect
+                    : ExplanationClassification.incorrect),
         );
         s.phase = passed ? 'review' : 'investigating';
         s.patch = passed
@@ -151,6 +162,7 @@ class PracticeWorkspaceService extends WorkspaceService {
         await Future<void>.delayed(const Duration(milliseconds: 650));
         final passed = s.files[loginPath]!.contains(goodCredential);
         s.validation = ValidationResult(
+          simulated: true,
           status: passed ? 'passed' : 'failed',
           output: passed
               ? '[Practice] Request contract restored.\n[Practice] Valid credentials: expected 200.\n[Practice] Invalid credentials: expected 401.\n[Practice] Missing credentials: expected 422.\n\nThese are fixture expectations. Docker and project tests were not executed.'

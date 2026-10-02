@@ -1,119 +1,27 @@
-# CodeProof Desktop
+# CodeProof Windows desktop
 
-Windows desktop application for the CodeProof developer engineering environment.
+The connected desktop calls the authenticated FastAPI service on 127.0.0.1. Guardian supplies filtered project files; AI services receive that filtered context. Patches modify registered temporary copies. Target tests run only in the configured trusted Docker image.
 
-## Prerequisites
+## Setup and build
 
-- **Flutter SDK** 3.13+ (stable channel)
-- **Dart SDK** 3.13+ (included with Flutter)
-- **Visual Studio 2022** with "Desktop development with C++" workload
-- **Windows 10/11** (for building and running)
-- **Git** for version control
+Tested toolchain: Flutter 3.47.5 / Dart 3.13.4, Windows, Visual Studio C++ desktop workload. The Dart SDK constraint is ^3.13.4. From desktop/: flutter pub get, flutter analyze, flutter test, flutter build windows --release. The output folder is build/windows/x64/runner/Release; keep the executable, DLLs and data directory together.
 
-## Dependency Installation
+From the repository root, create backend/.venv and install backend/requirements-dev.txt. Start with backend/.venv/Scripts/python.exe -m backend. This intended launcher loads only CodeProof's root .env; inherited process variables take precedence and values are not interpolated. It prints a generated pairing token unless a valid CODEPROOF_TOKEN was explicitly supplied. Keep the backend terminal running.
 
-```bash
-cd desktop
-flutter pub get
-```
+Connect your project using its filesystem folder, the token of that successfully running CodeProof service, and its loopback port (default 8000, configured with BACKEND_PORT). The port belongs to CodeProof, not the selected dummy app. If the port is busy, select a free BACKEND_PORT and restart; do not kill another listener. GET /health confirms service health; /openapi.json inventories routes. GET / and /favicon.ico are not application UI endpoints and may return 404.
 
-## Running on Windows (Development)
+Copy .env.example to root .env only if none exists. Set OPENROUTER_API_KEY privately and choose an available CODEPROOF_MODEL, replacing provider/model-id. Do not paste secrets into chat. Configuration is required for analysis/coaching/patch generation; local inspection and practice do not need a key. Explicit AI consent sends redacted selected contents to OpenRouter. Review sensitivity first: lexical filtering does not guarantee detection of every computed or obfuscated secret.
 
-```bash
-cd desktop
-flutter run -d windows
-```
+## Connected workflow and evidence
 
-## Formatting
+Project selection opens a real Guardian snapshot and disposable copy. Analysis/skill map use the configured provider. Investigate an observed issue or select one of three controlled incidents when the exact training-project manifest matches: request field, date serialization, database initialization. Incidents modify only registered copies. Close/reopen restores the healthy original. Ordinary external projects do not receive invented faults.
 
-```bash
-cd desktop
-dart format lib test
-```
+Four progressive hints and three explanation outcomes are supported. Only CORRECT with score >=0.7 permits a reviewed patch; a new explanation revokes old permission. Review the diff, apply it to the managed copy, then choose a supported Docker test runner. Results show measured total/passed/failed-errors/skipped counts or unavailable/unknown/no-tests states. Readiness requires real positive all-pass evidence and original integrity; empty or unavailable counts cannot certify success.
 
-## Static Analysis
+Docker must be running and codeproof/sandbox:latest (or an explicitly configured trusted image) must be built. Validation does not install target dependencies, build untrusted Dockerfiles or run target code on the host. Additional target dependencies require explicit trusted-image provisioning. Limits are configured by the backend; containers are ephemeral, network disabled, non-root, capability restricted, and snapshots mounted read-only.
 
-```bash
-cd desktop
-flutter analyze
-```
+## Practice and test distinctions
 
-## Tests
+Open sample project is an in-memory practice workspace. Its hints, keyword scoring, static patch and validation/readiness are simulations; no provider or target tests execute. Legacy/demo backend routes also return labeled fixtures. Provider transport regression tests intercept actual request serialization, but do not prove live model quality. Real Docker fixture checks establish runner/isolation behavior, not production readiness for every selected project.
 
-```bash
-cd desktop
-flutter test
-```
-
-## Windows Build (Release)
-
-```bash
-cd desktop
-flutter build windows --release
-```
-
-The built executable will be at:
-```
-desktop/build/windows/x64/runner/Release/codeproof_desktop.exe
-```
-
-## Current Scope (Foundation Task)
-
-This foundation implements:
-
-- ✅ Flutter Windows project initialization
-- ✅ Minimal app structure (`lib/app/`, `lib/features/startup/`)
-- ✅ Custom theme (light/dark) with Material 3
-- ✅ Startup screen with:
-  - CodeProof title and logo
-  - Application purpose description
-  - "No project selected" empty state
-  - Core principle footer
-  - Responsive layout handling resizing
-- ✅ Widget tests for startup screen and layout resilience
-
-## Known Limitations
-
-- **No backend integration** — Project selection, analysis, challenges, patches, sandbox, and readiness screens are not implemented
-- **No project scanning** — "Select Project" button is disabled (placeholder only)
-- **No navigation** — Single screen only; sidebar/routes not implemented
-- **No API client** — Centralized HTTP client not yet created
-- **No typed models** — Dart models matching backend contracts not yet created
-- **Mock data only** — All content is static; no real data flow
-
-## Project Structure
-
-```
-desktop/
-├── lib/
-│   ├── main.dart              # App entry point
-│   ├── app/
-│   │   ├── app.dart           # MaterialApp with theme
-│   │   └── theme.dart         # Light/dark theme definitions
-│   └── features/
-│       └── startup/
-│           └── startup_screen.dart  # Foundation startup UI
-├── test/
-│   └── widget_test.dart       # Startup screen tests
-├── windows/                   # Windows runner (generated)
-├── pubspec.yaml
-├── analysis_options.yaml
-└── README.md
-```
-
-## Architecture Notes
-
-- **No direct project modification** — Following CodeProof core principle
-- **Backend-first data flow** — All project data comes via FastAPI backend
-- **Sandbox isolation** — Code execution happens in Docker (backend responsibility)
-- **Flutter scope** — Presentation, interaction, backend API consumption only
-
-## Next Steps (Future Tasks)
-
-1. Application shell (sidebar, header, navigation)
-2. Reusable design system components
-3. Project selection & backend API integration
-4. Dashboard, Analysis, Skills, Challenges, Patch Lab, Sandbox, Readiness screens
-5. Centralized API client with typed models
-6. State management for selected project, analysis, challenges, etc.
-7. Windows installer/packaging for demo
+The connected runtime requires private provider/model configuration. See setup-evidence reports for executed checks and unavailable prerequisites; native behavior and live requests must be reported separately from widget tests. Sessions are in memory; close removes owned copies and progress. No installer is supplied by flutter build.

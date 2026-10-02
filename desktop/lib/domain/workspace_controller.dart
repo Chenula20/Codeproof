@@ -68,6 +68,14 @@ class WorkspaceController extends ChangeNotifier {
         },
         () async {
           if (data == null) return;
+          if (action == 'explanation' &&
+              (data!.phase == 'investigating' || data!.phase == 'review')) {
+            data!.evaluation = null;
+            data!.patch = null;
+            data!.phase = 'investigating';
+            tab = WorkspaceTab.investigation;
+            notifyListeners();
+          }
           data = await service.action(data!.id, action, body);
           if (action == 'challenge') {
             tab = WorkspaceTab.investigation;

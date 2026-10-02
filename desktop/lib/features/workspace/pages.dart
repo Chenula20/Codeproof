@@ -26,10 +26,10 @@ class WorkspacePage extends StatelessWidget {
     padding: const EdgeInsets.all(28),
     child: switch (controller.tab) {
       WorkspaceTab.analysis => _analysis(context),
-      WorkspaceTab.skills => _skills(),
-      WorkspaceTab.code => _code(),
-      WorkspaceTab.investigation => _investigation(),
-      WorkspaceTab.patch => _patch(),
+      WorkspaceTab.skills => _skills(context),
+      WorkspaceTab.code => _code(context),
+      WorkspaceTab.investigation => _investigation(context),
+      WorkspaceTab.patch => _patch(context),
     },
   );
 
@@ -39,7 +39,7 @@ class WorkspacePage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         PageHeading('01 / Understand your project', data.name, data.summary),
-        _workflowPulse(data),
+        _workflowPulse(context, data),
         const SizedBox(height: 28),
         Wrap(
           spacing: 8,
@@ -57,19 +57,19 @@ class WorkspacePage extends StatelessWidget {
                   '${data.files.length}',
                   'snapshot files',
                   Icons.description_outlined,
-                  Palette.cyan,
+                  Palette.of(context).cyan,
                 ),
                 (
                   '${data.skills.length}',
                   'engineering skills',
                   Icons.hub_outlined,
-                  Palette.violet,
+                  Palette.of(context).violet,
                 ),
                 (
                   'Read-only',
                   'original project',
                   Icons.shield_outlined,
-                  Palette.mint,
+                  Palette.of(context).mint,
                 ),
               ])
                 SizedBox(
@@ -93,8 +93,8 @@ class WorkspacePage extends StatelessWidget {
                         const SizedBox(height: 3),
                         Text(
                           label,
-                          style: const TextStyle(
-                            color: Palette.muted,
+                          style: TextStyle(
+                            color: Palette.of(context).muted,
                             fontSize: 11,
                           ),
                         ),
@@ -118,8 +118,8 @@ class WorkspacePage extends StatelessWidget {
                     children: [
                       Text(
                         '0${index + 1}',
-                        style: const TextStyle(
-                          color: Palette.cyan,
+                        style: TextStyle(
+                          color: Palette.of(context).cyan,
                           fontSize: 11,
                         ),
                       ),
@@ -127,7 +127,7 @@ class WorkspacePage extends StatelessWidget {
                       Expanded(
                         child: Text(
                           issue,
-                          style: const TextStyle(color: Palette.muted),
+                          style: TextStyle(color: Palette.of(context).muted),
                         ),
                       ),
                     ],
@@ -138,11 +138,14 @@ class WorkspacePage extends StatelessWidget {
         ),
         const SizedBox(height: 28),
         GlassPanel(
-          tint: Palette.violet,
+          tint: Palette.of(context).violet,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.auto_awesome_outlined, color: Palette.violet),
+              Icon(
+                Icons.auto_awesome_outlined,
+                color: Palette.of(context).violet,
+              ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
@@ -160,7 +163,7 @@ class WorkspacePage extends StatelessWidget {
                       data.sample
                           ? 'Put your understanding to work with a controlled authentication challenge.'
                           : 'Describe an observed issue and trace it through a safe copy of your code.',
-                      style: const TextStyle(color: Palette.muted),
+                      style: TextStyle(color: Palette.of(context).muted),
                     ),
                     const SizedBox(height: 18),
                     Wrap(
@@ -207,35 +210,35 @@ class WorkspacePage extends StatelessWidget {
     );
   }
 
-  Widget _workflowPulse(WorkspaceData data) {
+  Widget _workflowPulse(BuildContext context, WorkspaceData data) {
     final steps = [
       (
         'Understand',
         'Project mapped',
         true,
         Icons.hub_outlined,
-        Palette.cyan,
+        Palette.of(context).cyan,
       ),
       (
         'Investigate',
         data.hasChallenge ? 'Challenge active' : 'Ready when you are',
         data.hasChallenge,
         Icons.manage_search_rounded,
-        Palette.violet,
+        Palette.of(context).violet,
       ),
       (
         'Review',
         data.canReview ? 'Patch available' : 'Explain the cause',
         data.canReview,
         Icons.difference_outlined,
-        Palette.amber,
+        Palette.of(context).amber,
       ),
       (
         'Validate',
         data.ready ? 'Evidence collected' : 'Run checks last',
         data.ready,
         Icons.fact_check_outlined,
-        Palette.mint,
+        Palette.of(context).mint,
       ),
     ];
     final completed = steps.where((step) => step.$3).length;
@@ -248,7 +251,7 @@ class WorkspacePage extends StatelessWidget {
         : 'Analysis complete';
 
     return GlassPanel(
-      tint: Palette.cyan,
+      tint: Palette.of(context).cyan,
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,10 +263,10 @@ class WorkspacePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'WORKSPACE PULSE',
                       style: TextStyle(
-                        color: Palette.cyan,
+                        color: Palette.of(context).cyan,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.7,
@@ -282,7 +285,9 @@ class WorkspacePage extends StatelessWidget {
               ),
               StatusBadge(
                 '$completed / ${steps.length} steps',
-                color: data.ready ? Palette.mint : Palette.cyan,
+                color: data.ready
+                    ? Palette.of(context).mint
+                    : Palette.of(context).cyan,
                 icon: data.ready
                     ? Icons.verified_outlined
                     : Icons.route_outlined,
@@ -296,6 +301,7 @@ class WorkspacePage extends StatelessWidget {
                 for (final (index, step) in steps.indexed) ...[
                   Expanded(
                     child: _workflowStep(
+                      context,
                       title: step.$1,
                       detail: step.$2,
                       complete: step.$3,
@@ -309,8 +315,8 @@ class WorkspacePage extends StatelessWidget {
                       width: constraints.maxWidth < 520 ? 8 : 18,
                       child: Divider(
                         color: steps[index + 1].$3
-                            ? Palette.mint.withValues(alpha: .55)
-                            : Palette.line,
+                            ? Palette.of(context).mint.withValues(alpha: .55)
+                            : Palette.of(context).line,
                         thickness: 1,
                       ),
                     ),
@@ -323,7 +329,8 @@ class WorkspacePage extends StatelessWidget {
     );
   }
 
-  Widget _workflowStep({
+  Widget _workflowStep(
+    BuildContext context, {
     required String title,
     required String detail,
     required bool complete,
@@ -343,7 +350,7 @@ class WorkspacePage extends StatelessWidget {
       ),
       child: Icon(
         complete ? Icons.check_rounded : icon,
-        color: complete ? color : Palette.muted,
+        color: complete ? color : Palette.of(context).muted,
         size: compact ? 15 : 17,
       ),
     );
@@ -360,7 +367,9 @@ class WorkspacePage extends StatelessWidget {
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: complete ? Palette.text : Palette.muted,
+              color: complete
+                  ? Palette.of(context).text
+                  : Palette.of(context).muted,
             ),
           ),
         ],
@@ -380,7 +389,9 @@ class WorkspacePage extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: complete ? Palette.text : Palette.muted,
+                  color: complete
+                      ? Palette.of(context).text
+                      : Palette.of(context).muted,
                 ),
               ),
               const SizedBox(height: 3),
@@ -388,7 +399,10 @@ class WorkspacePage extends StatelessWidget {
                 detail,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Palette.muted, fontSize: 10),
+                style: TextStyle(
+                  color: Palette.of(context).muted,
+                  fontSize: 10,
+                ),
               ),
             ],
           ),
@@ -397,7 +411,7 @@ class WorkspacePage extends StatelessWidget {
     );
   }
 
-  Widget _skills() {
+  Widget _skills(BuildContext context) {
     final data = controller.data!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,30 +437,40 @@ class WorkspacePage extends StatelessWidget {
                       children: [
                         SectionTitle(
                           skill.category,
-                          trailing: const Icon(
+                          trailing: Icon(
                             Icons.north_east_rounded,
-                            color: Palette.muted,
+                            color: Palette.of(context).muted,
                             size: 15,
                           ),
                         ),
-                        _meter('Relevance', skill.relevance, Palette.cyan),
+                        _meter(
+                          context,
+                          'Relevance',
+                          skill.relevance,
+                          Palette.of(context).cyan,
+                        ),
                         const SizedBox(height: 10),
-                        _meter('Confidence', skill.confidence, Palette.violet),
+                        _meter(
+                          context,
+                          'Confidence',
+                          skill.confidence,
+                          Palette.of(context).violet,
+                        ),
                         const SizedBox(height: 17),
-                        const Text(
+                        Text(
                           'PROJECT EVIDENCE',
                           style: TextStyle(
                             fontSize: 9,
                             letterSpacing: 1.5,
-                            color: Palette.muted,
+                            color: Palette.of(context).muted,
                           ),
                         ),
                         const SizedBox(height: 5),
                         if (skill.evidence.isEmpty)
-                          const Text(
+                          Text(
                             'No direct evidence found',
                             style: TextStyle(
-                              color: Palette.muted,
+                              color: Palette.of(context).muted,
                               fontSize: 11,
                             ),
                           ),
@@ -466,9 +490,9 @@ class WorkspacePage extends StatelessWidget {
                                   path,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: 'Consolas',
-                                    color: Palette.cyan,
+                                    color: Palette.of(context).cyan,
                                     fontSize: 11,
                                   ),
                                 ),
@@ -486,13 +510,18 @@ class WorkspacePage extends StatelessWidget {
     );
   }
 
-  Widget _meter(String label, double value, Color color) => Row(
+  Widget _meter(
+    BuildContext context,
+    String label,
+    double value,
+    Color color,
+  ) => Row(
     children: [
       SizedBox(
         width: 76,
         child: Text(
           label,
-          style: const TextStyle(color: Palette.muted, fontSize: 11),
+          style: TextStyle(color: Palette.of(context).muted, fontSize: 11),
         ),
       ),
       Expanded(
@@ -501,7 +530,7 @@ class WorkspacePage extends StatelessWidget {
           child: LinearProgressIndicator(
             value: value.clamp(0, 1),
             color: color,
-            backgroundColor: Palette.line,
+            backgroundColor: Palette.of(context).line,
             minHeight: 5,
           ),
         ),
@@ -517,7 +546,7 @@ class WorkspacePage extends StatelessWidget {
     ],
   );
 
-  Widget _code() {
+  Widget _code(BuildContext context) {
     final data = controller.data!;
     final source =
         data.files[controller.selectedFile] ?? 'Select a file in the explorer.';
@@ -531,7 +560,7 @@ class WorkspacePage extends StatelessWidget {
             const StatusBadge('Read-only', icon: Icons.lock_outline_rounded),
             StatusBadge(
               data.hasChallenge ? 'Challenge copy' : 'Snapshot',
-              color: Palette.violet,
+              color: Palette.of(context).violet,
             ),
           ],
         ),
@@ -549,15 +578,15 @@ class WorkspacePage extends StatelessWidget {
           highlight: data.hasChallenge ? 'email: username' : null,
         ),
         const SizedBox(height: 17),
-        const Text(
+        Text(
           'Changes are reviewed as a patch and applied only to the isolated copy.',
-          style: TextStyle(color: Palette.muted, fontSize: 11),
+          style: TextStyle(color: Palette.of(context).muted, fontSize: 11),
         ),
       ],
     );
   }
 
-  Widget _investigation() {
+  Widget _investigation(BuildContext context) {
     final data = controller.data!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -573,11 +602,13 @@ class WorkspacePage extends StatelessWidget {
           children: [
             StatusBadge(
               data.canReview ? 'Patch unlocked' : 'Investigating',
-              color: data.canReview ? Palette.mint : Palette.cyan,
+              color: data.canReview
+                  ? Palette.of(context).mint
+                  : Palette.of(context).cyan,
             ),
             StatusBadge(
               data.sample ? 'Authentication' : 'Debugging',
-              color: Palette.violet,
+              color: Palette.of(context).violet,
             ),
           ],
         ),
@@ -590,19 +621,19 @@ class WorkspacePage extends StatelessWidget {
               padding: EdgeInsets.zero,
               child: ListTile(
                 onTap: () => controller.selectFile(path),
-                leading: const Icon(
+                leading: Icon(
                   Icons.description_outlined,
-                  color: Palette.cyan,
+                  color: Palette.of(context).cyan,
                   size: 19,
                 ),
                 title: Text(
                   path,
                   style: const TextStyle(fontFamily: 'Consolas', fontSize: 12),
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.arrow_forward_rounded,
                   size: 17,
-                  color: Palette.cyan,
+                  color: Palette.of(context).cyan,
                 ),
               ),
             ),
@@ -617,7 +648,7 @@ class WorkspacePage extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         GlassPanel(
-          tint: Palette.violet,
+          tint: Palette.of(context).violet,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -626,9 +657,9 @@ class WorkspacePage extends StatelessWidget {
                 style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
-              const Text(
+              Text(
                 'What is failing? Which evidence explains it? How would you verify the fix?',
-                style: TextStyle(color: Palette.muted),
+                style: TextStyle(color: Palette.of(context).muted),
               ),
               const SizedBox(height: 18),
               OutlinedButton.icon(
@@ -643,7 +674,7 @@ class WorkspacePage extends StatelessWidget {
     );
   }
 
-  Widget _patch() {
+  Widget _patch(BuildContext context) {
     final data = controller.data!;
     final patch = data.patch;
     if (patch == null) {
@@ -663,11 +694,13 @@ class WorkspacePage extends StatelessWidget {
           children: [
             StatusBadge(
               'Risk: ${patch.risk}',
-              color: patch.risk == 'low' ? Palette.mint : Palette.amber,
+              color: patch.risk == 'low'
+                  ? Palette.of(context).mint
+                  : Palette.of(context).amber,
             ),
             StatusBadge(
               data.applied ? 'Applied to copy' : 'Proposed patch',
-              color: Palette.cyan,
+              color: Palette.of(context).cyan,
             ),
           ],
         ),
@@ -678,12 +711,19 @@ class WorkspacePage extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline, size: 16, color: Palette.amber),
+                Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: Palette.of(context).amber,
+                ),
                 const SizedBox(width: 9),
                 Expanded(
                   child: Text(
                     warning,
-                    style: const TextStyle(fontSize: 12, color: Palette.muted),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Palette.of(context).muted,
+                    ),
                   ),
                 ),
               ],
@@ -723,9 +763,9 @@ class WorkspacePage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 15),
-        const Text(
+        Text(
           'Your original files remain read-only. This is a proposal until you review the validation evidence.',
-          style: TextStyle(color: Palette.muted, fontSize: 11),
+          style: TextStyle(color: Palette.of(context).muted, fontSize: 11),
         ),
       ],
     );
@@ -760,11 +800,11 @@ class CodeBlock extends StatelessWidget {
                 constraints: const BoxConstraints(minWidth: 260),
                 decoration: BoxDecoration(
                   color: diff && line.startsWith('+') && !line.startsWith('+++')
-                      ? Palette.mint.withValues(alpha: .09)
+                      ? Palette.of(context).mint.withValues(alpha: .09)
                       : diff && line.startsWith('-') && !line.startsWith('---')
-                      ? Palette.red.withValues(alpha: .09)
+                      ? Palette.of(context).red.withValues(alpha: .09)
                       : highlight != null && line.contains(highlight!)
-                      ? Palette.violet.withValues(alpha: .12)
+                      ? Palette.of(context).violet.withValues(alpha: .12)
                       : null,
                 ),
                 padding: const EdgeInsets.symmetric(
@@ -779,21 +819,21 @@ class CodeBlock extends StatelessWidget {
                         width: 34,
                         child: Text(
                           '${index + 1}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Consolas',
                             fontSize: 12,
                             height: 1.5,
-                            color: Palette.muted,
+                            color: Palette.of(context).muted,
                           ),
                         ),
                       ),
                     SelectableText.rich(
-                      TextSpan(children: _spans(line)),
-                      style: const TextStyle(
+                      TextSpan(children: _spans(context, line)),
+                      style: TextStyle(
                         fontFamily: 'Consolas',
                         fontSize: 12,
                         height: 1.5,
-                        color: Palette.text,
+                        color: Palette.of(context).text,
                       ),
                     ),
                   ],
@@ -805,17 +845,17 @@ class CodeBlock extends StatelessWidget {
     );
   }
 
-  List<TextSpan> _spans(String line) {
+  List<TextSpan> _spans(BuildContext context, String line) {
     if (diff) {
       return [
         TextSpan(
           text: line.isEmpty ? ' ' : line,
           style: TextStyle(
             color: line.startsWith('+')
-                ? Palette.mint
+                ? Palette.of(context).mint
                 : line.startsWith('-')
-                ? Palette.red
-                : Palette.muted,
+                ? Palette.of(context).red
+                : Palette.of(context).muted,
           ),
         ),
       ];
@@ -835,10 +875,10 @@ class CodeBlock extends StatelessWidget {
           text: text,
           style: TextStyle(
             color: text.startsWith('#')
-                ? Palette.muted
+                ? Palette.of(context).muted
                 : text.startsWith('"') || text.startsWith("'")
-                ? Palette.mint
-                : Palette.violet,
+                ? Palette.of(context).mint
+                : Palette.of(context).violet,
           ),
         ),
       );

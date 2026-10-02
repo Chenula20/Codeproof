@@ -29,7 +29,7 @@ class StartupScreen extends StatelessWidget {
                       children: [
                         Expanded(flex: 6, child: _hero(context, true)),
                         const SizedBox(width: 70),
-                        Expanded(flex: 4, child: _journey()),
+                        Expanded(flex: 4, child: _journey(context)),
                       ],
                     )
                   : Column(
@@ -37,7 +37,7 @@ class StartupScreen extends StatelessWidget {
                       children: [
                         _hero(context, false),
                         const SizedBox(height: 40),
-                        _journey(),
+                        _journey(context),
                       ],
                     ),
             ),
@@ -50,9 +50,9 @@ class StartupScreen extends StatelessWidget {
   Widget _hero(BuildContext context, bool wide) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const StatusBadge(
+      StatusBadge(
         'YOUR CODE. YOUR UNDERSTANDING.',
-        color: Palette.cyan,
+        color: Palette.of(context).cyan,
         icon: Icons.auto_awesome_outlined,
       ),
       const SizedBox(height: 28),
@@ -63,13 +63,17 @@ class StartupScreen extends StatelessWidget {
           height: 1.16,
           fontWeight: FontWeight.w700,
           letterSpacing: -2,
-          color: Palette.text,
+          color: Palette.of(context).text,
         ),
       ),
       const SizedBox(height: 5),
       ShaderMask(
-        shaderCallback: (rect) => const LinearGradient(
-          colors: [Palette.cyan, Palette.mint, Palette.violet],
+        shaderCallback: (rect) => LinearGradient(
+          colors: [
+            Palette.of(context).cyan,
+            Palette.of(context).mint,
+            Palette.of(context).violet,
+          ],
         ).createShader(rect),
         child: Text(
           'Prove you can fix it.',
@@ -83,9 +87,13 @@ class StartupScreen extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 24),
-      const Text(
+      Text(
         'A calmer space to explore your software, investigate failures, and turn a proposed fix into evidence you can trust.',
-        style: TextStyle(fontSize: 16, color: Palette.muted, height: 1.7),
+        style: TextStyle(
+          fontSize: 16,
+          color: Palette.of(context).muted,
+          height: 1.7,
+        ),
       ),
       const SizedBox(height: 30),
       Wrap(
@@ -105,18 +113,22 @@ class StartupScreen extends StatelessWidget {
         ],
       ),
       const SizedBox(height: 12),
-      const Text(
+      Text(
         'Sample works offline  ·  No account or API key needed',
-        style: TextStyle(fontSize: 11, color: Palette.muted),
+        style: TextStyle(fontSize: 11, color: Palette.of(context).muted),
       ),
       const SizedBox(height: 34),
-      const GlassPanel(
-        tint: Palette.mint,
+      GlassPanel(
+        tint: Palette.of(context).mint,
         padding: EdgeInsets.all(18),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.verified_user_outlined, color: Palette.mint, size: 21),
+            Icon(
+              Icons.verified_user_outlined,
+              color: Palette.of(context).mint,
+              size: 21,
+            ),
             SizedBox(width: 13),
             Expanded(
               child: Column(
@@ -125,7 +137,7 @@ class StartupScreen extends StatelessWidget {
                   Text(
                     'Your original project stays yours.',
                     style: TextStyle(
-                      color: Palette.mint,
+                      color: Palette.of(context).mint,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -133,7 +145,7 @@ class StartupScreen extends StatelessWidget {
                   Text(
                     'Read-only inspection. Isolated copies. Every patch reviewed before it is applied.',
                     style: TextStyle(
-                      color: Palette.muted,
+                      color: Palette.of(context).muted,
                       fontSize: 12,
                       height: 1.6,
                     ),
@@ -147,19 +159,19 @@ class StartupScreen extends StatelessWidget {
     ],
   );
 
-  Widget _journey() => GlassPanel(
+  Widget _journey(BuildContext context) => GlassPanel(
     blur: true,
     radius: 28,
     padding: const EdgeInsets.all(28),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'FROM CURIOSITY TO CONFIDENCE',
           style: TextStyle(
             fontSize: 10,
             letterSpacing: 1.5,
-            color: Palette.muted,
+            color: Palette.of(context).muted,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -206,8 +218,11 @@ class StartupScreen extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(13),
-                    color: (index.isOdd ? Palette.cyan : Palette.violet)
-                        .withValues(alpha: .09),
+                    color:
+                        (index.isOdd
+                                ? Palette.of(context).cyan
+                                : Palette.of(context).violet)
+                            .withValues(alpha: .09),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: .12),
                     ),
@@ -215,7 +230,9 @@ class StartupScreen extends StatelessWidget {
                   child: Icon(
                     icon,
                     size: 19,
-                    color: index.isOdd ? Palette.cyan : Palette.violet,
+                    color: index.isOdd
+                        ? Palette.of(context).cyan
+                        : Palette.of(context).violet,
                   ),
                 ),
                 const SizedBox(width: 17),
@@ -233,8 +250,8 @@ class StartupScreen extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         description,
-                        style: const TextStyle(
-                          color: Palette.muted,
+                        style: TextStyle(
+                          color: Palette.of(context).muted,
                           fontSize: 12,
                         ),
                       ),
@@ -243,16 +260,19 @@ class StartupScreen extends StatelessWidget {
                 ),
                 Text(
                   '0$index',
-                  style: const TextStyle(color: Palette.muted, fontSize: 10),
+                  style: TextStyle(
+                    color: Palette.of(context).muted,
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
           ),
         const Divider(),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'One workspace. A complete learning loop.',
-          style: TextStyle(color: Palette.muted, fontSize: 11),
+          style: TextStyle(color: Palette.of(context).muted, fontSize: 11),
         ),
       ],
     ),

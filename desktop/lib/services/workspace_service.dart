@@ -34,6 +34,16 @@ class LocalWorkspaceService extends WorkspaceService {
     String path,
     Map<String, dynamic> body,
   ) async {
+    if (port < 1 || port > 65535) {
+      throw const WorkspaceException(
+        'Enter the CodeProof service port from 1 to 65535.',
+      );
+    }
+    if (token.trim().length < 32) {
+      throw const WorkspaceException(
+        'Enter the pairing token from the running CodeProof service.',
+      );
+    }
     try {
       // Fixed loopback destination: the pairing token is never sent to a remote host.
       final request = await _client.openUrl(
@@ -55,7 +65,16 @@ class LocalWorkspaceService extends WorkspaceService {
           .bind(response)
           .join()
           .timeout(const Duration(seconds: 10));
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      if (response.statusCode == 401) {
+        throw const WorkspaceException(
+          'Pairing failed. Use the token from the successfully running CodeProof service and its matching port.',
+        );
+      }
+      final value = jsonDecode(raw);
+      if (value is! Map<String, dynamic>) {
+        throw const FormatException('Expected service object');
+      }
+      final decoded = value;
       if (response.statusCode < 200 || response.statusCode >= 300) {
         final detail = decoded['detail'];
         throw WorkspaceException(

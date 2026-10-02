@@ -27,9 +27,9 @@ class CoachPanel extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.auto_awesome_outlined,
-                  color: Palette.cyan,
+                  color: Palette.of(context).cyan,
                   size: 19,
                 ),
                 const SizedBox(width: 10),
@@ -50,7 +50,7 @@ class CoachPanel extends StatelessWidget {
             const SizedBox(height: 15),
             StatusBadge(
               data.sample ? 'Guided practice' : data.provider,
-              color: Palette.violet,
+              color: Palette.of(context).violet,
             ),
             const SizedBox(height: 24),
             Text(
@@ -61,20 +61,20 @@ class CoachPanel extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             if (!data.hasChallenge) ...[
-              const Text(
+              Text(
                 'Start with the big picture. Explore the analysis, follow a skill to its source files, then investigate a failure.',
-                style: TextStyle(color: Palette.muted),
+                style: TextStyle(color: Palette.of(context).muted),
               ),
               const SizedBox(height: 23),
               GlassPanel(
                 padding: const EdgeInsets.all(16),
-                tint: Palette.cyan,
+                tint: Palette.of(context).cyan,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.tips_and_updates_outlined,
-                      color: Palette.cyan,
+                      color: Palette.of(context).cyan,
                       size: 22,
                     ),
                     const SizedBox(height: 12),
@@ -83,9 +83,12 @@ class CoachPanel extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 6),
-                    const Text(
+                    Text(
                       'What does this application expect at its boundaries — and what happens when it receives something else?',
-                      style: TextStyle(color: Palette.muted, fontSize: 12),
+                      style: TextStyle(
+                        color: Palette.of(context).muted,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
@@ -108,7 +111,9 @@ class CoachPanel extends StatelessWidget {
                     : data.canReview
                     ? 'Patch unlocked'
                     : 'Investigating',
-                color: data.canReview ? Palette.mint : Palette.cyan,
+                color: data.canReview
+                    ? Palette.of(context).mint
+                    : Palette.of(context).cyan,
               ),
               const SizedBox(height: 22),
               const Divider(),
@@ -117,12 +122,18 @@ class CoachPanel extends StatelessWidget {
                 'Progressive hints',
                 trailing: Text(
                   '${data.hints.length} / 4',
-                  style: const TextStyle(color: Palette.muted, fontSize: 11),
+                  style: TextStyle(
+                    color: Palette.of(context).muted,
+                    fontSize: 11,
+                  ),
                 ),
               ),
-              const Text(
+              Text(
                 'A little direction, only when you need it.',
-                style: TextStyle(color: Palette.muted, fontSize: 12),
+                style: TextStyle(
+                  color: Palette.of(context).muted,
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(height: 12),
               SizedBox(
@@ -147,8 +158,8 @@ class CoachPanel extends StatelessWidget {
                       children: [
                         Text(
                           '0${index + 1}  ${['Direction', 'Component', 'Specific area', 'Near solution'][index]}',
-                          style: const TextStyle(
-                            color: Palette.cyan,
+                          style: TextStyle(
+                            color: Palette.of(context).cyan,
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                           ),
@@ -163,9 +174,12 @@ class CoachPanel extends StatelessWidget {
               const Divider(),
               const SizedBox(height: 18),
               const SectionTitle('Explain before you fix'),
-              const Text(
+              Text(
                 'Describe the cause and the evidence that led you there.',
-                style: TextStyle(color: Palette.muted, fontSize: 12),
+                style: TextStyle(
+                  color: Palette.of(context).muted,
+                  fontSize: 12,
+                ),
               ),
               const SizedBox(height: 12),
               TextField(
@@ -204,20 +218,18 @@ class CoachPanel extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 16),
                   child: GlassPanel(
                     padding: const EdgeInsets.all(14),
-                    tint: data.evaluation!.passed
-                        ? Palette.mint
-                        : Palette.amber,
+                    tint: data.evaluation!.permitsPatch
+                        ? Palette.of(context).mint
+                        : Palette.of(context).amber,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          data.evaluation!.passed
-                              ? 'Root cause identified'
-                              : 'Keep investigating',
+                          '${data.evaluation!.label} · ${(data.evaluation!.score * 100).round()}%',
                           style: TextStyle(
-                            color: data.evaluation!.passed
-                                ? Palette.mint
-                                : Palette.amber,
+                            color: data.evaluation!.permitsPatch
+                                ? Palette.of(context).mint
+                                : Palette.of(context).amber,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -236,9 +248,9 @@ class CoachPanel extends StatelessWidget {
               data.sample
                   ? 'Practice coaching uses curated hints and a keyword-based explanation check. It is not an AI assessment.'
                   : 'AI coaching uses your redacted snapshot only after you enable AI analysis.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
-                color: Palette.muted,
+                color: Palette.of(context).muted,
                 height: 1.6,
               ),
             ),

@@ -90,7 +90,7 @@ void main() {
     await tester.ensureVisible(find.text('Evaluate explanation'));
     await tester.tap(find.text('Evaluate explanation'));
     await tester.pumpAndSettle();
-    expect(find.text('Keep investigating'), findsOneWidget);
+    expect(find.text('Incorrect · 35%'), findsOneWidget);
     await tester.enterText(
       find.byKey(const Key('explanation-field')),
       'The client sends email but the handler expects username, a field mismatch.',
@@ -107,7 +107,7 @@ void main() {
     await tester.tap(find.text('Run practice validation'));
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
-    expect(find.text('Practice validation: passed'), findsOneWidget);
+    expect(find.text('Simulated practice validation: passed'), findsOneWidget);
     await tester.tap(find.text('Readiness'));
     await tester.pumpAndSettle();
     expect(find.text('PRACTICE COMPLETE'), findsOneWidget);

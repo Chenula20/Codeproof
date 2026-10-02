@@ -297,6 +297,7 @@ def evaluate_explanation(explanation: str) -> tuple[str, str, bool]:
     with _lock:
         if not _state.challenge_started:
             raise ValueError('Start a challenge before evaluating an explanation.')
+        _state.patch_unlocked = False
         text = explanation.lower()
         matches = sum(1 for keyword in EXPECTED_KEYWORDS if keyword in text)
         ratio = matches / len(EXPECTED_KEYWORDS)

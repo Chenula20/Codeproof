@@ -151,3 +151,20 @@ class TestDemoSecurityBoundary:
     def test_origin_header_still_rejected(self):
         response = client.get("/demo/overview", headers={"Origin": "http://localhost:5173"})
         assert response.status_code == 403
+
+
+def test_simulated_reevaluation_relocks_patch():
+    client.post('/demo/challenge/start')
+    answer = 'The frontend sends email but handler reads username, credentials missing with 422.'
+    assert client.post('/demo/explanation', json={'explanation': answer}).json()['patch_unlocked']
+    rejected = client.post('/demo/explanation', json={'explanation': 'Something unrelated is happening.'}).json()
+    assert rejected['classification'] == 'INCORRECT'
+    assert rejected['patch_unlocked'] is False
+    assert client.get('/demo/patch').status_code == 409
+
+
+def test_legacy_simulated_partial_is_not_passing():
+    from backend.services.challenge_service import evaluate_explanation
+    result = evaluate_explanation('auth-001', 'verify hashed password')
+    assert result.classification == 'PARTIALLY_CORRECT'
+    assert result.passed is False

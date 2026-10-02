@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/theme.dart';
+import '../../domain/workspace.dart';
 import '../../domain/workspace_controller.dart';
 import '../../ui/glass.dart';
 import 'coach.dart';
@@ -64,16 +65,17 @@ class WorkspaceShellState extends State<WorkspaceShell> {
 
   Future<void> startChallenge() async {
     final data = c.data!;
-    final issue = TextEditingController();
+    String issueText = '';
     String target = c.selectedFile;
+    Incident? selectedIncident;
     final proceed = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, update) => AlertDialog(
           title: Text(
-            data.sample
+            data.practice
                 ? 'Ready to break it, safely?'
-                : 'Investigate a project issue',
+                : 'Choose an investigation',
           ),
           content: SizedBox(
             width: 480,
@@ -83,55 +85,111 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    data.sample
-                        ? 'Introduce a controlled authentication failure in a temporary challenge copy. Your original project remains untouched.'
-                        : 'Describe a failure you observed. CodeProof will investigate this snapshot; it will not inject a fault into your original project.',
-                    style: const TextStyle(color: Palette.muted),
+                    data.practice
+                        ? 'Simulate an authentication failure in the in-memory practice workspace. No project files or tests are executed.'
+                        : 'Investigate an observed issue, or choose a supported controlled incident. Changes happen only in a managed temporary copy.',
+                    style: TextStyle(color: Palette.of(context).muted),
                   ),
                   const SizedBox(height: 20),
-                  const StatusBadge(
+                  StatusBadge(
                     'Original project protected',
-                    color: Palette.mint,
+                    color: Palette.of(context).mint,
                     icon: Icons.shield_outlined,
                   ),
-                  if (!data.sample) ...[
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: issue,
-                      minLines: 3,
-                      maxLines: 5,
-                      maxLength: 4000,
-                      onChanged: (_) => update(() {}),
-                      decoration: const InputDecoration(
-                        labelText: 'Observed issue',
-                        hintText: 'What happened, and what did you expect?',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      initialValue: target,
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Relevant file',
-                      ),
-                      items: data.files.keys
-                          .map(
-                            (path) => DropdownMenuItem(
-                              value: path,
+                  if (!data.practice) ...[
+                    if (data.supportedIncidents.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        key: const Key('incident-selector'),
+                        initialValue: '',
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Investigation type',
+                        ),
+                        items: [
+                          const DropdownMenuItem(
+                            value: '',
+                            child: Text('Observed project issue'),
+                          ),
+                          for (final incident in data.supportedIncidents)
+                            DropdownMenuItem(
+                              value: incident.id,
                               child: Text(
-                                path,
+                                incident.title,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
-                          )
-                          .toList(),
-                      onChanged: (value) => target = value!,
-                    ),
+                        ],
+                        onChanged: (value) => update(() {
+                          selectedIncident = value == null || value.isEmpty
+                              ? null
+                              : data.supportedIncidents.firstWhere(
+                                  (incident) => incident.id == value,
+                                );
+                        }),
+                      ),
+                    ],
+                    if (selectedIncident != null) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        selectedIncident!.goal,
+                        key: const Key('incident-goal'),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Target: ${selectedIncident!.targetFile}',
+                        style: TextStyle(color: Palette.of(context).muted),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'The local service checks the healthy training fixture before introducing this incident. Close the workspace and reopen the original project to restore its healthy baseline. Validation runs only in Docker.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Palette.of(context).muted,
+                        ),
+                      ),
+                    ] else ...[
+                      const SizedBox(height: 20),
+                      TextField(
+                        key: const Key('observed-issue-field'),
+                        minLines: 3,
+                        maxLines: 5,
+                        maxLength: 4000,
+                        onChanged: (value) => update(() => issueText = value),
+                        decoration: const InputDecoration(
+                          labelText: 'Observed issue',
+                          hintText: 'What happened, and what did you expect?',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        initialValue: target,
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Relevant file',
+                        ),
+                        items: data.files.keys
+                            .map(
+                              (path) => DropdownMenuItem(
+                                value: path,
+                                child: Text(
+                                  path,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) => target = value!,
+                      ),
+                    ],
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       'Coaching and patch generation require AI analysis to be enabled first.',
-                      style: TextStyle(fontSize: 11, color: Palette.muted),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Palette.of(context).muted,
+                      ),
                     ),
                   ],
                 ],
@@ -145,7 +203,10 @@ class WorkspaceShellState extends State<WorkspaceShell> {
             ),
             PrimaryButton(
               'Start challenge',
-              onPressed: !data.sample && issue.text.trim().isEmpty
+              onPressed:
+                  !data.practice &&
+                      selectedIncident == null &&
+                      issueText.trim().isEmpty
                   ? null
                   : () => Navigator.pop(context, true),
             ),
@@ -153,11 +214,14 @@ class WorkspaceShellState extends State<WorkspaceShell> {
         ),
       ),
     );
-    final issueText = issue.text;
-    // Dialog exit animations may still reference the controller for one frame.
     if (proceed == true && mounted) {
       explanation.clear();
-      await c.act('challenge', {'issue': issueText, 'target_file': target});
+      await c.act(
+        'challenge',
+        selectedIncident == null
+            ? {'issue': issueText, 'target_file': target}
+            : {'incident_id': selectedIncident!.id},
+      );
     }
   }
 
@@ -171,11 +235,14 @@ class WorkspaceShellState extends State<WorkspaceShell> {
         builder: (context) => SimpleDialog(
           title: const Text('Run tests in Docker'),
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.fromLTRB(24, 0, 24, 16),
               child: Text(
                 'Uses a prepared local image, without network access. No packages are installed during a run.',
-                style: TextStyle(color: Palette.muted, fontSize: 12),
+                style: TextStyle(
+                  color: Palette.of(context).muted,
+                  fontSize: 12,
+                ),
               ),
             ),
             for (final (value, title, description) in const [
@@ -273,9 +340,9 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                     IconButton(
                       tooltip: 'Open engineering coach',
                       onPressed: showCoach,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.auto_awesome_outlined,
-                        color: Palette.violet,
+                        color: Palette.of(context).violet,
                         size: 19,
                       ),
                     ),
@@ -283,7 +350,11 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                     Padding(
                       padding: const EdgeInsets.only(left: 12),
                       child: PrimaryButton(
-                        data.sample ? 'Break My App' : 'Investigate',
+                        data.practice
+                            ? 'Break My App'
+                            : data.supportedIncidents.isNotEmpty
+                            ? 'Choose challenge'
+                            : 'Investigate',
                         icon: Icons.bolt_rounded,
                         onPressed: c.busy ? null : startChallenge,
                       ),
@@ -291,6 +362,33 @@ class WorkspaceShellState extends State<WorkspaceShell> {
                 ],
               ),
             ),
+            if (data.activeIncident != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: GlassPanel(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Controlled incident: ${data.activeIncident!.title}',
+                        key: const Key('active-incident-title'),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(data.activeIncident!.goal),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Temporary copy: ${data.activeIncident!.targetFile}. Close this workspace and reopen the original project to restore the healthy baseline.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Palette.of(context).muted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -362,11 +460,11 @@ class WorkspaceShellState extends State<WorkspaceShell> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(13),
           color: c.tab == tab
-              ? Palette.cyan.withValues(alpha: .10)
+              ? Palette.of(context).cyan.withValues(alpha: .10)
               : Colors.transparent,
           border: Border.all(
             color: c.tab == tab
-                ? Palette.cyan.withValues(alpha: .30)
+                ? Palette.of(context).cyan.withValues(alpha: .30)
                 : Colors.transparent,
           ),
         ),
@@ -375,7 +473,9 @@ class WorkspaceShellState extends State<WorkspaceShell> {
           icon: Icon(locked ? Icons.lock_outline : icon, size: 15),
           label: Text(label),
           style: TextButton.styleFrom(
-            foregroundColor: c.tab == tab ? Palette.cyan : Palette.muted,
+            foregroundColor: c.tab == tab
+                ? Palette.of(context).cyan
+                : Palette.of(context).muted,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             textStyle: const TextStyle(fontFamily: 'Segoe UI', fontSize: 12),
           ),
@@ -407,12 +507,12 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
+        Padding(
           padding: EdgeInsets.fromLTRB(17, 20, 17, 12),
           child: Text(
             'PROJECT EXPLORER',
             style: TextStyle(
-              color: Palette.muted,
+              color: Palette.of(context).muted,
               letterSpacing: 1.4,
               fontSize: 9,
               fontWeight: FontWeight.w600,
@@ -437,11 +537,14 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
             padding: const EdgeInsets.symmetric(horizontal: 8),
             children: [
               if (files.isEmpty)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(12),
                   child: Text(
                     'No matching files',
-                    style: TextStyle(color: Palette.muted, fontSize: 12),
+                    style: TextStyle(
+                      color: Palette.of(context).muted,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               for (final path in files) ...[
@@ -451,8 +554,8 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
                     padding: const EdgeInsets.fromLTRB(9, 15, 5, 6),
                     child: Text(
                       previous = path.substring(0, path.lastIndexOf('/')),
-                      style: const TextStyle(
-                        color: Palette.muted,
+                      style: TextStyle(
+                        color: Palette.of(context).muted,
                         fontSize: 10,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -466,7 +569,8 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                     minLeadingWidth: 14,
                     selected: c.selectedFile == path,
-                    selectedTileColor: Palette.cyan.withValues(alpha: .08),
+                    selectedTileColor: Palette.of(context).cyan
+                        .withValues(alpha: .08),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -478,8 +582,8 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
                           : Icons.description_outlined,
                       size: 15,
                       color: path.endsWith('.js')
-                          ? Palette.amber
-                          : Palette.mint,
+                          ? Palette.of(context).amber
+                          : Palette.of(context).mint,
                     ),
                     title: Text(
                       path.split('/').last,
@@ -496,11 +600,11 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
             ],
           ),
         ),
-        const Padding(
+        Padding(
           padding: EdgeInsets.all(15),
           child: StatusBadge(
             'READ-ONLY',
-            color: Palette.mint,
+            color: Palette.of(context).mint,
             icon: Icons.lock_outline,
           ),
         ),

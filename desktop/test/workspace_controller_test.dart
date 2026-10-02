@@ -30,6 +30,27 @@ void main() {
   });
 
   test(
+    'New explanation clears old approval even on a rejected attempt',
+    () async {
+      final controller = WorkspaceController(PracticeWorkspaceService());
+      await controller.open();
+      await controller.act('challenge');
+      await controller.act('explanation', {
+        'explanation': 'email key is sent but username is expected',
+      });
+      expect(controller.data!.canReview, true);
+      await controller.act('explanation', {'explanation': 'short'});
+      expect(controller.error, isNotNull);
+      expect(controller.data!.canReview, false);
+      expect(controller.data!.patch, isNull);
+      expect(controller.tab, WorkspaceTab.investigation);
+      await controller.act('patch');
+      expect(controller.error, isNotNull);
+      controller.dispose();
+    },
+  );
+
+  test(
     'Controller exposes operation failures and preserves the active workspace',
     () async {
       final controller = WorkspaceController(PracticeWorkspaceService());

@@ -27,13 +27,18 @@ PATCH = '--- a/main.py\n+++ b/main.py\n@@ -1 +1 @@\n-value = 1\n+value = 2\n'
 class ProviderTransport:
     def __init__(self):
         self.calls = []
+        self.payloads = []
         self.score = .95
         self.fail = False
+        self.evaluation_payload = None
+        self.evaluation_raw = None
+        self.patch_raw = None
 
     def __call__(self, request):
         if self.fail:
             return httpx.Response(500, text='private-provider-error-and-key')
         body = json.loads(request.content)
+        self.payloads.append(body)
         prompt = body['messages'][-1]['content']
         schema = ast.literal_eval(prompt.split('Respond with valid JSON matching this schema:\n')[-1])
         title = schema['title']
@@ -53,7 +58,12 @@ class ProviderTransport:
             data = {'hint_level': level, 'hint_content': f'Inspect the value, level {level}', 'next_level_available': level < 4}
         else:
             data = response[title]
-        return httpx.Response(200, json={'choices': [{'message': {'content': json.dumps(data)}}]})
+        if title == 'ExplanationEvaluation' and self.evaluation_payload is not None:
+            data = self.evaluation_payload
+        content = self.evaluation_raw if title == 'ExplanationEvaluation' and self.evaluation_raw is not None else json.dumps(data)
+        if title == 'Patch' and self.patch_raw is not None:
+            content = self.patch_raw
+        return httpx.Response(200, json={'choices': [{'message': {'content': content}}]})
 
     @asynccontextmanager
     async def factory(self):
@@ -74,6 +84,11 @@ def project(tmp_path):
     (root / 'test_value.py').write_text('def test_value(): assert True\n')
     (root / '.env').write_text('password=private-password')
     (root / 'config.py').write_text('api_key = "abcdefghijklmnopqrstuvwxyz123456"\n')
+    (root / 'auth.py').write_text('SECRET_KEY = "signing-fixture!short"\nALGORITHM = "HS256"\n')
+    (root / 'package.json').write_text(json.dumps({
+        "name": "public-fixture", "version": "1.0.0",
+        "signingKey": "config-signing-fixture!", "dependencies": {"public-package": "1.0"}
+    }))
     return root
 
 
@@ -97,7 +112,8 @@ def live(request):
                 time.sleep(.02)
             assert server.started, 'Uvicorn failed to start'
             with httpx.Client(base_url=f'http://127.0.0.1:{port}', trust_env=False,
-                              headers={'Authorization': 'Bearer ' + TOKEN}, timeout=15) as client:
+                              headers={'Authorization': 'Bearer ' + TOKEN}, timeout=15,
+                              limits=httpx.Limits(max_keepalive_connections=0)) as client:
                 yield client, app, transport
         finally:
             server.should_exit = True
@@ -135,6 +151,9 @@ def test_complete_http_flow(live, project, monkeypatch):
     copy = Path(app.state.sessions[opened['id']].copy)
     assert '.env' not in opened['files']
     assert 'abcdefghijklmnopqrstuvwxyz123456' not in str(opened)
+    assert 'signing-fixture!short' not in json.dumps(opened)
+    assert 'config-signing-fixture!' not in json.dumps(opened)
+    assert 'HS256' in opened['files']['auth.py']
     assert not transport.calls
     post(client, base + '/challenge', {'issue': 'Wrong value', 'target_file': 'main.py'}, 409)
     analysis = post(client, base + '/analysis', {'use_ai': True})
@@ -162,6 +181,12 @@ def test_complete_http_flow(live, project, monkeypatch):
     expected_models = {'ProjectAnalysis', 'EngineeringSkillMap', 'HintResponse', 'ExplanationEvaluation', 'Patch'}
     assert {title for title, _ in transport.calls} == expected_models
     assert all(str(project) not in prompt and 'abcdefghijklmnopqrstuvwxyz123456' not in prompt for _, prompt in transport.calls)
+    # Intercepted real OpenRouter HTTP payloads across all AI services must be sanitized.
+    for payload in transport.payloads:
+        prompt = json.dumps(payload)
+        assert 'signing-fixture!short' not in prompt
+        assert 'config-signing-fixture!' not in prompt
+    assert any('HS256' in prompt for _, prompt in transport.calls)
     # A later external edit invalidates readiness; the backend did not make it.
     (project / 'main.py').write_text('value = 99\n')
     assert client.get(base + '/report').json()['readiness'] == 'BLOCKED'
@@ -207,3 +232,156 @@ def test_session_limit_and_shutdown_cleanup(project):
         paths = [Path(s.copy) for s in app.state.sessions.values()]
     assert all(not path.exists() for path in paths)
     assert not patch_lab._copies
+
+
+@pytest.mark.parametrize('classification', ['CORRECT', 'PARTIALLY_CORRECT', 'INCORRECT'])
+@pytest.mark.parametrize('score', [.69, .7, .95])
+def test_three_way_provider_gate(live, project, classification, score):
+    client, app, transport = live
+    before = fingerprint(project)
+    opened = post(client, '/v1/sessions', {'path': str(project)})
+    base = '/v1/sessions/' + opened['id']
+    try:
+        post(client, base + '/explanation', {'explanation': 'An explanation before investigation.'}, 409)
+        post(client, base + '/patch', expected=409)
+        post(client, base + '/analysis', {'use_ai': True})
+        post(client, base + '/challenge', {'issue': 'Wrong value', 'target_file': 'main.py'})
+        transport.evaluation_payload = {'user_explanation': 'Safe fixture explanation',
+            'classification': classification, 'score': score, 'feedback': 'Deterministic provider fixture.',
+            'passed': classification != 'CORRECT'}  # Deliberately contradict the provider flag.
+        patch_calls = sum(title == 'Patch' for title, _ in transport.calls)
+        view = post(client, base + '/explanation', {'explanation': 'The assignment has the wrong value.'})
+        expected = classification == 'CORRECT' and score >= .7
+        assert view['evaluation'] == {'classification': classification, 'score': score,
+            'feedback': 'Deterministic provider fixture.', 'passed': expected}
+        assert (view['patch'] is not None) == expected
+        assert view['phase'] == ('review' if expected else 'investigating')
+        assert sum(title == 'Patch' for title, _ in transport.calls) - patch_calls == int(expected)
+        post(client, base + '/patch', expected=200 if expected else 409)
+        assert fingerprint(project) == before
+    finally:
+        client.delete(base)
+
+
+@pytest.mark.parametrize('bad', ['partial', 'incorrect', 'enum', 'missing', 'string_score',
+    'bool_score', 'nan', 'inf', 'range', 'blank_feedback', 'missing_feedback', 'passed_string', 'json', 'transport_error', 'patch_error', 'missing_score', 'negative', 'missing_passed'])
+def test_reevaluation_revokes_old_approval(live, project, bad):
+    client, app, transport = live
+    before = fingerprint(project)
+    opened = post(client, '/v1/sessions', {'path': str(project)})
+    base = '/v1/sessions/' + opened['id']
+    try:
+        post(client, base + '/analysis', {'use_ai': True})
+        post(client, base + '/challenge', {'issue': 'Wrong value', 'target_file': 'main.py'})
+        post(client, base + '/explanation', {'explanation': 'The assignment has the wrong value.'})
+        data = {'user_explanation': 'Safe fixture explanation', 'classification': 'CORRECT',
+            'score': .95, 'feedback': 'Safe provider feedback.', 'passed': True}
+        if bad == 'partial': data['classification'] = 'PARTIALLY_CORRECT'
+        elif bad == 'incorrect': data['classification'] = 'INCORRECT'
+        elif bad == 'enum': data['classification'] = 'MAYBE'
+        elif bad == 'missing': del data['classification']
+        elif bad == 'string_score': data['score'] = '0.95'
+        elif bad == 'bool_score': data['score'] = True
+        elif bad == 'nan': data['score'] = float('nan')
+        elif bad == 'inf': data['score'] = float('inf')
+        elif bad == 'range': data['score'] = 1.1
+        elif bad == 'negative': data['score'] = -.1
+        elif bad == 'missing_score': del data['score']
+        elif bad == 'missing_passed': del data['passed']
+        elif bad == 'patch_error': transport.patch_raw = '{bad-patch'
+        elif bad == 'blank_feedback': data['feedback'] = '  '
+        elif bad == 'missing_feedback': del data['feedback']
+        elif bad == 'passed_string': data['passed'] = 'true'
+        elif bad == 'json': transport.evaluation_raw = '{not-json'
+        transport.evaluation_payload = data
+        if bad == 'transport_error':
+            transport.fail = True  # Provider transport failure also revokes prior approval.
+        response = client.post(base + '/explanation', json={'explanation': 'A new attempt must replace prior approval.'})
+        assert response.status_code == (200 if bad in ('partial', 'incorrect') else 500)
+        if response.status_code == 500:
+            assert response.json() == {'detail': 'Operation failed; check local service configuration.'}
+        session = app.state.sessions[opened['id']]
+        assert session.view.phase == 'investigating'
+        assert session.view.patch is None
+        assert session.view.evaluation is None or not session.view.evaluation.passed
+        post(client, base + '/patch', expected=409)
+        assert fingerprint(project) == before
+    finally:
+        client.delete(base)
+
+@pytest.mark.parametrize('classification,score', [('PARTIALLY_CORRECT', .95), ('INCORRECT', .95), ('CORRECT', .69)])
+def test_apply_rechecks_classification_and_score(live, project, classification, score):
+    client, app, transport = live
+    opened = post(client, '/v1/sessions', {'path': str(project)})
+    base = '/v1/sessions/' + opened['id']
+    before = fingerprint(project)
+    try:
+        post(client, base + '/analysis', {'use_ai': True})
+        post(client, base + '/challenge', {'issue': 'Wrong value', 'target_file': 'main.py'})
+        post(client, base + '/explanation', {'explanation': 'The assignment has the wrong value.'})
+        evaluation = app.state.sessions[opened['id']].view.evaluation
+        evaluation.classification = classification
+        evaluation.score = score
+        evaluation.passed = True  # Simulate contradictory stored authorization.
+        post(client, base + '/patch', expected=409)
+        assert fingerprint(project) == before
+    finally:
+        client.delete(base)
+
+@pytest.mark.parametrize('status,counts', [
+    ('passed', {'total':2,'passed':2,'failed':0,'skipped':0}),
+    ('failed', {'total':2,'passed':1,'failed':1,'skipped':0}),
+    ('passed', {'total':2,'passed':1,'failed':0,'skipped':1}),
+    ('failed', {'total':0,'passed':0,'failed':0,'skipped':0}),
+    ('unavailable', None), ('timeout', None), ('error', None), ('passed', None),
+])
+def test_connected_count_propagation_and_readiness(live, project, monkeypatch, status, counts):
+    from backend.models import SandboxResult
+    from backend.services import sandbox
+    client, app, transport = live
+    opened = post(client, '/v1/sessions', {'path':str(project)})
+    base='/v1/sessions/'+opened['id']
+    before=fingerprint(project)
+    try:
+        post(client,base+'/analysis',{'use_ai':True})
+        post(client,base+'/challenge',{'issue':'Wrong value','target_file':'main.py'})
+        post(client,base+'/explanation',{'explanation':'The assignment has the wrong value.'})
+        post(client,base+'/patch')
+        result=SandboxResult(status=status,test_counts=counts,output='Synthetic sandbox transport fixture.')
+        monkeypatch.setattr(sandbox,'run_managed_copy',lambda *args:result)
+        view=post(client,base+'/validation',{'runner':'python-pytest'})
+        assert view['validation']['test_counts']==counts
+        assert view['validation']['simulated'] is False
+        assert view['validation']['status']==status
+        report=client.get(base+'/report').json()
+        expected='READY' if status=='passed' and counts and counts['passed']==counts['total'] and counts['total']>0 else 'BLOCKED'
+        assert report['readiness']==expected
+        assert report['validation']['test_counts']==counts
+        # Replace prior result with unknown/unavailable; stale validated phase must not win.
+        monkeypatch.setattr(sandbox,'run_managed_copy',lambda *args:SandboxResult(status='unavailable'))
+        changed=post(client,base+'/validation',{'runner':'python-pytest'})
+        assert changed['phase']=='applied'
+        assert changed['validation']['test_counts'] is None
+        assert client.get(base+'/report').json()['readiness']=='BLOCKED'
+        assert fingerprint(project)==before
+    finally:
+        client.delete(base)
+
+
+def test_credential_literals_never_reach_provider_and_snapshot_code_parses(live,project):
+    client,app,transport=live
+    literals=['credential-context-fixture','api-context-fixture']
+    (project/'user_fixture.py').write_text('hashed_password = get_password_hash("credential-context-fixture")\nPUBLIC = 42\n')
+    (project/'settings.json').write_text('{"api_key":"api-context-fixture","public":42}')
+    before=fingerprint(project)
+    view=client.post('/v1/sessions',json={'path':str(project)}).json();sid=view['id'];url='/v1/sessions/'+sid
+    ast.parse(view['files']['user_fixture.py'])
+    assert 'get_password_hash(' in view['files']['user_fixture.py']
+    assert client.post(url+'/analysis',json={'use_ai':True}).status_code==200
+    assert client.post(url+'/challenge',json={'issue':'Wrong value in main.py','target_file':'main.py'}).status_code==200
+    for _ in range(4):assert client.post(url+'/hint').status_code==200
+    assert client.post(url+'/explanation',json={'explanation':'The value assignment is wrong and must change from one to two.'}).status_code==200
+    serialized=json.dumps(transport.payloads)
+    assert all(value not in serialized for value in literals)
+    assert fingerprint(project)==before
+    assert client.delete(url).status_code==200

@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
+# Keep legacy naive-UTC wire timestamps until a separately approved format migration.
 from typing import List, Optional
 from pydantic import BaseModel, Field
 
@@ -11,4 +13,4 @@ class Patch(BaseModel):
     affected_files: List[str] = Field(default_factory=list, description="List of files affected by this patch")
     validation_warnings: List[str] = Field(default_factory=list, description="Warnings from patch validation")
     risk_level: str = Field(..., description="Risk level: low, medium, high")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp of patch creation")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None), description="Timestamp of patch creation")

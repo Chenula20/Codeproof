@@ -173,6 +173,7 @@ class TestReleaseReadiness:
         """Test READY status when all tests pass."""
         sandbox_result = SandboxResult(
             status="passed",
+            test_counts={"total": 18, "passed": 18, "failed": 0, "skipped": 0},
             tests_total=18,
             tests_passed=18,
             tests_failed=0,
@@ -187,6 +188,7 @@ class TestReleaseReadiness:
         """Test BLOCKED status when tests fail."""
         sandbox_result = SandboxResult(
             status="failed",
+            test_counts={"total": 18, "passed": 10, "failed": 8, "skipped": 0},
             tests_total=18,
             tests_passed=10,
             tests_failed=8,
@@ -201,6 +203,7 @@ class TestReleaseReadiness:
         """Test WARNING status when there are security warnings."""
         sandbox_result = SandboxResult(
             status="passed",
+            test_counts={"total": 18, "passed": 18, "failed": 0, "skipped": 0},
             tests_total=18,
             tests_passed=18,
             tests_failed=0,

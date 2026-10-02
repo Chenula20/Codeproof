@@ -1,4 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
+
+# Keep legacy naive-UTC wire timestamps until a separately approved format migration.
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
@@ -18,7 +20,7 @@ class ProjectAnalysis(BaseModel):
     technologies: List[str] = Field(default_factory=list, description="Technologies detected in the project")
     issues: List[str] = Field(default_factory=list, description="Issues identified during analysis")
     skills: List[str] = Field(default_factory=list, description="Engineering skills relevant to the project")
-    analyzed_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp of analysis")
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None), description="Timestamp of analysis")
 
 
 class EngineeringSkillMap(BaseModel):
@@ -26,4 +28,4 @@ class EngineeringSkillMap(BaseModel):
     project_id: str = Field(..., description="Unique identifier for the project")
     skills: List[str] = Field(default_factory=list, description="Required engineering skills (legacy)")
     skill_estimates: List[SkillEstimate] = Field(default_factory=list, description="Detailed skill estimates per category")
-    generated_at: datetime = Field(default_factory=datetime.utcnow, description="Timestamp of skill map generation")
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None), description="Timestamp of skill map generation")

@@ -1,6 +1,8 @@
 from typing import Literal
 
 from pydantic import BaseModel, Field
+from ai.models import ExplanationClassification
+from backend.models import TestCounts
 
 
 class OpenProject(BaseModel):
@@ -14,6 +16,7 @@ class AnalysisRequest(BaseModel):
 class ChallengeRequest(BaseModel):
     issue: str = Field(default="", max_length=4000)
     target_file: str = Field(default="", max_length=512)
+    incident_id: str | None = Field(default=None, max_length=128)
 
 
 class ExplanationRequest(BaseModel):
@@ -32,9 +35,10 @@ class Skill(BaseModel):
 
 
 class Evaluation(BaseModel):
+    classification: ExplanationClassification
     passed: bool
-    feedback: str
-    score: float
+    feedback: str = Field(min_length=1)
+    score: float = Field(strict=True, allow_inf_nan=False, ge=0.0, le=1.0)
 
 
 class PatchView(BaseModel):
@@ -46,11 +50,20 @@ class PatchView(BaseModel):
 
 
 class Validation(BaseModel):
-    status: Literal["passed", "failed", "unavailable", "timeout", "not_run"] = "not_run"
+    status: Literal["passed", "failed", "error", "unavailable", "timeout", "not_run"] = "not_run"
+    test_counts: TestCounts | None = None
+    simulated: bool = False
     output: str = "Validation has not run."
     duration_ms: int = 0
     original_unchanged: bool | None = None
     checks: list[str] = Field(default_factory=list)
+
+
+class IncidentView(BaseModel):
+    id: str
+    title: str
+    goal: str
+    target_file: str
 
 
 class SessionView(BaseModel):
@@ -65,6 +78,8 @@ class SessionView(BaseModel):
     technologies: list[str]
     issues: list[str]
     skills: list[Skill]
+    supported_incidents: list[IncidentView] = Field(default_factory=list)
+    active_incident: IncidentView | None = None
     challenge_title: str = ""
     challenge_description: str = ""
     relevant_files: list[str] = Field(default_factory=list)

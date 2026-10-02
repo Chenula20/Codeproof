@@ -139,5 +139,5 @@ def evaluate_explanation(challenge_id: str, explanation: str) -> ExplanationResp
         classification=classification,
         feedback=feedback,
         score=score,
-        passed=classification in ("CORRECT", "PARTIALLY_CORRECT"),
+        passed=classification == "CORRECT" and score >= 0.7,
     )

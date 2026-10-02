@@ -1,8 +1,10 @@
 """Pydantic models for CodeProof Backend API contracts."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, timezone
+
+# Keep legacy naive-UTC wire timestamps until a separately approved format migration.
 
 
 # ── Project ──────────────────────────────────────────────────────────
@@ -38,7 +40,7 @@ class SessionCreateResponse(BaseModel):
     languages: list[str]
     frameworks: list[str]
     skill_estimates: dict[str, int] = {}
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
 
 class SessionStatus(BaseModel):
@@ -121,7 +123,37 @@ class SandboxRunRequest(BaseModel):
     patch: str  # unified diff format
 
 
-class SandboxResult(BaseModel):
+class TestCounts(BaseModel):
+    """Completed test outcomes; failed includes test errors, skipped is not passing."""
+    total: int = Field(strict=True, ge=0)
+    passed: int = Field(strict=True, ge=0)
+    failed: int = Field(strict=True, ge=0)
+    skipped: int = Field(strict=True, ge=0)
+
+    @model_validator(mode="after")
+    def consistent_total(self):
+        if self.total != self.passed + self.failed + self.skipped:
+            raise ValueError("Test outcome counts do not match total")
+        return self
+
+
+class TestCountProjection(BaseModel):
+    # Legacy integers are compatibility placeholders when test_counts is None.
+    test_counts: TestCounts | None = None
+    tests_total: int = 0
+    tests_passed: int = 0
+    tests_failed: int = 0
+
+    @model_validator(mode="after")
+    def project_known_counts(self):
+        if self.test_counts is not None:
+            self.tests_total = self.test_counts.total
+            self.tests_passed = self.test_counts.passed
+            self.tests_failed = self.test_counts.failed
+        return self
+
+
+class SandboxResult(TestCountProjection):
     status: str  # "passed" | "failed" | "error"
     tests_total: int = 0
     tests_passed: int = 0
@@ -134,7 +166,7 @@ class SandboxResult(BaseModel):
 
 # ── Release Readiness ────────────────────────────────────────────────
 
-class ReleaseReadiness(BaseModel):
+class ReleaseReadiness(TestCountProjection):
     status: str  # "READY" | "WARNING" | "BLOCKED"
     critical_issues: int = 0
     warnings: int = 0
@@ -221,4 +253,4 @@ class AIPatchResponse(BaseModel):
     affected_files: list[str]
     validation_warnings: list[str] = []
     risk_level: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
