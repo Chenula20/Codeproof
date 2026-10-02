@@ -283,3 +283,7 @@ TASK: Publish tested project fixes and complete reports to the requested reposit
 ## Publication-time Windows checkout correction
 
 A read-only Git smudge/filter probe with core.autocrlf=true reproduced CRLF conversion in all three pinned training files; none matched the approved manifest. Added root .gitattributes with training-project/** text eol=lf. The same actual Git filter probe now matches all three expected hashes without CRLF. No original files, fixture contents, API/AI contracts or Docker policy changed. This is one publication-time configuration fix in addition to the 62 already-audited source entries (63 source/config files total); the historical audit and packages retain their original tested snapshot. Evidence: windows-checkout-fixture-verification.json. All source application logic still matches the tested manifest.
+
+## Verified GitHub publication result
+
+Push succeeded to https://github.com/Chenula20/Codeproof/tree/codex/fix-ai-setup . Source/fix commit: 29611eafcdead228ab911c59a134e9d0c7b37c33. Remote branch OID matched; main and both teammate feature heads unchanged. See PUBLICATION-RESULT.md. A subsequent reports-only commit records this successful publication; application source does not change.
