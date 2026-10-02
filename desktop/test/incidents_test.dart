@@ -4,7 +4,9 @@ import 'package:codeproof_desktop/app/theme.dart';
 import 'package:codeproof_desktop/domain/workspace.dart';
 import 'package:codeproof_desktop/domain/workspace_controller.dart';
 import 'package:codeproof_desktop/features/workspace/workspace_shell.dart';
-import 'package:codeproof_desktop/services/practice_service.dart';
+
+import 'support/practice_fixture.dart';
+
 import 'package:codeproof_desktop/ui/glass.dart';
 
 class IncidentService extends PracticeWorkspaceService {

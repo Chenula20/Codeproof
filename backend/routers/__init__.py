@@ -1,5 +1,5 @@
-"""API routers."""
+"""Authenticated main application routers. Demo routers are packaged separately."""
 
-from backend.routers import project, challenges, patch, sandbox, release, sessions
+from backend.routers import sessions
 
-__all__ = ["project", "challenges", "patch", "sandbox", "release", "sessions"]
+__all__ = ['sessions']

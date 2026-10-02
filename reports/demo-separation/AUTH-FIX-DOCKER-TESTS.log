@@ -1,0 +1,28 @@
+....................................................                     [100%]
+=============================== warnings summary ===============================
+backend/main.py:157
+  /project/demo-project/tests/../backend/main.py:157: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    @app.on_event("startup")
+
+../../usr/local/lib/python3.12/site-packages/fastapi/applications.py:4744
+  /usr/local/lib/python3.12/site-packages/fastapi/applications.py:4744: DeprecationWarning:
+          on_event is deprecated, use lifespan event handlers instead.
+
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_api.py::TestAuthEndpoints::test_login_endpoint_success
+tests/test_auth.py::TestJWT::test_create_and_verify_token
+  /project/demo-project/tests/../backend/auth.py:95: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /evidence/after-fix.xml ------------------
+52 passed, 4 warnings in 9.23s

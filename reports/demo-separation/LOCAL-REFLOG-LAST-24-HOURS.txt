@@ -1,0 +1,35 @@
+9c856e08077fd35f8de6b9e9820d1d6487882906 origin/main@{2026-10-02T11:26:04+05:30} fetch origin --prune: fast-forward
+77786b4c23b6abcf000120e43c78230500c6f01d origin/main@{2026-10-02T09:29:58+05:30} update by push
+77786b4c23b6abcf000120e43c78230500c6f01d codex/mvp-release-completion@{2026-10-02T09:29:41+05:30} commit: Complete Guardian context protection and isolated dummy validation
+77786b4c23b6abcf000120e43c78230500c6f01d worktrees/Codeproof-mvp-release-completion/HEAD@{2026-10-02T09:29:41+05:30} commit: Complete Guardian context protection and isolated dummy validation
+6040f8e5416d75481b37e2a52fae0928c3ca9661 worktrees/Codeproof-mvp-release-completion/HEAD@{2026-10-02T08:23:54+05:30} reset: moving to HEAD
+6040f8e5416d75481b37e2a52fae0928c3ca9661 codex/mvp-release-completion@{2026-10-02T08:23:53+05:30} branch: Created from origin/codex/fix-ai-setup
+6040f8e5416d75481b37e2a52fae0928c3ca9661 worktrees/Codeproof-mvp-release-completion/HEAD@{2026-10-02T08:23:53+05:30}
+6040f8e5416d75481b37e2a52fae0928c3ca9661 origin/codex/fix-ai-setup@{2026-10-02T06:16:23+05:30} update by push
+6040f8e5416d75481b37e2a52fae0928c3ca9661 codex/fix-ai-setup@{2026-10-02T06:16:19+05:30} commit: Include reviewed MVP audit history and signing-worktree coverage
+6040f8e5416d75481b37e2a52fae0928c3ca9661 worktrees/Codeproof-fix-ai-setup/HEAD@{2026-10-02T06:16:19+05:30} commit: Include reviewed MVP audit history and signing-worktree coverage
+a38757ea089ed9a9d6abfd771c4b9ed183b0e0b2 origin/codex/fix-ai-setup@{2026-10-02T06:02:35+05:30} update by push
+a38757ea089ed9a9d6abfd771c4b9ed183b0e0b2 codex/fix-ai-setup@{2026-10-02T06:02:29+05:30} commit: Publish verified Windows and source packages with release-check evidence
+a38757ea089ed9a9d6abfd771c4b9ed183b0e0b2 worktrees/Codeproof-fix-ai-setup/HEAD@{2026-10-02T06:02:29+05:30} commit: Publish verified Windows and source packages with release-check evidence
+41b50a5c4524b5fbbdd2c66630b81f7188aa5ed5 origin/codex/fix-ai-setup@{2026-10-02T05:52:22+05:30} update by push
+41b50a5c4524b5fbbdd2c66630b81f7188aa5ed5 codex/fix-ai-setup@{2026-10-02T05:52:19+05:30} commit: Record verified GitHub publication and full merge report
+41b50a5c4524b5fbbdd2c66630b81f7188aa5ed5 worktrees/Codeproof-fix-ai-setup/HEAD@{2026-10-02T05:52:19+05:30} commit: Record verified GitHub publication and full merge report
+29611eafcdead228ab911c59a134e9d0c7b37c33 origin/codex/fix-ai-setup@{2026-10-02T05:51:13+05:30} update by push
+29611eafcdead228ab911c59a134e9d0c7b37c33 codex/fix-ai-setup@{2026-10-02T05:49:55+05:30} commit: Integrate verified CodeProof MVP safety, workflow and desktop fixes
+29611eafcdead228ab911c59a134e9d0c7b37c33 worktrees/Codeproof-fix-ai-setup/HEAD@{2026-10-02T05:49:55+05:30} commit: Integrate verified CodeProof MVP safety, workflow and desktop fixes
+911d45cc267d8972dd7b65d6cf260bd6e7a779db codex/release-audit-p06-p15@{2026-10-02T05:14:59+05:30} branch: Created from HEAD
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-release-audit-p06-p15/HEAD@{2026-10-02T05:14:59+05:30} reset: moving to HEAD
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-release-audit-p06-p15/HEAD@{2026-10-02T05:14:59+05:30}
+911d45cc267d8972dd7b65d6cf260bd6e7a779db codex/fix-ai-setup@{2026-10-01T21:01:25+05:30} branch: Created from 911d45cc267d8972dd7b65d6cf260bd6e7a779db
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-fix-ai-setup/HEAD@{2026-10-01T21:01:25+05:30} reset: moving to HEAD
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-fix-ai-setup/HEAD@{2026-10-01T21:01:25+05:30}
+911d45cc267d8972dd7b65d6cf260bd6e7a779db codex/fix-signing-secret-redaction@{2026-10-01T20:42:53+05:30} branch: Created from 911d45cc267d8972dd7b65d6cf260bd6e7a779db
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-fix-signing-secret-redaction/HEAD@{2026-10-01T20:42:53+05:30} reset: moving to HEAD
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-fix-signing-secret-redaction/HEAD@{2026-10-01T20:42:53+05:30}
+911d45cc267d8972dd7b65d6cf260bd6e7a779db test/mvp-integration@{2026-10-01T19:11:20+05:30} merge origin/feature/flutter-desktop-v2: Merge made by the 'ort' strategy.
+911d45cc267d8972dd7b65d6cf260bd6e7a779db worktrees/Codeproof-mvp-audit-worktree/HEAD@{2026-10-01T19:11:20+05:30} merge origin/feature/flutter-desktop-v2: Merge made by the 'ort' strategy.
+2874de18cfa1ed9fabbf04fa4f3b9af694e895a4 test/mvp-integration@{2026-10-01T19:10:51+05:30} merge origin/feature/backend-integration: Fast-forward
+2874de18cfa1ed9fabbf04fa4f3b9af694e895a4 worktrees/Codeproof-mvp-audit-worktree/HEAD@{2026-10-01T19:10:51+05:30} merge origin/feature/backend-integration: Fast-forward
+6efa548ab78a2b93075a395b777b2fe30206f403 test/mvp-integration@{2026-10-01T19:10:40+05:30} branch: Created from origin/main
+6efa548ab78a2b93075a395b777b2fe30206f403 worktrees/Codeproof-mvp-audit-worktree/HEAD@{2026-10-01T19:10:40+05:30} reset: moving to HEAD
+6efa548ab78a2b93075a395b777b2fe30206f403 worktrees/Codeproof-mvp-audit-worktree/HEAD@{2026-10-01T19:10:40+05:30}

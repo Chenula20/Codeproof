@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
-from backend.routers import project, challenges, patch, sandbox, release, sessions, demo
+from backend.routers import sessions
 from backend.services.sessions import configured_provider
 
 logger = logging.getLogger('codeproof.backend')
@@ -23,7 +23,7 @@ def create_app(token: str | None = None, provider_factory=None) -> FastAPI:
             app.state.sessions.clear()
 
     app = FastAPI(title='CodeProof Backend', version='1.0.0', lifespan=lifespan,
-        description='Connected projects use /v1/sessions. Unversioned routes are deterministic demo mode only.')
+        description='Main application service. Select a project explicitly through /v1/sessions. Demo services are packaged separately.')
     app.state.token = token if token is not None else os.getenv('CODEPROOF_TOKEN', '')
     app.state.sessions = {}
     app.state.provider_factory = provider_factory or configured_provider
@@ -48,7 +48,7 @@ def create_app(token: str | None = None, provider_factory=None) -> FastAPI:
         logger.error('request_failed', extra={'error_type': type(exc).__name__})
         return JSONResponse({'detail': 'Operation failed; check local service configuration.'}, status_code=500)
 
-    for router in (project.router, challenges.router, patch.router, sandbox.router, release.router, sessions.router, demo.router):
+    for router in (sessions.router,):
         app.include_router(router)
 
     @app.get('/health')

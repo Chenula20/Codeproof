@@ -42,7 +42,7 @@ void main() {
         null,
       ),
     );
-    await preview.boot(tester, const Size(1440, 960));
+    await preview.boot(tester, const Size(1440, 960), fixture: false);
     expect(
       tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
       ThemeMode.dark,
@@ -88,7 +88,6 @@ void main() {
           tester,
           'p12-${light ? 'light' : 'dark'}-welcome',
         );
-        await tester.tap(find.text('Open sample project'));
         await tester.pumpAndSettle();
         await tester.tap(find.text('Break My App').first);
         await tester.pumpAndSettle();

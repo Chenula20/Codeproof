@@ -1,58 +1,13 @@
-# CodeProof
+# CodeProof Main App
 
-A Windows desktop developer engineering environment that helps developers who use AI to build software but may not fully understand, debug, test, or maintain the software they create.
+CodeProof is the Windows developer workspace for inspecting an explicitly selected project, understanding failures, reviewing patches, and validating disposable copies in Docker.
 
-## Architecture
+This is the separated MAIN application. Demo/sample projects, the browser presentation demo, controlled training incidents, and the bundled offline practice service are preserved independently in the clearly labelled CodeProof Demo App folder. They are not mounted by this backend or included in the main Windows executable.
 
-```
-Flutter Desktop
-    ↓
-Workspace Guardian
-    ↓
-FastAPI Backend
-    ↓
-AI Engine
-    ↓
-Patch Lab
-    ↓
-Docker Sandbox
-    ↓
-Test Runner
-    ↓
-Release Readiness
-```
+Architecture: Flutter Desktop -> Workspace Guardian -> authenticated loopback FastAPI /v1 service -> AI services -> managed-copy Patch Lab -> Docker validation -> release readiness. The original selected user project is read-only; patches and execution use disposable copies.
 
-## Core Principle
+Start the backend with python -m backend after installing trusted backend dependencies. Its launcher loads only CodeProof's own root .env and pairs the desktop using a token. Select a nonempty project filesystem folder. AI requests require private provider/model configuration and explicit consent. Docker must be running with an approved trusted sandbox image for actual validation.
 
-> The original user project is never directly modified by CodeProof.
+See backend/README.md and desktop/README.md for setup. No /demo or legacy sample endpoints are served by this main app. Existing /v1 response fields are retained; supported_incidents is empty and controlled demo incident requests are rejected. A blank or omitted project path returns an actionable HTTP 400 and never chooses a sample.
 
-## Repository Structure
-
-```
-codeproof/
-├── AGENTS.md              # Project rules and context
-├── README.md
-├── .gitignore
-├── .env.example
-├── docs/
-│   ├── ARCHITECTURE_V1.1.md
-│   └── adrs/
-├── desktop/               # Flutter Desktop (Friend 1)
-├── backend/               # FastAPI Backend (Friend 3)
-├── ai/                    # AI Engine (Project Lead)
-├── workspace/             # Workspace Guardian (Project Lead)
-├── sandbox/               # Docker Sandbox (Friend 3)
-├── demo-project/          # Student Event Management (Friend 2)
-├── tests/
-└── scripts/
-```
-
-## Getting Started
-
-1. If no root .env exists, copy .env.example to .env. Set OPENROUTER_API_KEY privately and replace the CODEPROOF_MODEL example for connected AI; inspection/practice work without them.
-2. Install dependencies for each component
-3. Run tests to verify setup. Start the desktop service with backend/.venv/Scripts/python.exe -m backend; this launcher loads only CodeProof's root .env, keeps process variables authoritative, and generates a pairing token. See backend/README.md for port, pairing, provider and Docker prerequisites.
-
-## Development
-
-See `AGENTS.md` for development rules and team roles.
+Historical branch archives under CodeProof brances and older deliverable ZIPs are retained as history. They are excluded from the new main source/runtime packages and do not describe the current runtime. The external original dummy app remains separate and untouched.

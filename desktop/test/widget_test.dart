@@ -1,3 +1,7 @@
+import 'package:codeproof_desktop/domain/workspace_controller.dart';
+
+import 'support/practice_fixture.dart';
+
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -40,13 +44,20 @@ Future<void> capture(WidgetTester tester, String name) async {
   });
 }
 
-Future<void> boot(WidgetTester tester, Size size) async {
+Future<void> boot(WidgetTester tester, Size size, {bool fixture = true}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+  final controller = fixture
+      ? WorkspaceController(PracticeWorkspaceService())
+      : null;
+  if (controller != null) await controller.open();
   await tester.pumpWidget(
-    const RepaintBoundary(key: Key('preview'), child: CodeProofApp()),
+    RepaintBoundary(
+      key: const Key('preview'),
+      child: CodeProofApp(key: ValueKey(fixture), controller: controller),
+    ),
   );
   await tester.pumpAndSettle();
 }
@@ -56,10 +67,10 @@ void main() {
   testWidgets('Complete guided workflow, including locked steps and evidence', (
     tester,
   ) async {
-    await boot(tester, const Size(1440, 960));
+    await boot(tester, const Size(1440, 960), fixture: false);
     expect(find.text('Build with AI.\nUnderstand the code.'), findsOneWidget);
     await capture(tester, '01-welcome');
-    await tester.tap(find.text('Open sample project'));
+    await boot(tester, const Size(1440, 960));
     await tester.pumpAndSettle();
     expect(find.text('Student Event Management'), findsWidgets);
     await capture(tester, '02-analysis');
@@ -122,8 +133,6 @@ void main() {
   ]) {
     testWidgets('Responsive navigation and settings at $size', (tester) async {
       await boot(tester, size);
-      await tester.ensureVisible(find.text('Open sample project'));
-      await tester.tap(find.text('Open sample project'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('Skill Map'));
@@ -142,14 +151,25 @@ void main() {
   testWidgets('Connection dialog validates pairing token and port', (
     tester,
   ) async {
-    await boot(tester, const Size(1000, 800));
+    await boot(tester, const Size(1000, 800), fixture: false);
     await tester.tap(find.text('Connect your project'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Open project'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Select a project folder before connecting.'),
+      findsOneWidget,
+    );
+    await tester.enterText(
+      find.byType(TextField).first,
+      r'C:\Projects\selected-app',
+    );
     await tester.tap(find.text('Open project'));
     await tester.pumpAndSettle();
     expect(find.textContaining('at least 32 characters'), findsOneWidget);
     await tester.tap(find.text('Cancel'));
     await tester.pumpAndSettle();
-    expect(find.text('Open sample project'), findsOneWidget);
+    expect(find.text('Open sample project'), findsNothing);
+    expect(find.text('Connect your project'), findsOneWidget);
   });
 }

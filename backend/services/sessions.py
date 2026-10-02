@@ -15,7 +15,7 @@ from workspace.models import ProjectSnapshot
 from backend.session_models import SessionView, Skill, Evaluation, PatchView, Validation
 from .guardian import capture, hashes, open_guardian
 from .diff import apply_diff
-from . import patch_lab, sandbox, release_readiness, incidents
+from . import patch_lab, sandbox, release_readiness
 
 
 @asynccontextmanager
@@ -63,12 +63,14 @@ class Session:
             description=view.challenge_description, difficulty='medium', target_skill='Debugging',
             problem_statement=view.challenge_description, relevant_files=view.relevant_files,
             relevant_code_excerpts=[view.files[p] for p in view.relevant_files],
-            expected_concepts=list(incidents.INCIDENTS[view.active_incident.id].concepts) if view.active_incident else ['Explain the root cause, affected code, and a testable correction.'],
+            expected_concepts=['Explain the root cause, affected code, and a testable correction.'],
             project_summary=view.summary)
 
 
 def open_session(path: str) -> Session:
-    root = Path(path or patch_lab.get_demo_project_path()).expanduser().resolve()
+    if not path or not path.strip():
+        raise ValueError('Select a project folder; the main application does not open an implicit demo.')
+    root = Path(path).expanduser().resolve()
     if root == Path(root.anchor):
         raise ValueError('Select a project directory, not a drive root')
     guardian = open_guardian(str(root))
@@ -79,7 +81,7 @@ def open_session(path: str) -> Session:
     try:
         view = SessionView(id=uuid.uuid4().hex, name=root.name, sample=False,
             files=dict(snapshot.files), summary=f'Guardian snapshot: {len(snapshot.files)} filtered text files. Enable AI analysis to investigate.',
-            technologies=[], issues=[], skills=[], supported_incidents=incidents.supported(snapshot.files, original_hashes), activity=['Opened a redacted Guardian snapshot.'])
+            technologies=[], issues=[], skills=[], supported_incidents=[], activity=['Opened a redacted Guardian snapshot.'])
         return Session(guardian, snapshot, original_hashes, copy, view)
     except Exception:
         patch_lab.cleanup_temporary_copy(copy)
@@ -108,37 +110,12 @@ def challenge(session, issue, target, incident_id=None):
         raise HTTPException(409, 'Enable AI analysis before project investigation')
     view = session.view
     if incident_id is not None:
-        session.check()
-        if not session.original_unchanged():
-            raise ValueError('Original changed externally; reopen the session')
-        current = patch_lab.copy_files(session.copy)
-        if current != session.snapshot.files:
-            raise ValueError('Temporary copy differs from the analyzed snapshot')
-        incident, files = incidents.inject(current, session.original_hashes, incident_id)
-        updated = session.snapshot.model_copy(deep=True)
-        updated.files = files
-        new_copy = patch_lab.materialize(updated)
-        try:
-            if patch_lab.copy_files(new_copy) != files:
-                raise ValueError('Controlled incident copy verification failed')
-            patch_lab.cleanup_temporary_copy(session.copy)
-        except Exception:
-            patch_lab.cleanup_temporary_copy(new_copy)
-            raise
-        session.copy, session.snapshot = new_copy, updated
-        view.files = dict(files)
-        view.active_incident = incident.view()
-        view.supported_incidents = []
-        view.challenge_title = incident.title
-        view.challenge_description = incident.description
-        view.relevant_files = [incident.target_file]
-        view.activity.append('Controlled incident introduced only in a registered temporary copy.')
-    else:
-        if not issue.strip() or target not in session.snapshot.files:
-            raise ValueError('Describe the issue and select a snapshot file')
-        view.challenge_title = 'Project investigation'
-        view.challenge_description = issue
-        view.relevant_files = [target]
+        raise ValueError('Controlled demo incidents are available only in the separate demo application.')
+    if not issue.strip() or target not in session.snapshot.files:
+        raise ValueError('Describe the issue and select a snapshot file')
+    view.challenge_title = 'Project investigation'
+    view.challenge_description = issue
+    view.relevant_files = [target]
     view.phase = 'investigating'
 
 

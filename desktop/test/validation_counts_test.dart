@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart' hide Evaluation;
 import 'package:codeproof_desktop/domain/workspace.dart';
 import 'package:codeproof_desktop/domain/workspace_controller.dart';
-import 'package:codeproof_desktop/services/practice_service.dart';
+
+import 'support/practice_fixture.dart';
+
 import 'package:codeproof_desktop/features/workspace/evidence.dart';
 import 'package:codeproof_desktop/ui/glass.dart';
 

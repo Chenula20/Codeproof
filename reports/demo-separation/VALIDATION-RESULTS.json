@@ -1,0 +1,35 @@
+{
+  "main_python": {
+    "errors": 0,
+    "passed": 464,
+    "failed": 0,
+    "skipped": 2
+  },
+  "flutter": {
+    "version": "1.0.10+11",
+    "passed": 38,
+    "analysis": "No issues",
+    "windows_build": "Passed"
+  },
+  "original_backend": {
+    "warnings": 239,
+    "passed": 70,
+    "failed": 0,
+    "skipped": 2
+  },
+  "packaged_isolation": {
+    "failed": 0,
+    "passed": 6
+  },
+  "native_ui": "Main welcome screen observed; no sample action",
+  "package_hashes": "129 source and 12 runtime ZIP entries matched disk",
+  "sample_auth": {
+    "warnings": 4,
+    "passed": 52
+  },
+  "execution": "Python selected/project checks in constrained ephemeral Docker; native Flutter exception approved by user",
+  "skipped_tests": [
+    "Windows junction regression",
+    "Real Docker controller/image availability inside isolated test container"
+  ]
+}

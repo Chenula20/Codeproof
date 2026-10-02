@@ -21,10 +21,6 @@ _copies: dict[str, Copy] = {}
 _lock = RLock()
 
 
-def get_demo_project_path() -> str:
-    return str(Path(__file__).resolve().parents[2] / 'demo-project')
-
-
 def _key(path: str) -> str:
     # Resolving here would erase evidence of a replaced root link.
     return os.path.normcase(os.path.abspath(path))

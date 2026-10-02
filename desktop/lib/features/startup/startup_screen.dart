@@ -4,13 +4,7 @@ import '../../app/theme.dart';
 import '../../ui/glass.dart';
 
 class StartupScreen extends StatelessWidget {
-  const StartupScreen({
-    super.key,
-    required this.onPractice,
-    required this.onConnect,
-    required this.busy,
-  });
-  final VoidCallback onPractice;
+  const StartupScreen({super.key, required this.onConnect, required this.busy});
   final VoidCallback onConnect;
   final bool busy;
   @override
@@ -100,11 +94,6 @@ class StartupScreen extends StatelessWidget {
         spacing: 12,
         runSpacing: 12,
         children: [
-          PrimaryButton(
-            'Open sample project',
-            onPressed: busy ? null : onPractice,
-            icon: Icons.play_arrow_rounded,
-          ),
           OutlinedButton.icon(
             onPressed: busy ? null : onConnect,
             icon: const Icon(Icons.folder_open_rounded, size: 18),
@@ -114,7 +103,7 @@ class StartupScreen extends StatelessWidget {
       ),
       const SizedBox(height: 12),
       Text(
-        'Sample works offline  ·  No account or API key needed',
+        'Main application  ·  Select your project to begin',
         style: TextStyle(fontSize: 11, color: Palette.of(context).muted),
       ),
       const SizedBox(height: 34),

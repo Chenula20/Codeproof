@@ -1,5 +1,0 @@
-# Reviewed extensions for the separate dummy; base image supplies FastAPI/pytest/jose/passlib.
-SQLAlchemy==2.0.36
-pytest-asyncio==1.4.0
-httpx==0.28.1
-bcrypt==4.2.0

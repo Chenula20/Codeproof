@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:codeproof_desktop/domain/workspace_controller.dart';
-import 'package:codeproof_desktop/services/practice_service.dart';
+
+import 'support/practice_fixture.dart';
+
 import 'package:codeproof_desktop/services/workspace_service.dart';
 
 void main() {

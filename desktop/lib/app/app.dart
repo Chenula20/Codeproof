@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import '../domain/workspace_controller.dart';
 import '../features/startup/startup_screen.dart';
 import '../features/workspace/workspace_shell.dart';
-import '../services/practice_service.dart';
 import '../services/workspace_service.dart';
 import '../ui/glass.dart';
 import 'theme.dart';
@@ -12,7 +11,8 @@ import 'theme.dart';
 const _nativeChannel = MethodChannel('codeproof/native');
 
 class CodeProofApp extends StatefulWidget {
-  const CodeProofApp({super.key});
+  const CodeProofApp({super.key, this.controller});
+  final WorkspaceController? controller;
   @override
   State<CodeProofApp> createState() => _CodeProofAppState();
 }
@@ -86,7 +86,7 @@ class _CodeProofAppState extends State<CodeProofApp> {
     reducedTransparency: reducedTransparency,
     reducedMotion: reducedMotion,
     child: MaterialApp(
-      title: 'CodeProof',
+      title: 'CodeProof Main App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -99,6 +99,7 @@ class _CodeProofAppState extends State<CodeProofApp> {
         child: child!,
       ),
       home: _Home(
+        controller: widget.controller,
         onSettings: (context) => showDialog<void>(
           context: context,
           builder: (context) => StatefulBuilder(
@@ -191,14 +192,17 @@ class _CodeProofAppState extends State<CodeProofApp> {
 }
 
 class _Home extends StatefulWidget {
-  const _Home({required this.onSettings});
+  const _Home({required this.onSettings, this.controller});
+  final WorkspaceController? controller;
   final void Function(BuildContext) onSettings;
   @override
   State<_Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<_Home> {
-  final controller = WorkspaceController(PracticeWorkspaceService());
+  late final controller =
+      widget.controller ??
+      WorkspaceController(LocalWorkspaceService(token: ''));
   final shellKey = GlobalKey<WorkspaceShellState>();
   @override
   void dispose() {
@@ -408,9 +412,6 @@ class _HomeState extends State<_Home> {
                       child: data == null
                           ? StartupScreen(
                               busy: controller.busy,
-                              onPractice: () => controller.open(
-                                using: PracticeWorkspaceService(),
-                              ),
                               onConnect: connect,
                             )
                           : WorkspaceShell(
@@ -555,8 +556,7 @@ class _ConnectDialogState extends State<_ConnectDialog> {
                     decoration: const InputDecoration(
                       labelText: 'Project folder',
                       hintText: r'C:\Projects\my-app',
-                      helperText:
-                          'Leave empty to connect the bundled sample project.',
+                      helperText: 'Select your project folder. Demo projects are packaged separately.',
                     ),
                   ),
                 ),
@@ -621,6 +621,12 @@ class _ConnectDialogState extends State<_ConnectDialog> {
         'Open project',
         icon: Icons.folder_open_outlined,
         onPressed: () {
+          if (path.text.trim().isEmpty) {
+            setState(
+              () => error = 'Select a project folder before connecting.',
+            );
+            return;
+          }
           final number = int.tryParse(port.text);
           if (token.text.trim().length < 32) {
             setState(
@@ -630,7 +636,7 @@ class _ConnectDialogState extends State<_ConnectDialog> {
           }
           if (number == null || number < 1 || number > 65535) {
             setState(
-              () => error = 'Enter the CodeProof service port from 1 to 65535; this is not the dummy app port.',
+              () => error = 'Enter the CodeProof service port from 1 to 65535; this is the CodeProof service port.',
             );
             return;
           }
