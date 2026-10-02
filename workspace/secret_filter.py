@@ -1,3 +1,4 @@
+import ast
 import re
 from pathlib import Path
 from typing import List, Pattern, Set
@@ -140,6 +141,38 @@ class SecretFilter:
         ))
 
     @staticmethod
+    def _nonsensitive_python_expression(value: str) -> bool:
+        """Preserve Python plumbing; do not evaluate or resolve its values.
+
+        Names/member lookups and calls without embedded credential literals are
+        context, not source credentials. Dictionary keys and subscript labels
+        describe public fields. Dynamic/computed secrets remain unsupported.
+        """
+        try:
+            expression = ast.parse(value.strip(), mode="eval").body
+        except (SyntaxError, ValueError, RecursionError):
+            return False
+        if isinstance(expression, ast.Constant):
+            return False  # A scalar value, including numeric passwords, is data.
+        if isinstance(expression, ast.Name):
+            # Bare INI/environment-style scalar values also parse as names.
+            # Preserve only conventional credential parameter references.
+            return expression.id in {"password", "plain_password", "hashed_password",
+                                     "token", "access_token", "api_key"}
+        labels = set()
+        for node in ast.walk(expression):
+            if isinstance(node, ast.Dict):
+                labels.update(id(key) for key in node.keys if key is not None)
+            elif isinstance(node, ast.Subscript):
+                labels.add(id(node.slice))
+        return not any(
+            isinstance(node, (ast.JoinedStr, ast.FormattedValue)) or
+            (isinstance(node, ast.Constant) and isinstance(node.value, (str, bytes))
+             and id(node) not in labels)
+            for node in ast.walk(expression)
+        )
+
+    @staticmethod
     def _quoted_spans(content: str):
         """Recognize lexical strings so documentation is not an assignment."""
         cursor = 0
@@ -200,7 +233,11 @@ class SecretFilter:
             consumed = end
             value = content[start:end]
             if (match.group("separator") == ":" and
-                    re.fullmatch(r"(?:str|bytes|int|float|bool|Final|Optional)(?:\[[\w. |]+\])?", value)):
+                    re.fullmatch(r"(?:str|bytes|int|float|bool|Final|Optional)(?:\[[\w. |]+\])?", value.strip())):
+                continue
+            if (assignment_pattern is self.CREDENTIAL_ASSIGNMENT
+                    and not yaml_plain
+                    and self._nonsensitive_python_expression(value)):
                 continue
             if end > start and not self._environment_reference(value):
                 yield start, end
