@@ -1,0 +1,17 @@
+[
+  {
+    "file": "app.py",
+    "windows_checkout_hash_matches_manifest": true,
+    "contains_crlf": false
+  },
+  {
+    "file": "tests/test_app.py",
+    "windows_checkout_hash_matches_manifest": true,
+    "contains_crlf": false
+  },
+  {
+    "file": "README.md",
+    "windows_checkout_hash_matches_manifest": true,
+    "contains_crlf": false
+  }
+]

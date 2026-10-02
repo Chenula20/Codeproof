@@ -1,0 +1,37 @@
+41:        Uri.http('127.0.0.1:$port', path),
+43:      request.followRedirects = false;
+44:      request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $token');
+85:    await _request('POST', '/v1/sessions', {'path': path}),
+93:    await _request('POST', '/v1/sessions/$id/$action', body),
+97:    await _request('DELETE', '/v1/sessions/$id', {});
+12:from ai.services import ProjectAnalyzer, HintEngine, ExplanationEvaluator, PatchGenerator
+16:from .guardian import capture, hashes, open_guardian
+52:    def original_unchanged(self):
+73:    guardian = open_guardian(str(root))
+74:    snapshot, original_hashes = capture(guardian)
+93:            engine = ProjectAnalyzer(provider)
+155:    ok, message = patch_lab.apply_patch(session.copy, view.patch.diff, set(view.relevant_files))
+158:    view.files = patch_lab.copy_files(session.copy)
+166:    result = await asyncio.to_thread(sandbox.run_managed_copy, session.copy, runner)
+167:    unchanged = session.original_unchanged()
+175:        original_unchanged=unchanged, checks=checks)
+16:    owner: tempfile.TemporaryDirectory
+34:    owner = tempfile.TemporaryDirectory(prefix='codeproof_patch_')
+44:            target = contained_path(root, name, exists=False)
+46:            contained_path(root, name, exists=False).write_text(content, encoding='utf-8', newline='')
+71:            raise ValueError('Only managed temporary workspaces may be used')
+74:            target = contained_path(root, name)
+101:                contained_path(root, name)
+103:                target = contained_path(root, name)
+111:                target = contained_path(root, name)
+13:RUNNERS = {
+73:        if runner not in RUNNERS:
+92:            command=['sh', '-c', 'cp -R /snapshot/. /tmp/project && cd /tmp/project && exec ' + RUNNERS[runner]],
+93:            user='65532:65532', network_mode='none', network_disabled=True,
+94:            mem_limit=limits['memory'], memswap_limit=limits['memory'],
+95:            nano_cpus=int(limits['cpu'] * 1e9), pids_limit=64,
+96:            read_only=True, cap_drop=['ALL'], security_opt=['no-new-privileges:true'],
+97:            tmpfs={'/tmp': 'rw,noexec,nosuid,nodev,size=128m,mode=1777'},
+98:            volumes={copy: {'bind': '/snapshot', 'mode': 'ro'}},
+104:        code = container.wait(timeout=remaining).get('StatusCode', -1)
+128:                container.remove(force=True, v=True)

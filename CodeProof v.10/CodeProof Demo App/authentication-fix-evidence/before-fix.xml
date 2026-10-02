@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="5" time="2.258" timestamp="2026-10-02T06:34:44.260209+00:00" hostname="2644762d245e"><testcase classname="tests.test_auth.TestLogin" name="test_login_success" time="0.236"><failure message="AssertionError: assert None == {'email': 'test@example.com', 'id': 1, 'username': 'testuser'}">tests/test_auth.py:53: in test_login_success
+    assert result == sample_user
+E   AssertionError: assert None == {'email': 'test@example.com', 'id': 1, 'username': 'testuser'}</failure></testcase><testcase classname="tests.test_auth.TestLogin" name="test_login_rejects_stored_hash" time="0.230"><failure message="AssertionError: assert {'email': 'test@example.com', 'id': 1, 'username': 'testuser'} is None&#10; +  where {'email': 'test@example.com', 'id': 1, 'username': 'testuser'} = authenticate_user('testuser', '$2b$12$fFD/pd46ivIak7dzApREUOlhrmIP7AEdR2.1Qv2QkvRHqggqcTwie')">tests/test_auth.py:58: in test_login_rejects_stored_hash
+    assert authenticate_user("testuser", sample_user_hash) is None
+E   AssertionError: assert {'email': 'test@example.com', 'id': 1, 'username': 'testuser'} is None
+E    +  where {'email': 'test@example.com', 'id': 1, 'username': 'testuser'} = authenticate_user('testuser', '$2b$12$fFD/pd46ivIak7dzApREUOlhrmIP7AEdR2.1Qv2QkvRHqggqcTwie')</failure></testcase><testcase classname="tests.test_api.TestAuthEndpoints" name="test_login_endpoint_success" time="0.244"><failure message="assert 401 == 200&#10; +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code">tests/test_api.py:62: in test_login_endpoint_success
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = &lt;Response [401 Unauthorized]&gt;.status_code</failure></testcase><testcase classname="tests.test_api.TestAuthEndpoints" name="test_login_endpoint_rejects_stored_hash" time="0.242"><failure message="assert 200 == 401&#10; +  where 200 = &lt;Response [200 OK]&gt;.status_code">tests/test_api.py:78: in test_login_endpoint_rejects_stored_hash
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = &lt;Response [200 OK]&gt;.status_code</failure></testcase><testcase classname="tests.test_api.TestAuthEndpoints" name="test_login_endpoint_wrong_password" time="0.233" /></testsuite></testsuites>

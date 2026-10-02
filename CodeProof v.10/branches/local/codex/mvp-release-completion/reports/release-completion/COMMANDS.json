@@ -1,0 +1,98 @@
+{
+  "cwd": "C:/Codeproof-mvp-release-completion",
+  "python_env": "backend/.venv",
+  "trusted_host_tests": true,
+  "target_execution": "Production CodeProof Docker only",
+  "commands": [
+    [
+      "backend/.venv/Scripts/python.exe -m pip install -r backend/requirements-dev.txt",
+      0,
+      "Normal dependencies"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe -m pytest backend/tests -q -W error::DeprecationWarning -W error::FutureWarning -p no:cacheprovider --basetemp=tmp/backend-final-release --junitxml=tmp/release-evidence/backend-release.xml",
+      0,
+      "265 passed; zero failed/error/skipped/warnings"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe -m pytest tests/ --tb=short -q -W error::DeprecationWarning -W error::FutureWarning -p no:cacheprovider --basetemp=tmp/final-release-project --junitxml=tmp/release-evidence/project-release.xml",
+      0,
+      "250 passed; zero failed/error/skipped/warnings"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe -m pytest backend/tests/test_provider_failures.py -q -W error::DeprecationWarning -W error::FutureWarning -p no:cacheprovider --basetemp=tmp/provider-failures --junitxml=tmp/release-evidence/provider-failures.xml",
+      0,
+      "16 mocked OpenRouter failure regressions"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe -m pip check",
+      0,
+      "No broken requirements"
+    ],
+    [
+      "flutter pub get",
+      0,
+      "From desktop/; four constrained-version notices"
+    ],
+    [
+      "flutter analyze",
+      0,
+      "From desktop/; no issues"
+    ],
+    [
+      "flutter test",
+      0,
+      "From desktop/; 37 passed"
+    ],
+    [
+      "flutter build windows --release",
+      0,
+      "From desktop/; built in 82.3 seconds"
+    ],
+    [
+      "docker build -t codeproof/dummy-remediation:20261002 remediation/dummy-app/sandbox",
+      0,
+      "Reviewed trusted image extension"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe remediation/dummy-app/prepare_copy.py \"C:/New folder/CodeProof-DummyApp\" tmp/dummy-remediation-healthy",
+      0,
+      "New filtered isolated copy; no host target execution"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/verify_dummy.py",
+      0,
+      "Actual production Docker: 8/8 signing and 32/32 whole copied target"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/intended_launcher_runtime.py",
+      0,
+      "Real health/auth/routes/local inspection; live configuration NOT TESTABLE"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/f07_real_docker_v2.py",
+      0,
+      "Seven real count/readiness states; mocked provider transport"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/docker_validation_probe_v2.py",
+      0,
+      "Six real isolation/runner/repair states"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/f07_real_runners.py",
+      0,
+      "Three real runner states"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/docker_validation_additional.py",
+      0,
+      "Three actual cgroup/scratch/noexec tests"
+    ],
+    [
+      "backend/.venv/Scripts/python.exe tmp/release-evidence/verify_preservation.py",
+      0,
+      "Accessible file hashes plus HEAD/index; unreadable old cache directories disclosed"
+    ]
+  ]
+}

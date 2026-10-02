@@ -1,0 +1,148 @@
+{
+  "name": "CodeProof v.10 merged application",
+  "version": "1.0.10+10",
+  "source_commit": "9c856e08077fd35f8de6b9e9820d1d6487882906",
+  "source_file_count": 280,
+  "source_zip_sha256": "ea8142dea2214b39ed41ab8012f8ddee1b5c586a3ef954788432cc82124adc23",
+  "branch_references_integrated": 19,
+  "windows": {
+    "file": "deliverables/CodeProof-v10-Windows.zip",
+    "version": "1.0.10+10",
+    "sha256": "8e246e38653946704c2a7fa64accc7538c1d74689d49a0d92ff414b88121e0d0",
+    "bytes": 12178099,
+    "runtime_file_count": 12,
+    "backend_bundled": false,
+    "runtime_files": [
+      {
+        "path": "codeproof_desktop.exe",
+        "bytes": 131072,
+        "sha256": "a51f842279219e12c4a45260ebfe11c9bdd20f433ca5d9dd8ce5e63b60c25a10"
+      },
+      {
+        "path": "flutter_windows.dll",
+        "bytes": 21274112,
+        "sha256": "8bd7b61eee31aa436edb182db41624d1cd3b2688a7e03622320dbeae067b5251"
+      },
+      {
+        "path": "data/app.so",
+        "bytes": 6013832,
+        "sha256": "93bd8ed21d34fe8e930d4100d2f7239cb90ed0131508d6af7bc637b56f4fb4ed"
+      },
+      {
+        "path": "data/icudtl.dat",
+        "bytes": 864880,
+        "sha256": "325a86063d26334c2eabe1743cea073b612540fbf3d8fc2ef0b5708e3763a8c7"
+      },
+      {
+        "path": "data/flutter_assets/AssetManifest.bin",
+        "bytes": 117,
+        "sha256": "00af55ad3d6f21898fe77e0ff092d1a1cda52c941b6860e9928d45c8af8c095d"
+      },
+      {
+        "path": "data/flutter_assets/FontManifest.json",
+        "bytes": 208,
+        "sha256": "cd7e03645bc44b2dd47b7cb626f51c4ecbf55a197ab77241628b47ac165fbe21"
+      },
+      {
+        "path": "data/flutter_assets/NativeAssetsManifest.json",
+        "bytes": 45,
+        "sha256": "9548a31e4a048135c1d94f919328bfb62ae2c7bb3cab96557c7941daa97776cb"
+      },
+      {
+        "path": "data/flutter_assets/NOTICES.Z",
+        "bytes": 98182,
+        "sha256": "b69036f06683679eb2779e1f2e3c07805b27c9102878104bc05773662cb0966b"
+      },
+      {
+        "path": "data/flutter_assets/fonts/MaterialIcons-Regular.otf",
+        "bytes": 7300,
+        "sha256": "2df64ae7e4bab10330ee82877de532dbb96550d6182bc00d2acb33bcf58d1767"
+      },
+      {
+        "path": "data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+        "bytes": 257628,
+        "sha256": "67c44fe9183b002e79dde7f6977e2988661c9a3e4a3c5fce968787efdbed823c"
+      },
+      {
+        "path": "data/flutter_assets/shaders/ink_sparkle.frag",
+        "bytes": 21856,
+        "sha256": "1fe8436a743884cb65078fe8c7b38e18f5365f2a2961270916f426fd13c604af"
+      },
+      {
+        "path": "data/flutter_assets/shaders/stretch_effect.frag",
+        "bytes": 17616,
+        "sha256": "bc7599dbbbaab310efe41520574138d21fb18a88c8fe4495ed79315309336f6f"
+      }
+    ]
+  },
+  "validation": {
+    "date": "2026-10-02",
+    "version": "1.0.10+10",
+    "python": {
+      "passed": 510,
+      "execution": "Trusted Docker image, no network, read-only source, 1 GiB memory, 2 CPUs, 128 PIDs",
+      "failed": 0,
+      "skipped": 5,
+      "skipped_tests": [
+        {
+          "test": "backend.tests.test_incidents.test_real_docker_baseline_failure_repair[request-field]",
+          "reason": "Real Docker/image unavailable:"
+        },
+        {
+          "test": "backend.tests.test_incidents.test_real_docker_baseline_failure_repair[date-serialization]",
+          "reason": "Real Docker/image unavailable:"
+        },
+        {
+          "test": "backend.tests.test_incidents.test_real_docker_baseline_failure_repair[database-init]",
+          "reason": "Real Docker/image unavailable:"
+        },
+        {
+          "test": "backend.tests.test_patch_safety.test_junction_rejected_on_windows",
+          "reason": "Windows junction regression"
+        },
+        {
+          "test": "backend.tests.test_sandbox_safety.test_real_docker_when_available",
+          "reason": "Docker is not installed; real container validation unavailable"
+        }
+      ],
+      "total": 515,
+      "errors": 0
+    },
+    "initial_python_run": {
+      "passed": 508,
+      "correction": "Use native absolute paths and assert rejection before provider access; no production behavior change",
+      "failed": 2,
+      "reason": "Existing POSIX absolute-path test expected Windows-specific rejection message",
+      "skipped": 5
+    },
+    "flutter": {
+      "host_execution_exception": "Explicitly approved by the user for the isolated copy",
+      "passed": 37,
+      "analysis": "No issues",
+      "failed": 0,
+      "windows_build": "Passed"
+    },
+    "docker_training": {
+      "tmpfs_noexec": true,
+      "failed": 0,
+      "pids": 64,
+      "read_only": true,
+      "network": "none",
+      "passed": 3,
+      "memory_mib": 512,
+      "tmpfs_mib": 128,
+      "user": "65532:65532",
+      "image": "codeproof/sandbox:latest",
+      "cpus": 2
+    },
+    "live_ai_provider_quality": "Not tested; private usable provider/model configuration is required",
+    "native_connected_ui_journey": "Not performed in this integration; widget checks and build success are separate evidence",
+    "architecture": "Flutter desktop + separate authenticated loopback FastAPI service + Docker workers, unchanged"
+  },
+  "executable": "Windows/codeproof_desktop.exe",
+  "source": "source",
+  "original_workspace_unchanged": true,
+  "original_branch_snapshots_unchanged": true,
+  "github_main_verified": true,
+  "github_commit_url": "https://github.com/Chenula20/Codeproof/commit/9c856e08077fd35f8de6b9e9820d1d6487882906"
+}

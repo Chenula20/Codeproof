@@ -1,0 +1,21 @@
+ORIGINAL WORKSPACE HEAD:
+2874de18cfa1ed9fabbf04fa4f3b9af694e895a4
+ORIGINAL WORKSPACE STATUS:
+?? .pytest-tmp/
+?? desktop/.dart_tool/
+?? desktop/codeproof_desktop.iml
+?? desktop/windows/
+?? reports/
+ISOLATED AUTHENTICATION FIX HEAD:
+9c856e08077fd35f8de6b9e9820d1d6487882906
+ISOLATED AUTHENTICATION FIX STATUS:
+ M demo-project/backend/auth.py
+ M demo-project/tests/conftest.py
+ M demo-project/tests/test_api.py
+ M demo-project/tests/test_auth.py
+AUTHENTICATION FIX DIFF STAT:
+ demo-project/backend/auth.py    |  4 +---
+ demo-project/tests/conftest.py  | 12 ++++++++++++
+ demo-project/tests/test_api.py  | 40 +++++++++++++++++++++++++++++++---------
+ demo-project/tests/test_auth.py | 15 +++++++--------
+ 4 files changed, 51 insertions(+), 20 deletions(-)

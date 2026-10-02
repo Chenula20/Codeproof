@@ -1,0 +1,412 @@
+{
+  "f07-real-docker-v2.json": [
+    {
+      "name": "pass",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "snapshot_removed": true,
+      "counts": {
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "passed",
+      "readiness": "READY"
+    },
+    {
+      "name": "fail",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "snapshot_removed": true,
+      "counts": {
+        "total": 2,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0
+      },
+      "status": "failed",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "skip",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "snapshot_removed": true,
+      "counts": {
+        "total": 2,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 1
+      },
+      "status": "passed",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "empty",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "snapshot_removed": true,
+      "counts": {
+        "total": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "failed",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "delay",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "snapshot_removed": true,
+      "counts": null,
+      "status": "timeout",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "unavailable",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "counts": null,
+      "status": "unavailable",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "parse",
+      "success": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "snapshot_removed": true,
+      "counts": null,
+      "status": "error",
+      "readiness": "BLOCKED"
+    }
+  ],
+  "docker-validation-runtime-v2.json": [
+    {
+      "name": "isolation",
+      "passed_check": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "limits_match": true,
+      "restrictions_match": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "passed",
+      "readiness": {
+        "test_counts": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "skipped": 0
+        },
+        "tests_total": 6,
+        "tests_passed": 6,
+        "tests_failed": 0,
+        "status": "READY",
+        "critical_issues": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "name": "failure",
+      "passed_check": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "limits_match": true,
+      "restrictions_match": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "status": "failed",
+      "readiness": {
+        "test_counts": {
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0
+        },
+        "tests_total": 1,
+        "tests_passed": 0,
+        "tests_failed": 1,
+        "status": "BLOCKED",
+        "critical_issues": 1,
+        "warnings": 0
+      }
+    },
+    {
+      "name": "timeout",
+      "passed_check": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "limits_match": true,
+      "restrictions_match": true,
+      "managed_copies_remaining": 0,
+      "counts": null,
+      "status": "timeout",
+      "readiness": {
+        "test_counts": null,
+        "tests_total": 0,
+        "tests_passed": 0,
+        "tests_failed": 0,
+        "status": "BLOCKED",
+        "critical_issues": 1,
+        "warnings": 0
+      }
+    },
+    {
+      "name": "unittest",
+      "passed_check": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "limits_match": true,
+      "restrictions_match": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "passed",
+      "readiness": {
+        "test_counts": {
+          "total": 1,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "tests_total": 1,
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "status": "READY",
+        "critical_issues": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "name": "node",
+      "passed_check": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "limits_match": true,
+      "restrictions_match": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "passed",
+      "readiness": {
+        "test_counts": {
+          "total": 1,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "tests_total": 1,
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "status": "READY",
+        "critical_issues": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "name": "patch",
+      "passed_check": true,
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "limits_match": true,
+      "restrictions_match": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "passed",
+      "readiness": {
+        "test_counts": {
+          "total": 1,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        "tests_total": 1,
+        "tests_passed": 1,
+        "tests_failed": 0,
+        "status": "READY",
+        "critical_issues": 0,
+        "warnings": 0
+      }
+    }
+  ],
+  "docker-validation-additional.json": [
+    {
+      "name": "actual_limits",
+      "original_hashes_unchanged": true,
+      "container_removed": true,
+      "copy_removed": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      "status": "passed",
+      "readiness": {
+        "test_counts": {
+          "total": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0
+        },
+        "tests_total": 3,
+        "tests_passed": 3,
+        "tests_failed": 0,
+        "status": "READY",
+        "critical_issues": 0,
+        "warnings": 0
+      }
+    }
+  ],
+  "f07-real-runners.json": [
+    {
+      "name": "unittest",
+      "verified": true,
+      "original_unchanged": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 3,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 1
+      },
+      "status": "failed",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "node",
+      "verified": true,
+      "original_unchanged": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 3,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 1
+      },
+      "status": "failed",
+      "readiness": "BLOCKED"
+    },
+    {
+      "name": "all_skipped",
+      "verified": true,
+      "original_unchanged": true,
+      "managed_copies_remaining": 0,
+      "counts": {
+        "total": 2,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 2
+      },
+      "status": "failed",
+      "readiness": "BLOCKED"
+    }
+  ],
+  "dummy-healthy.json": {
+    "signing_configuration": {
+      "status": "passed",
+      "test_counts": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      "runtime_errors": [],
+      "outcomes": [],
+      "duration_ms": 16907,
+      "warning_counts": [
+        "4"
+      ],
+      "warning_categories": [
+        "DeprecationWarning"
+      ],
+      "source": "Real production CodeProof managed-copy Docker; synthetic test signing environment only"
+    },
+    "complete_copied_dummy": {
+      "status": "passed",
+      "test_counts": {
+        "total": 32,
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0
+      },
+      "runtime_errors": [],
+      "outcomes": [],
+      "duration_ms": 16250,
+      "warning_counts": [
+        "3",
+        "7",
+        "17",
+        "8",
+        "1",
+        "5",
+        "7",
+        "1",
+        "3",
+        "66"
+      ],
+      "warning_categories": [
+        "DeprecationWarning"
+      ],
+      "source": "Real production CodeProof managed-copy Docker; synthetic test signing environment only"
+    }
+  },
+  "signing-before.json": {
+    "stage": "Before signing remediation, harmless filtered literal only",
+    "status": "failed",
+    "test_counts": {
+      "total": 8,
+      "passed": 2,
+      "failed": 6,
+      "skipped": 0
+    },
+    "missing_configuration_did_not_fail": true,
+    "raw_output_retained": false,
+    "no_actual_signing_value_used_or_recorded": true
+  },
+  "_evidence_scope": {
+    "docker": "Real production managed-copy Docker",
+    "connected_AI": "Deterministic intercepted provider HTTP transport in connected count/readiness scenarios",
+    "live_provider_quality": "NOT TESTABLE; example model rejected before transport",
+    "dummy_signing": "Synthetic harmless test environment only"
+  }
+}

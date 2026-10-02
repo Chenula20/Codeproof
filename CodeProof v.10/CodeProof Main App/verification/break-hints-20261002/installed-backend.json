@@ -1,0 +1,9 @@
+{
+  "source_commit": "bbb7478dcc226b6c8047c88b0edacbb90899393a",
+  "installed_incidents": 2,
+  "sample": false,
+  "temporary_session_closed": true,
+  "mode": "Local backend",
+  "health": "healthy",
+  "backend_port": 8000
+}

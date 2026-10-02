@@ -1,0 +1,30 @@
+[
+  {
+    "component": "demo-project",
+    "file_count": 25,
+    "file": "demo-project-preserved.zip",
+    "sha256": "abe4bd742cf2fbc25cb9765a7d64b628d3daaa57a4855d40e18f908b82f335aa",
+    "note": "Includes previously requested, Docker-verified pending authentication fix."
+  },
+  {
+    "component": "training-project",
+    "file_count": 3,
+    "file": "training-project-preserved.zip",
+    "sha256": "26aeea50dd8d8398e81df636eec9884e9ca146313d360dac7b4b920f26501c57",
+    "note": "Tracked files preserved from v10 commit 9c856e0."
+  },
+  {
+    "component": "frontend",
+    "file_count": 24,
+    "file": "frontend-preserved.zip",
+    "sha256": "411109036d72445ae6b43b039fb00cc60df7b85bccd9957f9c069726456ee62e",
+    "note": "Tracked files preserved from v10 commit 9c856e0."
+  },
+  {
+    "component": "remediation/dummy-app",
+    "file_count": 7,
+    "file": "remediation-dummy-app-preserved.zip",
+    "sha256": "f988d5430896b24f53aa73fc2e5072b55710f998fa9316ff704626497d158109",
+    "note": "Tracked files preserved from v10 commit 9c856e0."
+  }
+]

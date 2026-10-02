@@ -1,0 +1,12 @@
+[
+  {
+    "zip": "CodeProof-Main-Windows.zip",
+    "verified_files": 12,
+    "hashes_match": true
+  },
+  {
+    "zip": "CodeProof-Main-Source.zip",
+    "verified_files": 129,
+    "hashes_match": true
+  }
+]

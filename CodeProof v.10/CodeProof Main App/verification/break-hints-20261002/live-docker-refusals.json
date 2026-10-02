@@ -1,0 +1,16 @@
+[
+  {
+    "original_unchanged": true,
+    "phase": "analyzed",
+    "detail": "Tests did not reproduce the selected syntax fault. Choose a module exercised by this test runner. The healthy copy has been retained.",
+    "case": "uncovered-module",
+    "status": 409
+  },
+  {
+    "original_unchanged": true,
+    "phase": "analyzed",
+    "detail": "Healthy Docker baseline required. Fix existing test failures, missing dependencies, or Docker setup before Break My App. F                                                                        [100%]\n=================================== FAILURES ===================================\n___________________________________ test_add ___________________________________\n\n    def test_add():\n>       assert add(2,3) == 99\nE       assert 5 == 99\nE        +  where 5 = add(2, 3)\n\ntest_calculator.py:3: AssertionError\n=========================== short test summary info ============================\nFAILED test_calculator.py::test_add - assert 5 == 99\n1 failed in 0.02s\n",
+    "case": "failing-baseline",
+    "status": 409
+  }
+]

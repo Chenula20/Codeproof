@@ -1,0 +1,24 @@
+...............................s...................s.................... [100%]
+=============================== warnings summary ===============================
+ai/providers/gemini.py:3
+  /project/ai/providers/gemini.py:3: FutureWarning: 
+  
+  All support for the `google.generativeai` package has ended. It will no longer be receiving 
+  updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+  See README for more details:
+  
+  https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+  
+    import google.generativeai as genai
+
+backend/tests/test_demo_separation.py: 4 warnings
+backend/tests/test_patch_safety.py: 112 warnings
+backend/tests/test_sandbox_safety.py: 40 warnings
+backend/tests/test_services.py: 16 warnings
+backend/tests/test_sessions.py: 66 warnings
+  /usr/local/lib/python3.12/site-packages/pydantic/main.py:263: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------- generated xml file: /evidence/original-backend-tests.xml -----------
+70 passed, 2 skipped, 239 warnings in 3.93s

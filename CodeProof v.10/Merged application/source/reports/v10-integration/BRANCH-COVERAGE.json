@@ -1,0 +1,108 @@
+{
+  "base_main": "56a98d7b38fe2135d81300dae7df782247a31782",
+  "base_tree": "9f42b2ed217884edaf63e8afa7faf4f214aada65",
+  "integrated_head": "7fe41ddb13bf3e9c045f87f1d98a2cf895223b4a",
+  "guardian_merge": "64f061851733b60401a5d7bed2936d58cd4d2109",
+  "flutter_history_merge": "dd15dda5abf8ad7f8df59b71b462465d8a40f132",
+  "master_history_merge": "7fe41ddb13bf3e9c045f87f1d98a2cf895223b4a",
+  "source_tree_after_history_reconciliation": "9f42b2ed217884edaf63e8afa7faf4f214aada65",
+  "source_changed_during_reconciliation": false,
+  "policy": "Maintained root implementations retained; superseded historical implementations remain in branch archive",
+  "branches": [
+    {
+      "ref": "refs/heads/codex/fix-ai-setup",
+      "captured_commit": "6040f8e5416d75481b37e2a52fae0928c3ca9661",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/codex/fix-signing-secret-redaction",
+      "captured_commit": "911d45cc267d8972dd7b65d6cf260bd6e7a779db",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/codex/mvp-release-completion",
+      "captured_commit": "77786b4c23b6abcf000120e43c78230500c6f01d",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/codex/release-audit-p06-p15",
+      "captured_commit": "911d45cc267d8972dd7b65d6cf260bd6e7a779db",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/feature/backend-integration",
+      "captured_commit": "2874de18cfa1ed9fabbf04fa4f3b9af694e895a4",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/feature/flutter-desktop",
+      "captured_commit": "c3a61e47a9a6e64472a8bf5ed26f9e1b001622ec",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/feature/flutter-desktop-v2",
+      "captured_commit": "e8ebf7c657db5379b98a384c947250e8096499db",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/heads/test/mvp-integration",
+      "captured_commit": "911d45cc267d8972dd7b65d6cf260bd6e7a779db",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/codex/fix-ai-setup",
+      "captured_commit": "6040f8e5416d75481b37e2a52fae0928c3ca9661",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/ai-analysis-engine",
+      "captured_commit": "ea9bdd5b6df690df93ae82d7e47a0cdebb3f1700",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/ai-coaching-contract",
+      "captured_commit": "7fa4dacb84df4d9fde0dfa4fff130229e389fe0b",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/ai-coaching-engine",
+      "captured_commit": "0af2bc29b8802f9bc8b3536ae83eb50be99d7e49",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/ai-guardian-contract",
+      "captured_commit": "ec78486e4a292093a1087618171bf94d0a786e6c",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/ai-patch-generator",
+      "captured_commit": "6efa548ab78a2b93075a395b777b2fe30206f403",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/backend-integration",
+      "captured_commit": "2874de18cfa1ed9fabbf04fa4f3b9af694e895a4",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/flutter-desktop",
+      "captured_commit": "c8dfd9f4e1309ad96507d4bfe3fd77e2355fbd18",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/feature/flutter-desktop-v2",
+      "captured_commit": "e8ebf7c657db5379b98a384c947250e8096499db",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/main",
+      "captured_commit": "77786b4c23b6abcf000120e43c78230500c6f01d",
+      "ancestor_of_integrated_head": true
+    },
+    {
+      "ref": "refs/remotes/origin/master",
+      "captured_commit": "c6114639d6c5dd43ae4db5e4be6cfb9b753b9c97",
+      "ancestor_of_integrated_head": true
+    }
+  ]
+}

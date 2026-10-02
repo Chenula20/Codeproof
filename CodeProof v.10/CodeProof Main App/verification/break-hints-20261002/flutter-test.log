@@ -1,0 +1,53 @@
+Resolving dependencies...
+Downloading packages...
+  cupertino_icons 1.0.9 (2.0.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.14 available)
+Got dependencies!
+4 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart
+00:00 +0: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(400.0, 800.0)
+00:00 +1: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(400.0, 800.0)
+00:00 +2: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(400.0, 800.0)
+00:01 +3: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(400.0, 800.0)
+00:02 +4: C:/cp-break-hints-20261002/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:02 +5: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(1440.0, 1000.0)
+00:02 +6: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(1440.0, 1000.0)
+00:02 +7: C:/cp-break-hints-20261002/desktop/test/break_hints_test.dart: Main controls and four local hints at Size(1440.0, 1000.0)
+00:03 +8: C:/cp-break-hints-20261002/desktop/test/evaluation_test.dart: CORRECT coach shows classification, score and feedback
+00:03 +9: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +10: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +11: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +12: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +13: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +14: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +15: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +16: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +17: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +18: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +19: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +20: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +21: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +22: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +23: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +24: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +25: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +26: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +27: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:04 +28: C:/cp-break-hints-20261002/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:05 +29: C:/cp-break-hints-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:05 +30: C:/cp-break-hints-20261002/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:06 +31: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:06 +32: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:06 +33: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:06 +34: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:08 +35: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:09 +36: C:/cp-break-hints-20261002/desktop/test/theme_test.dart: Theme light renders full simulated journey
+00:09 +37: C:/cp-break-hints-20261002/desktop/test/theme_test.dart: Theme light renders full simulated journey
+00:10 +38: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Responsive navigation and settings at Size(900.0, 650.0)
+00:10 +39: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Responsive navigation and settings at Size(1280.0, 720.0)
+00:10 +40: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: Connection dialog validates pairing token and port
+00:10 +41: C:/cp-break-hints-20261002/desktop/test/widget_test.dart: (tearDownAll)
+00:10 +41: All tests passed!

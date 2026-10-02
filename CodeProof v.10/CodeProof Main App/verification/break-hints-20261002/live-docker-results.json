@@ -1,0 +1,75 @@
+[
+  {
+    "phase": "investigating",
+    "original_unchanged": true,
+    "validation": {
+      "status": "failed",
+      "test_counts": null,
+      "simulated": false,
+      "output": "\n==================================== ERRORS ====================================\n_____________________ ERROR collecting test_calculator.py ______________________\n/usr/local/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule\n    mod = import_path(\n/usr/local/lib/python3.12/site-packages/_pytest/pathlib.py:596: in import_path\n    importlib.import_module(module_name)\n/usr/local/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<frozen importlib._bootstrap>:1387: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1360: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:935: in _load_unlocked\n    ???\n/usr/local/lib/python3.12/site-packages/_pytest/assertion/rewrite.py:188: in exec_module\n    exec(co, module.__dict__)\ntest_calculator.py:1: in <module>\n    from calculator import add\nE     File \"/tmp/project/calculator.py\", line 3\nE       if True print(\"CODEPROOF_FAULT_4bee5c97d9ce2b957f0c\")\nE               ^^^^^\nE   SyntaxError: invalid syntax\n=========================== short test summary info ============================\nERROR test_calculator.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n1 error in 0.15s\n",
+      "duration_ms": 2766,
+      "original_unchanged": true,
+      "checks": [
+        "Healthy baseline passed in Docker: python-pytest",
+        "Controlled syntax fault reproduced in Docker",
+        "Original project hashes unchanged"
+      ]
+    },
+    "simulated": false,
+    "result": "passed",
+    "hints": 4,
+    "runner": "python-pytest"
+  },
+  {
+    "phase": "investigating",
+    "original_unchanged": true,
+    "validation": {
+      "status": "failed",
+      "test_counts": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "simulated": false,
+      "output": "test_calculator (unittest.loader._FailedTest.test_calculator) ... ERROR\n\n======================================================================\nERROR: test_calculator (unittest.loader._FailedTest.test_calculator)\n----------------------------------------------------------------------\nImportError: Failed to import test module: test_calculator\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.12/unittest/loader.py\", line 396, in _find_test_path\n    module = self._get_module_from_name(name)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/unittest/loader.py\", line 339, in _get_module_from_name\n    __import__(name)\n  File \"/tmp/project/tests/test_calculator.py\", line 2, in <module>\n    from calculator import add\n  File \"/tmp/project/calculator.py\", line 3\n    if True print(\"CODEPROOF_FAULT_d193eaeceec1b1e2ebbf\")\n            ^^^^^\nSyntaxError: invalid syntax\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nFAILED (errors=1)\n",
+      "duration_ms": 1218,
+      "original_unchanged": true,
+      "checks": [
+        "Healthy baseline passed in Docker: python-unittest",
+        "Controlled syntax fault reproduced in Docker",
+        "Original project hashes unchanged"
+      ]
+    },
+    "simulated": false,
+    "result": "passed",
+    "hints": 4,
+    "runner": "python-unittest"
+  },
+  {
+    "phase": "investigating",
+    "original_unchanged": true,
+    "validation": {
+      "status": "failed",
+      "test_counts": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "simulated": false,
+      "output": "TAP version 13\n# /tmp/project/calculator.js:2\n# if (true { /* CODEPROOF_FAULT_c7393ad0bcb1a705f1f3 */\n#          ^\n# SyntaxError: Unexpected token '{'\n#     at wrapSafe (node:internal/modules/cjs/loader:1472:18)\n#     at Module._compile (node:internal/modules/cjs/loader:1501:20)\n#     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n#     at Module.load (node:internal/modules/cjs/loader:1275:32)\n#     at Module._load (node:internal/modules/cjs/loader:1096:12)\n#     at Module.require (node:internal/modules/cjs/loader:1298:19)\n#     at require (node:internal/modules/helpers:182:18)\n#     at Object.<anonymous> (/tmp/project/calculator.test.js:3:17)\n#     at Module._compile (node:internal/modules/cjs/loader:1529:14)\n#     at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)\n# Node.js v20.19.2\n# Subtest: /tmp/project/calculator.test.js\nnot ok 1 - /tmp/project/calculator.test.js\n  ---\n  duration_ms: 127.136535\n  location: '/tmp/project/calculator.test.js:1:1'\n  failureType: 'testCodeFailure'\n  exitCode: 1\n  signal: ~\n  error: 'test failed'\n  code: 'ERR_TEST_FAILURE'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 0\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 134.757502\n",
+      "duration_ms": 1890,
+      "original_unchanged": true,
+      "checks": [
+        "Healthy baseline passed in Docker: node-test",
+        "Controlled syntax fault reproduced in Docker",
+        "Original project hashes unchanged"
+      ]
+    },
+    "simulated": false,
+    "result": "passed",
+    "hints": 4,
+    "runner": "node-test"
+  }
+]

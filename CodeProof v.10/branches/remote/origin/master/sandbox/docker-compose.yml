@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks: []
+    mem_limit: 2g
+    cpus: 2.0
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true

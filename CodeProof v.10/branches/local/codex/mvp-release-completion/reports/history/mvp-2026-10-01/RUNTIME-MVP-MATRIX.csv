@@ -1,0 +1,19 @@
+FEATURE,STATUS,EVIDENCE,REAL OR MOCK,BLOCKER?,OWNER
+MVP-01 Windows desktop,PARTIAL,Native startup observed; navigation unverified,Real native,Yes,Flutter
+MVP-02 Open/select project,PARTIAL,Real Dart/API opens dummy; native dialog unverified,Real client/API,Yes,Flutter + Backend
+MVP-03 Workspace Guardian,PARTIAL,23 files; venv excluded; signing secret unredacted,Real Guardian,Yes,Project Lead + Backend
+MVP-04 Project analysis,NOT TESTABLE,HTTP 503 missing provider/model,Real gate,Yes,Project Lead + Backend
+MVP-05 Engineering skill map,NOT TESTABLE,Connected skills empty after blocked analysis,Live unavailable; demo mock,Yes,Project Lead + Flutter
+MVP-06 Controlled challenge,PARTIAL,Connected 409; demo in-memory challenge,Demo mock; real gate,Yes,Backend + Product
+MVP-07 Investigation workspace,NOT TESTABLE,Connected UI/challenge not reached,Real source only,Yes,Flutter + Product + Backend
+MVP-08 Progressive AI hints,NOT TESTABLE,Four connected requests 409; demo static hints,Real gate; demo mock,Yes,Project Lead + Backend
+MVP-09 Explain before fix,NOT TESTABLE,Three connected submissions 409,Real gate,Yes,Project Lead + Flutter + Backend
+MVP-10 Explanation evaluation,NOT TESTABLE,Live evaluator blocked; classifications only demo,Demo mock,Yes,Project Lead + Backend
+MVP-11 AI patch generation,NOT TESTABLE,No real AI proposal,Demo mock only,Yes,Project Lead
+MVP-12 Patch review UI,NOT TESTABLE,No live proposal/native review,Unverified UI,Yes,Flutter + Product
+MVP-13 Patch Lab,PASS,Real safe fixture copy-only apply and path protections,Real subsystem,No for tested subsystem,Backend
+MVP-14 Docker sandbox,NOT TESTABLE,Real validation unavailable,Real availability check,Yes,Backend
+MVP-15 Automated target test runner,NOT TESTABLE,No actual target container tests,Demo counts mock,Yes,Backend
+MVP-16 Sandbox results UI,NOT TESTABLE,Native results not reached,Unverified UI,Yes,Flutter + Product
+MVP-17 Release readiness,PARTIAL,Real BLOCKED; successful READY unverified,Real fail-closed; demo READY mock,Yes,Backend + Flutter
+MVP-18 Original protection,PARTIAL,6398 hashes unchanged; successful full flow incomplete,Real hashes,Yes,Project Lead + Backend

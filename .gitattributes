@@ -1,2 +1,3 @@
 # Keep exact-hash training fixtures reproducible on Windows.
 training-project/** text eol=lf
+CodeProof[[:space:]]v.10/CodeProof-all-branches.bundle filter=lfs diff=lfs merge=lfs -text

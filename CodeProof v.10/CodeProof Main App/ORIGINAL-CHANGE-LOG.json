@@ -1,0 +1,133 @@
+[
+  {
+    "action": "replace",
+    "path": "README.md",
+    "original_sha256": "95c31b01c192516c867b7a06244b55aa163347f2e7c10db735308d6f291e0f48",
+    "separated_sha256": "0f5d1707f7d60f67b941cc7153068be692735b6394e3fcba360bc4a2a4470f10",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\README.md"
+  },
+  {
+    "action": "replace",
+    "path": "backend/README.md",
+    "original_sha256": "df97179a6a04bb55031e255a56edfd70556e7247eba41bd307767a461ca486ed",
+    "separated_sha256": "7b0db1ebd72bd35321bf92bb832a6875eb4363dd1238bb3173b6b1482f901c68",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\README.md"
+  },
+  {
+    "action": "replace",
+    "path": "backend/main.py",
+    "original_sha256": "cda3c5e6ee69d91b51b3c73a10cfd55ed51547aa3d3690b0abeb83cbd6a3e66d",
+    "separated_sha256": "8cf63b82367cb998f7554bfd6d5959907868112bd6ad8d72b9c292a8bbb51695",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\main.py"
+  },
+  {
+    "action": "replace",
+    "path": "backend/routers/__init__.py",
+    "original_sha256": "d4c84178ce6e001c1c480623acbbf694e2ae5cf525e00f43618bc6ae0b84fcac",
+    "separated_sha256": "c5f06f7521ef297db9e1bc63d6d3d4ccebb8b59f98fe53c085674f06a7a805ce",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\__init__.py"
+  },
+  {
+    "action": "replace",
+    "path": "backend/services/patch_lab.py",
+    "original_sha256": "cf7219e9c27ede5e18def1a6c7f0047c5f0e7dd1b694c673eeb7f8187810e603",
+    "separated_sha256": "de44899dc18c953f481994ac5b9ce4295604305918889bd078791268ec0e850e",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\services\\patch_lab.py"
+  },
+  {
+    "action": "replace",
+    "path": "backend/services/sessions.py",
+    "original_sha256": "a698d75f07cad5607e7e4405942f7e6ef65e78bfd425069a029e12963bea319a",
+    "separated_sha256": "ebb4cf09047cc486124a4d693ef847bf8f73e4d4b7d97abc3100e72dfd03b45c",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\services\\sessions.py"
+  },
+  {
+    "action": "replace",
+    "path": "backend/tests/test_services.py",
+    "original_sha256": "668bdc8696fd44fb834d86cace0622909ad6860788e34f698823fafb850dca92",
+    "separated_sha256": "be83cd8ea0c4199290401e46ff03c909342a57fac60786b3ef915018b37e900c",
+    "rollback": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\tests\\test_services.py"
+  },
+  {
+    "action": "create",
+    "path": "backend/tests/test_demo_separation.py",
+    "separated_sha256": "04f52bff4b9a8b9a545c2e4eb6fbd6e2c8b9dd8f159c59d5f92000e66187280d"
+  },
+  {
+    "action": "move_out",
+    "path": "demo-project",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\demo-project"
+  },
+  {
+    "action": "move_out",
+    "path": "frontend",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\frontend"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/demo_models.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\demo_models.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/routers/project.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\project.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/routers/challenges.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\challenges.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/routers/patch.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\patch.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/routers/sandbox.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\sandbox.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/routers/release.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\release.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/routers/demo.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\routers\\demo.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/services/project_service.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\services\\project_service.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/services/challenge_service.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\services\\challenge_service.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/services/demo_fixtures.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\services\\demo_fixtures.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/tests/test_api.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\tests\\test_api.py"
+  },
+  {
+    "action": "move_out",
+    "path": "backend/tests/test_demo_ui_api.py",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\backend\\tests\\test_demo_ui_api.py"
+  },
+  {
+    "action": "replace_runtime",
+    "path": "desktop/build/windows/x64/runner/Release",
+    "preserved_at": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Demo App\\original-checkout-rollback\\desktop-build-Release",
+    "rebuilt_version": "1.0.10+11",
+    "exe_sha256": "2655ce10f2e2312be68abbae94c72f82840329849a987fcd4bf9e3d446898b3a"
+  }
+]

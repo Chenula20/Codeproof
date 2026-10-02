@@ -1,0 +1,2 @@
+# Keep exact-hash training fixtures reproducible on Windows.
+training-project/** text eol=lf

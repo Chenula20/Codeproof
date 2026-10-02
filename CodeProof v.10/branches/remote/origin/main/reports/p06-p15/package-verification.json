@@ -1,0 +1,25 @@
+{
+  "CodeProof-Windows-P06-P15.zip": {
+    "corrupt_entry": null,
+    "files": 13,
+    "missing_runtime_files": []
+  },
+  "CodeProof-Source-P06-P15.zip": {
+    "corrupt_entry": null,
+    "files": 193,
+    "manifest_mismatches": [],
+    "missing_required_files": [],
+    "private_or_dependency_paths": []
+  },
+  "feature_matrix": {
+    "rows": 18,
+    "unique_ids": 18,
+    "counts": {
+      "PASS": 8,
+      "PARTIAL": 10,
+      "MISSING": 0,
+      "BROKEN": 0,
+      "NOT TESTABLE": 0
+    }
+  }
+}

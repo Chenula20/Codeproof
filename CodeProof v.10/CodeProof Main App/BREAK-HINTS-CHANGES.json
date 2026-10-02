@@ -1,0 +1,173 @@
+{
+  "commit": "bbb7478dcc226b6c8047c88b0edacbb90899393a",
+  "tests": {
+    "backend_skipped": 2,
+    "live_docker_runners": [
+      "python-pytest",
+      "python-unittest",
+      "node-test"
+    ],
+    "backend_passed": 485,
+    "flutter_passed": 41
+  },
+  "task": "Break My App and local progressive hints",
+  "runtime_changes": [
+    {
+      "path": "codeproof_desktop.exe",
+      "sha256": "d508827cd5cc05f01d8c1f968d385ad8622cb203932f2c64a9eea149b527b578",
+      "bytes": 131072
+    },
+    {
+      "path": "flutter_windows.dll",
+      "sha256": "8bd7b61eee31aa436edb182db41624d1cd3b2688a7e03622320dbeae067b5251",
+      "bytes": 21274112
+    },
+    {
+      "path": "data/app.so",
+      "sha256": "3d152d2cae7e7602dc5f1538aecfb8e557bd4aff50e8c0d9bfd18db49a6ca695",
+      "bytes": 6013832
+    },
+    {
+      "path": "data/icudtl.dat",
+      "sha256": "325a86063d26334c2eabe1743cea073b612540fbf3d8fc2ef0b5708e3763a8c7",
+      "bytes": 864880
+    },
+    {
+      "path": "data/flutter_assets/AssetManifest.bin",
+      "sha256": "00af55ad3d6f21898fe77e0ff092d1a1cda52c941b6860e9928d45c8af8c095d",
+      "bytes": 117
+    },
+    {
+      "path": "data/flutter_assets/FontManifest.json",
+      "sha256": "cd7e03645bc44b2dd47b7cb626f51c4ecbf55a197ab77241628b47ac165fbe21",
+      "bytes": 208
+    },
+    {
+      "path": "data/flutter_assets/NativeAssetsManifest.json",
+      "sha256": "9548a31e4a048135c1d94f919328bfb62ae2c7bb3cab96557c7941daa97776cb",
+      "bytes": 45
+    },
+    {
+      "path": "data/flutter_assets/NOTICES.Z",
+      "sha256": "b69036f06683679eb2779e1f2e3c07805b27c9102878104bc05773662cb0966b",
+      "bytes": 98182
+    },
+    {
+      "path": "data/flutter_assets/fonts/MaterialIcons-Regular.otf",
+      "sha256": "2df64ae7e4bab10330ee82877de532dbb96550d6182bc00d2acb33bcf58d1767",
+      "bytes": 7300
+    },
+    {
+      "path": "data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+      "sha256": "67c44fe9183b002e79dde7f6977e2988661c9a3e4a3c5fce968787efdbed823c",
+      "bytes": 257628
+    },
+    {
+      "path": "data/flutter_assets/shaders/ink_sparkle.frag",
+      "sha256": "1fe8436a743884cb65078fe8c7b38e18f5365f2a2961270916f426fd13c604af",
+      "bytes": 21856
+    },
+    {
+      "path": "data/flutter_assets/shaders/stretch_effect.frag",
+      "sha256": "bc7599dbbbaab310efe41520574138d21fb18a88c8fe4495ed79315309336f6f",
+      "bytes": 17616
+    }
+  ],
+  "version": "1.0.10+12",
+  "base_commit": "aeda703e15e3aa436422414304e8f1d6e576c192",
+  "local_time": "2026-10-02T15:50:25.3095436+05:30",
+  "original_runtime": "C:\\Codeproof-main\\Codeproof-main\\desktop\\build\\windows\\x64\\runner\\Release",
+  "source_changes": [
+    {
+      "after_sha256": "c74ac10f7c2b12d0a257c3c14a1f804cee49e2a56772f9fe1745f75152d24feb",
+      "path": "README.md",
+      "change": "M",
+      "before_sha256": "aedde1c3e20361aef163589a03a71e38ab239e4c13925ab18c30af9409c16357"
+    },
+    {
+      "after_sha256": "eca7b51f1177a1d35b9e1993ac53653960845b89efc459cedabce88270fe67dd",
+      "path": "backend/routers/sessions.py",
+      "change": "M",
+      "before_sha256": "77e1d9739fd62afb3c300a01683aeb21874798b54f907effed1af18e8b2f68ef"
+    },
+    {
+      "after_sha256": "aa71850318d15d4ba3e4ded15a4e1ae69f3b575d7be280bc8032aa89d2a97d8d",
+      "path": "backend/services/controlled_faults.py",
+      "change": "A",
+      "before_sha256": null
+    },
+    {
+      "after_sha256": "d9cc3684d476da1c131e4855ec1d91286b66ff080165e3e3863bc01857d8c226",
+      "path": "backend/services/sessions.py",
+      "change": "M",
+      "before_sha256": "fb422e0ba06532bdb9e118cd796aaf124325802e152f86d42716d111548c48b1"
+    },
+    {
+      "after_sha256": "74e1361495d12e270bb486d82b0c6477aea8c6f939531bc79ba0f3ff4287c289",
+      "path": "backend/tests/test_controlled_faults.py",
+      "change": "A",
+      "before_sha256": null
+    },
+    {
+      "after_sha256": "865febba092684ced7d7fdb6bc480745e529ae7dc52f5cbd29195603b2abdccb",
+      "path": "backend/tests/test_demo_separation.py",
+      "change": "M",
+      "before_sha256": "9aede79cb2a179e8d9cd3411c8e66508d527900592f0f704163fd009aa12c666"
+    },
+    {
+      "after_sha256": "2bff08fc656b68081fc8483e881dd6400fe7587eb0e9a2e3c01f88c1b453b903",
+      "path": "desktop/lib/domain/workspace_controller.dart",
+      "change": "M",
+      "before_sha256": "de49d51647cf37018766201fe9b8e4d194db1eb152e11bffccad8b200838c177"
+    },
+    {
+      "after_sha256": "cc1c8e914ec12921216e7d1b0d5d45b71278d44ee87a4e371ae22547601ba8b1",
+      "path": "desktop/lib/features/workspace/coach.dart",
+      "change": "M",
+      "before_sha256": "74a6d820fe307db4fd34fc0ab04b85b152ef2c5d1da5d7430c68603ac29c64de"
+    },
+    {
+      "after_sha256": "a7f49ac6840067d553bb9968a251aa78b58526570e866f5cca0002c1e9aacace",
+      "path": "desktop/lib/features/workspace/workspace_shell.dart",
+      "change": "M",
+      "before_sha256": "b96ee18d55d3d4a8629cf99d876a289825d2a7e54af35ed68109e8bf1cdd47eb"
+    },
+    {
+      "after_sha256": "2a462ce0438b348fa0cee30760eff1c6e25317f4dafeab6602f3c4efd75482b3",
+      "path": "desktop/lib/services/workspace_service.dart",
+      "change": "M",
+      "before_sha256": "2e13b86b313095a088badeea96fca21c969eb5763c092d63476efd6294f2c3a0"
+    },
+    {
+      "after_sha256": "3c1b320a1fb07932f1c434613d743190d526bf491f00e9c78b82d3cf4925e800",
+      "path": "desktop/lib/ui/glass.dart",
+      "change": "M",
+      "before_sha256": "efdcfb4132d26b0ec456d6d56177138b2c949df10b503599172558566f22dd21"
+    },
+    {
+      "after_sha256": "19a8fe65427191a8f329bf9a0368d36cd0950f9e140e7498e66909be385ad314",
+      "path": "desktop/pubspec.yaml",
+      "change": "M",
+      "before_sha256": "d47226e63e371a54c07832dc2e5a52456a32707396fa6fb4db4e2d2d57a01daf"
+    },
+    {
+      "after_sha256": "077eecf37fd593aa6b43ad3270e4e7c0d3049c3292ec69131b50daec50e5c081",
+      "path": "desktop/test/break_hints_test.dart",
+      "change": "A",
+      "before_sha256": null
+    },
+    {
+      "after_sha256": "7ccbe115f3666148f77c7ce1830f3f12171c5d8e096478728b3a757ece586edd",
+      "path": "desktop/test/incidents_test.dart",
+      "change": "M",
+      "before_sha256": "23d6363e98117cf0276ee9881823e01e56966a2d3548731645115e6541aa77d9"
+    },
+    {
+      "after_sha256": "f497a19d1b424f0f4ff4b2b22379c58bc57bc4b63462a6e51cad2619c0cf10e8",
+      "path": "docs/break-my-app-hints-report.md",
+      "change": "A",
+      "before_sha256": null
+    }
+  ],
+  "rollback_folder": "C:\\CodeProof brances\\CodeProof v.10\\CodeProof Main App\\history\\before-break-hints-20261002-154519"
+}

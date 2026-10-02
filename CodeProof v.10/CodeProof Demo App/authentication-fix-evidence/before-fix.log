@@ -1,0 +1,52 @@
+FFFF.                                                                    [100%]
+=================================== FAILURES ===================================
+_________________________ TestLogin.test_login_success _________________________
+tests/test_auth.py:53: in test_login_success
+    assert result == sample_user
+E   AssertionError: assert None == {'email': 'test@example.com', 'id': 1, 'username': 'testuser'}
+___________________ TestLogin.test_login_rejects_stored_hash ___________________
+tests/test_auth.py:58: in test_login_rejects_stored_hash
+    assert authenticate_user("testuser", sample_user_hash) is None
+E   AssertionError: assert {'email': 'test@example.com', 'id': 1, 'username': 'testuser'} is None
+E    +  where {'email': 'test@example.com', 'id': 1, 'username': 'testuser'} = authenticate_user('testuser', '$2b$12$fFD/pd46ivIak7dzApREUOlhrmIP7AEdR2.1Qv2QkvRHqggqcTwie')
+________________ TestAuthEndpoints.test_login_endpoint_success _________________
+tests/test_api.py:62: in test_login_endpoint_success
+    assert response.status_code == 200
+E   assert 401 == 200
+E    +  where 401 = <Response [401 Unauthorized]>.status_code
+__________ TestAuthEndpoints.test_login_endpoint_rejects_stored_hash ___________
+tests/test_api.py:78: in test_login_endpoint_rejects_stored_hash
+    assert response.status_code == 401
+E   assert 200 == 401
+E    +  where 200 = <Response [200 OK]>.status_code
+=============================== warnings summary ===============================
+backend/main.py:157
+  /project/demo-project/tests/../backend/main.py:157: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../usr/local/lib/python3.12/site-packages/fastapi/applications.py:4744
+  /usr/local/lib/python3.12/site-packages/fastapi/applications.py:4744: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+tests/test_api.py::TestAuthEndpoints::test_login_endpoint_rejects_stored_hash
+  /project/demo-project/tests/../backend/auth.py:97: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+----------------- generated xml file: /evidence/before-fix.xml -----------------
+=========================== short test summary info ============================
+FAILED tests/test_auth.py::TestLogin::test_login_success - AssertionError: as...
+FAILED tests/test_auth.py::TestLogin::test_login_rejects_stored_hash - Assert...
+FAILED tests/test_api.py::TestAuthEndpoints::test_login_endpoint_success - as...
+FAILED tests/test_api.py::TestAuthEndpoints::test_login_endpoint_rejects_stored_hash
+4 failed, 1 passed, 3 warnings in 2.26s
