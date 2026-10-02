@@ -1,0 +1,49 @@
+Resolving dependencies...
+Downloading packages...
+  cupertino_icons 1.0.9 (2.0.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  meta 1.18.3 (1.19.0 available)
+  test_api 0.7.12 (0.7.14 available)
+Got dependencies!
+4 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading <AUDIT_WORKTREE>/desktop/test/connection_test.dart
+00:00 +0: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Invalid token and port fail before networking
+00:00 +1: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Wrong token gets actionable error even for non-JSON 401
+00:00 +2: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:00 +3: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +4: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +5: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +6: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +7: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +8: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +9: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +10: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +11: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:01 +12: <AUDIT_WORKTREE>/desktop/test/connection_test.dart: Unavailable backend is reported without private token
+00:02 +13: <AUDIT_WORKTREE>/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:02 +14: <AUDIT_WORKTREE>/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +15: <AUDIT_WORKTREE>/desktop/test/incidents_test.dart: Approved incident sends only its id
+00:03 +16: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +17: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +18: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +19: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +20: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +21: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +22: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +23: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +24: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:03 +25: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:04 +26: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Session-only theme and opt-in remembering use native options
+00:05 +27: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:05 +28: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:05 +29: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:05 +30: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:07 +31: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Complete guided workflow, including locked steps and evidence
+00:08 +32: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Theme light renders full simulated journey
+00:08 +33: <AUDIT_WORKTREE>/desktop/test/theme_test.dart: Theme light renders full simulated journey
+00:09 +34: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Responsive navigation and settings at Size(900.0, 650.0)
+00:09 +35: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Responsive navigation and settings at Size(1280.0, 720.0)
+00:10 +36: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: Connection dialog validates pairing token and port
+00:10 +37: <AUDIT_WORKTREE>/desktop/test/widget_test.dart: (tearDownAll)
+00:10 +37: All tests passed!

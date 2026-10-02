@@ -14,3 +14,8 @@ Validation: 477 Python tests, 37 Flutter tests, clean analysis and successful Wi
 Original checkout/dummy preservation evidence is in final-preservation.json; private .env, API keys/tokens, dependency trees, temporary test directories and local generated build packages were excluded. Tested local package paths/hashes are in artifact-manifest.json.
 
 TASK: Publish the reviewed fixes/reports as requested. IMPLEMENTED: Committed and pushed dedicated branch; verified remote OID/protected heads. ARCHITECTURE/API/DATA IMPACT: No new change for publication beyond previously approved fixes and checkout configuration. SECURITY: Reviewed explicit paths, no private credentials detected; originals retained. TESTS: Prior fresh audit plus Windows checkout probe; no unearned live-AI claims. KNOWN ISSUES/NEXT DEPENDENCY: Review branch and complete private configuration, native journey and separately owned dummy remediation before release sign-off.
+
+
+## Additional verified packages and checks
+
+The user requested all deliverables. Added the reviewed Windows/audit-source/public-current-source ZIPs and six final passing logs plus two output-free JUnit summaries with hostname metadata removed. See deliverables/README.md and reports/p06-p15/verified-checks/. Earlier local-only archive statement is superseded. Automatic approval review rejected the broad historical log/script/project-evidence upload; those raw files remain local pending a reviewed export. No new original/dummy data export, source implementation, main merge or teammate branch update.
