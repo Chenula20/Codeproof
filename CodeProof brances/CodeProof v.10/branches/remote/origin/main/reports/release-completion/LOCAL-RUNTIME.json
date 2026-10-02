@@ -1,0 +1,179 @@
+{
+  "launcher": "python -u -m backend",
+  "provider_transport": "No transport substituted",
+  "route_inventory": [
+    {
+      "method": "GET",
+      "path": "/project"
+    },
+    {
+      "method": "GET",
+      "path": "/analysis"
+    },
+    {
+      "method": "GET",
+      "path": "/skills"
+    },
+    {
+      "method": "GET",
+      "path": "/challenges"
+    },
+    {
+      "method": "GET",
+      "path": "/challenges/{challenge_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/challenges/{challenge_id}/hint"
+    },
+    {
+      "method": "POST",
+      "path": "/challenges/{challenge_id}/explanation"
+    },
+    {
+      "method": "POST",
+      "path": "/patch/validate"
+    },
+    {
+      "method": "POST",
+      "path": "/sandbox/run"
+    },
+    {
+      "method": "GET",
+      "path": "/release-readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/release-readiness"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions"
+    },
+    {
+      "method": "DELETE",
+      "path": "/v1/sessions/{session_id}"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/{session_id}/analysis"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/{session_id}/challenge"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/{session_id}/hint"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/{session_id}/explanation"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/{session_id}/patch"
+    },
+    {
+      "method": "POST",
+      "path": "/v1/sessions/{session_id}/validation"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/sessions/{session_id}/report"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/overview"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/skill-map"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/files"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/file"
+    },
+    {
+      "method": "POST",
+      "path": "/demo/challenge/start"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/challenge"
+    },
+    {
+      "method": "POST",
+      "path": "/demo/hint"
+    },
+    {
+      "method": "POST",
+      "path": "/demo/explanation"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/patch"
+    },
+    {
+      "method": "POST",
+      "path": "/demo/patch/apply"
+    },
+    {
+      "method": "POST",
+      "path": "/demo/validation"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/release-readiness"
+    },
+    {
+      "method": "GET",
+      "path": "/demo/state"
+    },
+    {
+      "method": "POST",
+      "path": "/demo/reset"
+    },
+    {
+      "method": "GET",
+      "path": "/health"
+    }
+  ],
+  "private_provider_configuration_complete": false,
+  "port": 58305,
+  "owned_backend_pid": 16316,
+  "generated_pairing_token_valid_length": true,
+  "health": {
+    "status_code": 200,
+    "body": {
+      "status": "healthy",
+      "service": "codeproof-backend",
+      "version": "1.0.0"
+    }
+  },
+  "root_status": 404,
+  "missing_token_status": 401,
+  "wrong_token_status": 401,
+  "dummy_open": {
+    "status_code": 200,
+    "visible_files": 24,
+    "provider": "Local inspection",
+    "mode": "Local backend"
+  },
+  "local_inspection_status": 200,
+  "dummy_connected_live_analysis": "NOT TESTABLE",
+  "dummy_session_closed": true,
+  "dummy_file_count": 6398,
+  "dummy_hashes_unchanged": true,
+  "safe_provider_analysis_status": 503,
+  "live_provider_analysis": "NOT TESTABLE",
+  "failure_point": "Analyze with AI: private OPENROUTER_API_KEY and/or usable CODEPROOF_MODEL absent",
+  "safe_configuration_diagnostic": "Replace the CODEPROOF_MODEL example provider/model-id with an available OpenRouter model ID, then restart the backend.",
+  "safe_session_closed": true,
+  "safe_fixture_unchanged": true,
+  "owned_backend_stopped": true
+}

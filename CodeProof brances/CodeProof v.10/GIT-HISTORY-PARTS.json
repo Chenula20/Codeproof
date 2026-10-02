@@ -1,0 +1,23 @@
+{
+  "format": "Concatenate the ordered parts as raw bytes",
+  "original_file": "CodeProof-all-branches.bundle",
+  "bytes": 134806308,
+  "sha256": "03d86e4ef8ef71ea7f5ebdeeb732e42e8e3164ce51b51ca57e62d62879631732",
+  "parts": [
+    {
+      "file": "history/CodeProof-all-branches.bundle.part01",
+      "bytes": 50331648,
+      "sha256": "064e91446afb1285a16bd3e010a0612c4c07bebe0f946bceedf82a3e0a1f8a29"
+    },
+    {
+      "file": "history/CodeProof-all-branches.bundle.part02",
+      "bytes": 50331648,
+      "sha256": "870baefa0f19581948d3b6c732d2526bc72a99cd2295bf3f8b822acba809a857"
+    },
+    {
+      "file": "history/CodeProof-all-branches.bundle.part03",
+      "bytes": 34143012,
+      "sha256": "3ef54e93585b2e2a36686a295b5b9f746674b345955c9beaaa15c9ef9592b4fc"
+    }
+  ]
+}

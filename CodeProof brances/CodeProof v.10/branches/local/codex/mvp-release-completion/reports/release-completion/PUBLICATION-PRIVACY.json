@@ -1,0 +1,11 @@
+{
+  "tracked_and_selected_files_scanned": 273,
+  "new_selected_files": 31,
+  "decompressed_archive_entries": 438,
+  "publication_history_commits": 13,
+  "actual_private_value_match_count": 0,
+  "unresolved_high_confidence_pattern_count": 0,
+  "reviewed_fixture_exception": "tests/test_guardian.py writes a header-only synthetic private.key exclusion fixture, without key material; same reviewed fixture in historical source packages/commits",
+  "credentials_or_values_recorded": false,
+  "scope": "Known private values compared in UTF-8/UTF-16/JSON/base64; strong-pattern and prohibited archive-content checks. This is not a guarantee of perfect secret detection."
+}

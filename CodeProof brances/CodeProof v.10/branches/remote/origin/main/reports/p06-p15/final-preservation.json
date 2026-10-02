@@ -1,0 +1,40 @@
+{
+  "original": {
+    "path": "C:\\Codeproof-main\\Codeproof-main",
+    "recorded_files": 253,
+    "changed_files": [],
+    "head": "2874de18cfa1ed9fabbf04fa4f3b9af694e895a4",
+    "head_unchanged": true,
+    "index_sha256": "EE5FAD670F85390FDBB926B940E83E0EF66C9C21BA3A44256E26C3230279544E",
+    "index_unchanged": true
+  },
+  "dummy": {
+    "path": "C:\\New folder\\CodeProof-DummyApp",
+    "before_count": 6398,
+    "after_count": 6398,
+    "unchanged": true,
+    "changed_or_added_or_removed": []
+  },
+  "assembly": {
+    "file_count": 62,
+    "changed_after_assembly": []
+  },
+  "audit_branch": "codex/release-audit-p06-p15",
+  "audit_head": "911d45cc267d8972dd7b65d6cf260bd6e7a779db",
+  "backend_tests": {
+    "tests": 249,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 249,
+    "warnings": 0
+  },
+  "project_tests": {
+    "tests": 228,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 228,
+    "warnings": 0
+  }
+}

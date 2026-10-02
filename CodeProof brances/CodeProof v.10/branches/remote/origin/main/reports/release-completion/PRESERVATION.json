@@ -1,0 +1,91 @@
+{
+  "C:\\Codeproof-main\\Codeproof-main": {
+    "before_files": 19656,
+    "after_files": 19656,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 13,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  },
+  "C:\\Codeproof-fix-ai-setup": {
+    "before_files": 13543,
+    "after_files": 13543,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 0,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  },
+  "C:\\Codeproof-fix-signing-secret-redaction": {
+    "before_files": 174,
+    "after_files": 174,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 0,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  },
+  "C:\\Codeproof-mvp-audit-worktree": {
+    "before_files": 8505,
+    "after_files": 8505,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 0,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  },
+  "C:\\Codeproof-release-audit-p06-p15": {
+    "before_files": 7777,
+    "after_files": 7777,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 0,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  },
+  "C:\\Codeproof-mvp-audit": {
+    "before_files": 133,
+    "after_files": 133,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "head_unchanged": true,
+    "index_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 0,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  },
+  "C:\\New folder\\CodeProof-DummyApp": {
+    "before_files": 6398,
+    "after_files": 6398,
+    "changed_count": 0,
+    "added_count": 0,
+    "removed_count": 0,
+    "links_unchanged": true,
+    "unchanged": true,
+    "unreadable_directory_count": 0,
+    "hash_scope": "All accessible enumerated files, excluding permitted shared Git metadata"
+  }
+}

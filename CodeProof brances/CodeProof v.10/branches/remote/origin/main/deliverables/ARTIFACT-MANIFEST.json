@@ -1,0 +1,53 @@
+{
+  "source_snapshot_commit": "41b50a5c4524b5fbbdd2c66630b81f7188aa5ed5",
+  "files": {
+    "deliverables/CodeProof-Windows-P06-P15.zip": {
+      "bytes": 11915947,
+      "sha256": "7361cd94b5e41b38559a3ab8542425954b26e5fc7f012da990e51076a16651c2"
+    },
+    "deliverables/CodeProof-Source-P06-P15.zip": {
+      "bytes": 321955,
+      "sha256": "50137977bbc754cb9dd0aa7e9e5e6d64e237ad2f77c0ffbdc7ac1b68bc57ef6e"
+    },
+    "deliverables/CodeProof-Source-GitHub.zip": {
+      "bytes": 382349,
+      "sha256": "1d99d25e5acfd524db71e241454307ba06ebdc869e2fdccfc3dba245e0b77ac8"
+    },
+    "reports/p06-p15/verified-checks/backend-tests.log": {
+      "bytes": 431,
+      "sha256": "f2f7810d3bdd588ab069d154367a2308f6b1640e4d8013ac904082ac95c2bbca"
+    },
+    "reports/p06-p15/verified-checks/project-tests.log": {
+      "bytes": 420,
+      "sha256": "1ccbb14b8299bf4cf2ce5256e6b097a45115188a7b67ceff843d5de85f0a8500"
+    },
+    "reports/p06-p15/verified-checks/flutter-analyze.log": {
+      "bytes": 418,
+      "sha256": "af1c89da8d30a4bba6abaf4b156e4516cadfae4e0175fc0e07e1d650a7c511a1"
+    },
+    "reports/p06-p15/verified-checks/flutter-tests.log": {
+      "bytes": 4833,
+      "sha256": "45116440f420e21d992b819cdf000977a15b83ef4d41dbad2ef1a340b4e37b70"
+    },
+    "reports/p06-p15/verified-checks/windows-build.log": {
+      "bytes": 504,
+      "sha256": "877aba503ec81b48940a609cc397222f2b461c57eed7fe61ffc864b43e9a5ede"
+    },
+    "reports/p06-p15/verified-checks/pip-check.log": {
+      "bytes": 31,
+      "sha256": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
+    },
+    "reports/p06-p15/verified-checks/backend-tests.xml": {
+      "bytes": 33575,
+      "sha256": "06035fb534305a8aa4495ce42f1b5569c023096cb8af23cb4d5657f91a5e7e63"
+    },
+    "reports/p06-p15/verified-checks/project-tests.xml": {
+      "bytes": 33959,
+      "sha256": "997f52c3382109e73296d94557f1645a99232ad2cdb76dd8ecff4f74915407db"
+    },
+    "deliverables/README.md": {
+      "bytes": 1261,
+      "sha256": "7733a6b5dde69de39c2b32a0809425abad5773528bfb283242a767ce59389c13"
+    }
+  }
+}

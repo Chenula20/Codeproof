@@ -1,0 +1,12 @@
+# P14 separate dummy signing-key remediation proposal
+TASK: Inspect the selected target and propose remediation without changing its original files.
+CURRENT: The external dummy has a hardcoded signing key. CodeProof now removes signing literals before provider serialization, independently of target remediation.
+REQUEST: In an separately authorized target fix copy, load CODEPROOF_DUMMY_SIGNING_KEY from the inherited environment. Fail startup with a nonsecret actionable error if absent or insufficiently provisioned; require a high-entropy key supplied privately. No insecure production fallback or hardcoded default. Do not assume a .env loader exists in this target.
+WHY: Remove a reused source signing credential and make configuration responsibility explicit.
+AFFECTED COMPONENTS: External dummy authentication/backend and tests, owned by the dummy app owner. No CodeProof API/AI contract.
+REQUIRED CHANGES: Replace signing assignment with environment lookup/validation; supply a harmless synthetic key only in controlled test fixtures; document private environment setup and restart. Tests must check missing configuration, correct key, key mismatch and unchanged original files in the separate copy through Docker. Do not execute dummy code on the host.
+RISKS: Replacing the signing key invalidates existing signed tokens. Plan forced sign-in, remove old dev tokens, and coordinate key rotation before production deployment; do not silently retain the exposed key. Secret provisioning is separate from model/API-key configuration.
+RECOMMENDATION: Approve/apply the target patch only in a dedicated target copy after explicit target authorization. The current request preserves C:\New folder\CodeProof-DummyApp; no original modifications are made. This task is a proposal, not a claimed verified target repair.
+SECURITY: Actual key values are absent from this report and proposed diff. Provider redaction remains required regardless of target changes.
+TESTS/KNOWN ISSUES: Target-specific runtime verification is pending. Its root pytest import layout and trusted-image dependencies (including SQLAlchemy and compatible httpx) also need an explicit target setup fix; CodeProof does not install arbitrary target dependencies automatically. The stdlib training fixture has real Docker pass/fail/repair evidence.
+NEXT DEPENDENCY: Dummy owner approves isolated target remediation, supplies the key privately and selects the dependency/test layout before runtime sign-off.

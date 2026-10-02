@@ -1,0 +1,23 @@
+services:
+  sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: codeproof/sandbox:latest
+    user: "65532:65532"
+    network_mode: none
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 2.0
+    pids_limit: 64
+    read_only: true
+    cap_drop: [ALL]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=128m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 64k
+        max-file: "1"
