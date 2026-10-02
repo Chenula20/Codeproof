@@ -1,6 +1,6 @@
 {
-  "published_file_count": 8739,
-  "original_file_count": 8732,
+  "published_file_count": 8740,
+  "original_file_count": 8733,
   "local_originals_unchanged": true,
   "empty_directory_markers": [
     "CodeProof Main App/source/backend/services/__pycache__/.gitkeep",
@@ -23,6 +23,14 @@
       "original_sha256": "1fcbf9a17b22a91dcfe7665d21d30fdd6b2220b6acfa095e4189b94f0272bfb6",
       "published_sha256": "578db55c3ba1dddb8ffaf58844447d6bfb99b12c4395f2dc3da8d2c01fe78dbe",
       "reason": "Provider API key values removed from uploaded template copy"
+    },
+    {
+      "path": "CodeProof v.10.rar",
+      "original_sha256": null,
+      "published_sha256": "34ed4f4ed4671ec9c555e750255e7c8d2ee9fa6065c375aff8693a157568bc22",
+      "reason": "Provider API key and local pairing token values redacted in two archive members; all 7096 member paths retained",
+      "original_bytes": 253696148,
+      "original_hash_note": "The archive appeared during publication and was copied and audited. Its local source disappeared before its original container hash was recorded; all archived file content was compared before sanitizing."
     }
   ],
   "snapshot_utc": "2026-10-02T16:47:09.7132041+05:30",
@@ -43721,10 +43729,16 @@
       "sha256": "bc7599dbbbaab310efe41520574138d21fb18a88c8fe4495ed79315309336f6f",
       "bytes": 17616,
       "path": "Merged application/Windows/data/flutter_assets/shaders/stretch_effect.frag"
+    },
+    {
+      "path": "CodeProof v.10.rar",
+      "bytes": 253694167,
+      "sha256": "34ed4f4ed4671ec9c555e750255e7c8d2ee9fa6065c375aff8693a157568bc22"
     }
   ],
   "source_folder": "C:\\CodeProof brances\\CodeProof v.10",
   "destination_folder": "CodeProof v.10",
   "no_files_omitted": true,
-  "large_file_storage": "Git LFS for CodeProof-all-branches.bundle"
+  "large_file_storage": "Git LFS for CodeProof-all-branches.bundle",
+  "additional_archive_observed_local": "2026-10-02T17:01:17+05:30"
 }
